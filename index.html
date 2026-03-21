@@ -3,450 +3,802 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile</title>
-    <meta name="description" content="Cybersecurity student portfolio with professional security design">
-    <meta name="author" content="serozr">
-    <link rel="stylesheet" href="src/css/main.css">
-    <link rel="stylesheet" href="src/css/animations.css">
+    <title>Afterguard — Johann Weingertner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg:        #080c12;
+            --surface:   #0d1520;
+            --surface2:  #111b2a;
+            --border:    rgba(0,200,255,0.12);
+            --border2:   rgba(0,200,255,0.22);
+            --accent:    #00c8ff;
+            --accent2:   #0066ff;
+            --accent3:   #7c3aed;
+            --text:      #e2eaf6;
+            --muted:     #6b7fa0;
+            --danger:    #ff4545;
+            --success:   #00e5a0;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+        }
+
+        /* Noise grain overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.4;
+        }
+
+        /* Scanline effect on nav */
+        .scanlines {
+            background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,200,255,0.015) 2px, rgba(0,200,255,0.015) 4px);
+        }
+
+        /* Syne for headings */
+        .font-syne { font-family: 'Inter', sans-serif; }
+        .font-mono-custom { font-family: 'Space Mono', monospace; }
+
+        /* Glow effects */
+        .glow-accent { box-shadow: 0 0 20px rgba(0,200,255,0.25), 0 0 60px rgba(0,200,255,0.08); }
+        .glow-text { text-shadow: 0 0 30px rgba(0,200,255,0.4); }
+        .glow-dot { box-shadow: 0 0 6px rgba(0,229,160,0.8); }
+
+        /* Animated gradient border */
+        .grad-border {
+            border: 1px solid transparent;
+            background: linear-gradient(var(--surface), var(--surface)) padding-box,
+                        linear-gradient(135deg, rgba(0,200,255,0.4), rgba(0,102,255,0.2), rgba(124,58,237,0.3)) border-box;
+            transition: background 0.25s ease;
+        }
+
+        .grad-border:hover {
+            background: linear-gradient(var(--surface2), var(--surface2)) padding-box,
+                        linear-gradient(135deg, rgba(0,200,255,0.7), rgba(0,102,255,0.4), rgba(124,58,237,0.5)) border-box;
+        }
+
+        /* Nav active pill */
+        .nav-active {
+            background: linear-gradient(135deg, rgba(0,200,255,0.15), rgba(0,102,255,0.1));
+            border: 1px solid rgba(0,200,255,0.3);
+            color: var(--accent);
+        }
+
+        /* Skill tag */
+        .skill-tag {
+            background: rgba(0,200,255,0.06);
+            border: 1px solid rgba(0,200,255,0.2);
+            color: rgba(0,200,255,0.9);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            padding: 3px 10px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .skill-tag:hover {
+            background: rgba(0,200,255,0.12);
+            border-color: rgba(0,200,255,0.4);
+        }
+
+        /* Timeline line */
+        .timeline-line {
+            width: 1px;
+            background: linear-gradient(to bottom, rgba(0,200,255,0.5), rgba(0,200,255,0));
+            position: absolute;
+            left: 11px;
+            top: 24px;
+            bottom: 0;
+        }
+
+        /* Section marker */
+        .section-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--accent);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        /* Cert badge ring */
+        .cert-ring {
+            background: linear-gradient(135deg, rgba(0,200,255,0.2), rgba(124,58,237,0.2));
+            border: 1px solid rgba(0,200,255,0.3);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: rgba(0,200,255,0.2); border-radius: 3px; }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 6px rgba(0,229,160,0.6); }
+            50%       { box-shadow: 0 0 14px rgba(0,229,160,1); }
+        }
+        @keyframes scanline-drift {
+            0%   { background-position: 0 0; }
+            100% { background-position: 0 100px; }
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0; }
+        }
+
+        .animate-fade-up { animation: fadeUp 0.5s ease-out both; }
+        .animate-fade-up-1 { animation: fadeUp 0.5s 0.1s ease-out both; }
+        .animate-fade-up-2 { animation: fadeUp 0.5s 0.2s ease-out both; }
+        .animate-fade-up-3 { animation: fadeUp 0.5s 0.3s ease-out both; }
+        .animate-glow-dot { animation: pulse-glow 2s ease-in-out infinite; }
+        .cursor-blink { animation: blink 1s step-end infinite; }
+
+        /* Progress bar for skills */
+        .progress-bar {
+            height: 2px;
+            background: linear-gradient(to right, var(--accent), var(--accent2));
+            border-radius: 2px;
+            position: relative;
+        }
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -3px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 8px rgba(0,200,255,0.8);
+        }
+
+        /* Card hover lift */
+        .card-hover {
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 20px rgba(0,200,255,0.08);
+        }
+
+        /* Mobile menu */
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-down { animation: slideDown 0.18s ease-out; }
+
+        /* Corner decoration */
+        .corner-tl::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 20px; height: 20px;
+            border-top: 2px solid rgba(0,200,255,0.6);
+            border-left: 2px solid rgba(0,200,255,0.6);
+        }
+        .corner-br::after {
+            content: '';
+            position: absolute;
+            bottom: 0; right: 0;
+            width: 20px; height: 20px;
+            border-bottom: 2px solid rgba(0,200,255,0.3);
+            border-right: 2px solid rgba(0,200,255,0.3);
+        }
+
+        /* Badge status */
+        .badge-active {
+            background: rgba(0,229,160,0.12);
+            border: 1px solid rgba(0,229,160,0.3);
+            color: var(--success);
+        }
+
+        /* Mobile nav toggle */
+        .hamburger-line {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: var(--muted);
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+    </style>
 </head>
 <body>
-    <div id="bootScreen" class="boot-screen">
-        <div class="boot-content">
-            <div class="boot-terminal">
-                <p><span class="boot-prompt">[SECURITY]</span> <span class="boot-text">Initializing secure portfolio...</span></p>
-                <p><span class="boot-prompt">[BOOT]</span> <span class="boot-text">Loading security protocols</span> <span class="boot-dots"></span></p>
-                <p><span class="boot-prompt">[INIT]</span> <span class="boot-text">Establishing secure connection</span> <span class="boot-status boot-ok">[SECURE]</span></p>
-                <p><span class="boot-prompt">[LOAD]</span> <span class="boot-text">Starting security services</span> <span class="boot-status boot-ok">[OK]</span></p>
-                <p><span class="boot-prompt">[EXEC]</span> <span class="boot-text">Loading profile.sh</span> <span class="boot-dots"></span></p>
-                <p><span class="boot-prompt">[INIT]</span> <span class="boot-text">Preparing student portfolio</span> <span class="boot-status boot-ok">[OK]</span></p>
-                <p><span class="boot-prompt">[DONE]</span> <span class="boot-text">System secure and ready</span> <span class="boot-status boot-ready">[READY]</span></p>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+// ─── Icon helper ─────────────────────────────────────────────
+const Icon = ({ name, className = "w-5 h-5", ...props }) => {
+    const ref = useRef(null);
+    useEffect(() => {
+        if (ref.current && lucide[name]) {
+            const el = lucide.createElement(lucide[name], { class: className });
+            ref.current.innerHTML = '';
+            ref.current.appendChild(el);
+        }
+    }, [name, className]);
+    return <i ref={ref} className={`flex-shrink-0 ${className}`} {...props} />;
+};
+
+// ─── Data ────────────────────────────────────────────────────
+const CERTIFICATIONS = [
+    { name: 'Certified CyberDefenders Level 1', short: 'CCDL1', issuer: 'CyberDefenders', year: 2026, status: 'Active', color: '#00c8ff', badge: '/badges/ccdl1.png' },
+    { name: 'Core Certified Power User', short: 'SPLK-1002', issuer: 'Splunk', year: 2026, status: 'Active', color: '#ff6b35', badge: '/badges/splunk.png' },
+    { name: 'CompTIA A+', short: 'A+', issuer: 'CompTIA', year: 2025, status: 'Active', color: '#c8302a', badge: '/badges/aplus.png' },
+    { name: 'CompTIA Security+', short: 'SY0-701', issuer: 'CompTIA', year: 2025, status: 'Active', color: '#c8302a', badge: '/badges/secplus.png' },
+    { name: 'Certified in Cybersecurity', short: 'CC', issuer: 'ISC2', year: 2025, status: 'Active', color: '#00a3e0', badge: '/badges/isc2cc.png' },
+    { name: 'Azure Fundamentals', short: 'AZ-900', issuer: 'Microsoft', year: 2025, status: 'Active', color: '#0078d4', badge: '/badges/az900.png' },
+];
+
+// ── CyberDefenders completed labs ────────────────────────────
+const CD_LABS = [
+    { name: 'Poisoned PyTorch', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/poisoned-pytorch/', category: 'Threat Hunting', difficulty: 'Medium', completed: '3/18/2026' },
+    { name: 'ConsentStorm', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/consentstorm/', category: 'Cloud Forensics', difficulty: 'Medium', completed: '3/16/2026' },
+    { name: 'XXE Infiltration', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/xxe-infiltration/', category: 'Network Forensics', difficulty: 'Easy', completed: '3/15/2026' },
+    { name: 'DanaBot', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/danabot/', category: 'Network Forensics', difficulty: 'Easy', completed: '3/14/2026' },
+    { name: 'CallMeOnTheChain - EtherRAT', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/callmeonthechain-etherrat/', category: 'Network Forensics', difficulty: 'Medium', completed: '3/13/2026' },
+    { name: 'Volatility Traces', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/volatility-traces/', category: 'Endpoint Forensics', difficulty: 'Easy', completed: '3/12/2026' },
+    { name: 'Perfect Survey', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/perfect-survey/', category: 'Threat Hunting', difficulty: 'Medium', completed: '3/11/2026' },
+    { name: 'Stolen Time - HiddenTear', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/stolen-time-hiddentear/', category: 'Threat Hunting', difficulty: 'Medium', completed: '3/6/2026' },
+    { name: 'SigmaPredator', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/sigmapredator/', category: 'Detection Engineering', difficulty: 'Easy', completed: '3/5/2026' },
+    { name: 'RevengeHotels APT', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/revengehotels/', category: 'Endpoint Forensics', difficulty: 'Easy', completed: '3/4/2026' },
+    { name: 'Rogue Azure', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/rogue-azure/', category: 'Cloud Forensics', difficulty: 'Easy', completed: '3/4/2026' },
+    { name: 'DynamicEscalate', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/dynamicescalate/', category: 'Cloud Forensics', difficulty: 'Easy', completed: '3/4/2026' },
+    { name: 'AbuSESer - Trufflenet', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/abuser-trufflenet/', category: 'Cloud Forensics', difficulty: 'Easy', completed: '3/4/2026' },
+    { name: 'ContainerBreak - Rootkit Trail', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/containerbreak-rootkit-trail/', category: 'Endpoint Forensics', difficulty: 'Easy', completed: '3/3/2026' },
+    { name: 'AWSWatcher', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/awswatcher/', category: 'Cloud Forensics', difficulty: 'Easy', completed: '3/7/2026' },
+    { name: 'RediShell - Kinsing', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/redishell-kinsing/', category: 'Network Forensics', difficulty: 'Easy', completed: '3/2/2026' },
+    { name: 'Maranhao', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/maranhao/', category: 'Endpoint Forensics', difficulty: 'Easy', completed: '3/2/2026' },
+    { name: 'Openfire', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/openfire/', category: 'Network Forensics', difficulty: 'Easy', completed: '3/2/2026' },
+    { name: 'Lockdown', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/lockdown/', category: 'Network Forensics', difficulty: 'Easy', completed: '3/1/2026' },
+    { name: 'Tusk Infostealer', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/tusk-infostealer/', category: 'Threat Intel', difficulty: 'Easy', completed: '3/9/2026' },
+    { name: 'XLMRat', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/xlmrat/', category: 'Network Forensics', difficulty: 'Easy', completed: '1/15/2026' },
+    { name: 'PsExec Hunt', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/psexec-hunt/', category: 'Network Forensics', difficulty: 'Easy', completed: '1/15/2026' },
+    { name: 'The Crime', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/the-crime/', category: 'Endpoint Forensics', difficulty: 'Easy', completed: '1/15/2026' },
+    { name: 'Lespion', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/lespion/', category: 'Threat Intel', difficulty: 'Easy', completed: '1/13/2026' },
+    { name: 'Amadey - APT-C-36', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/amadey-apt-c-36/', category: 'Endpoint Forensics', difficulty: 'Easy', completed: '1/12/2026' },
+    { name: 'Yellow RAT', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/yellow-rat/', category: 'Threat Intel', difficulty: 'Easy', completed: '1/12/2026' },
+    { name: 'PoisonedCredentials', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/poisonedcredentials/', category: 'Network Forensics', difficulty: 'Easy', completed: '1/11/2026' },
+    { name: 'Oski', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/oski/', category: 'Threat Intel', difficulty: 'Easy', completed: '1/10/2026' },
+    { name: 'WebStrike', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/webstrike/', category: 'Network Forensics', difficulty: 'Easy', completed: '1/10/2026' },
+];
+
+const SKILLS = [
+    { category: 'SIEM & Threat Hunting', items: ['Splunk SPL', 'Microsoft Sentinel KQL', 'Log Analysis', 'Threat Hunting', 'AWS CloudTrail', 'Azure Sentinel'] },
+    { category: 'Digital Forensics', items: ['Memory Forensics', 'Disk Forensics', 'Windows Event Log Analysis', 'FTK Imager', 'Autopsy', 'Volatility', 'Eric Zimmerman Tools'] },
+    { category: 'Network & Traffic', items: ['Network Traffic Analysis', 'Wireshark', 'Port Scan Detection', 'Beaconing Analysis'] },
+    { category: 'Cloud & Infrastructure', items: ['Cloud Security (Azure & AWS)', 'Active Directory', 'DHCP/DNS', 'GuardDuty'] },
+    { category: 'Intel & OSINT', items: ['OSINT', 'OleTools', 'Phishing Analysis', 'VBA Macro Analysis', 'IOC Identification'] },
+];
+
+const PROJECTS = [
+    { name: 'Active Directory Lab', tag: 'Lab', detail: 'Deployed Windows Server DC, configured domain, joined client, managed users', icon: 'Server', accent: '#0066ff' },
+    { name: 'School Gaming Tournament', tag: 'Infrastructure', detail: 'Deployed LAN for 50+ concurrent players, configured DHCP/DNS, resolved misconfiguration under pressure', icon: 'Network', accent: '#ff6b35' },
+];
+
+const EXPERIENCE = [
+    {
+        role: 'Cybersecurity Intern',
+        org: 'Chesterfield County IST Department',
+        period: 'June 2025 – February 2026',
+        bullets: [
+            'Participated in tabletop exercise simulating cybersecurity incident response',
+            'Gained exposure to enterprise ticketing, security workflows, and professional mindset',
+            'Developed understanding of compliance auditing and cybersecurity insurance requirements',
+            'Observed security team communication and documentation practices',
+        ]
+    }
+];
+
+// ─── Nav ─────────────────────────────────────────────────────
+const NAV_ITEMS = [
+    { id: 'home', label: 'Home', icon: 'User' },
+    { id: 'certs', label: 'Certifications', icon: 'Award' },
+    { id: 'projects', label: 'Labs & Projects', icon: 'FlaskConical' },
+    { id: 'competitions', label: 'Competitions', icon: 'Trophy' },
+    { id: 'experience', label: 'Experience', icon: 'Briefcase' },
+    { id: 'skills', label: 'Skills', icon: 'Cpu' },
+];
+
+// ─── Components ──────────────────────────────────────────────
+const SectionLabel = ({ children }) => (
+    <span className="section-label">{children}</span>
+);
+
+const Card = ({ children, className = '', ...props }) => (
+    <div className={`grad-border rounded-xl card-hover relative overflow-hidden ${className}`} {...props}>
+        {children}
+    </div>
+);
+
+// ─── Pages ───────────────────────────────────────────────────
+const HomePage = () => (
+    <div className="space-y-12 animate-fade-up">
+        {/* Hero */}
+        <div className="relative rounded-2xl overflow-hidden corner-tl corner-br p-px" style={{background:'linear-gradient(135deg,rgba(0,200,255,0.3),rgba(0,102,255,0.15),rgba(124,58,237,0.2))'}}>
+            <div className="rounded-2xl p-10 md:p-16 relative" style={{background:'linear-gradient(135deg,#090f1a,#0a1525)'}}>
+                {/* Ambient glow blobs */}
+                <div className="absolute top-0 right-0 w-96 h-96 rounded-full opacity-10" style={{background:'radial-gradient(circle,#00c8ff,transparent 70%)',filter:'blur(60px)'}} />
+                <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full opacity-8" style={{background:'radial-gradient(circle,#7c3aed,transparent 70%)',filter:'blur(50px)'}} />
+
+                {/* Status */}
+                <div className="flex items-center gap-2 mb-8">
+                    <span className="w-2 h-2 rounded-full animate-glow-dot" style={{background:'var(--success)'}} />
+                    <span className="font-mono-custom text-xs" style={{color:'var(--success)'}}>AVAILABLE FOR HIRE</span>
+                </div>
+
+                <div className="relative z-10">
+                    <SectionLabel>portfolio / networking & cybersecurity</SectionLabel>
+                    <h1 className="font-syne font-black mt-3 mb-4 leading-tight tracking-tight glow-text" style={{color:'var(--text)',fontSize:'clamp(2.5rem,6vw,4.5rem)'}}>
+                        <span style={{background:'linear-gradient(90deg,var(--accent),var(--accent2))',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>Afterguard</span>
+                    </h1>
+                    <p className="font-mono-custom text-sm mb-6" style={{color:'var(--muted)'}}>
+                        // Networking & Cybersecurity
+                    </p>
+
+                    <p className="text-base leading-relaxed max-w-2xl" style={{color:'rgba(226,234,246,0.75)',lineHeight:'1.8'}}>
+                        Aspiring networking and cybersecurity professional with hands-on experience across both disciplines.
+                        On the networking side, I've worked with Cisco devices, built homelabs to practice real-world concepts,
+                        and am actively studying for my CCNA. On the security side, I've job shadowed at Chesterfield County,
+                        accumulated 250+ hours in the CyberDefenders CyberRange (Top 100), and hold 6 active industry certifications.
+                    </p>
+
+                    <div className="flex flex-wrap gap-4 mt-8">
+                        <a href="https://www.linkedin.com/in/johann-weingertner-61b884358/" target="_blank" rel="noopener noreferrer"
+                           className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all"
+                           style={{background:'linear-gradient(135deg,var(--accent),var(--accent2))',color:'#080c12'}}>
+                            <Icon name="Linkedin" className="w-4 h-4" />
+                            LinkedIn
+                        </a>
+                        <a href="https://github.com/JohannWeingertner" target="_blank" rel="noopener noreferrer"
+                           className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all"
+                           style={{border:'1px solid rgba(255,255,255,0.1)',color:'var(--muted)',background:'rgba(255,255,255,0.03)'}}>
+                            <Icon name="Github" className="w-4 h-4" />
+                            GitHub
+                        </a>
+                        <a href="https://cyberdefenders.org/p/Afterguard/" target="_blank" rel="noopener noreferrer"
+                           className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all"
+                           style={{border:'1px solid rgba(0,200,255,0.25)',color:'var(--accent)',background:'rgba(0,200,255,0.05)'}}>
+                            <Icon name="Shield" className="w-4 h-4" />
+                            CyberDefenders
+                        </a>
+                    </div>
+                </div>
             </div>
-            <div class="boot-progress">
-                <div class="boot-progress-bar"></div>
-            </div>
-            <p class="boot-footer">Press any key to continue...</p>
+        </div>
+
+        {/* Stats row */}
+        <div className="grid grid-cols-3 gap-4">
+            {[
+                { val: '6', label: 'Certifications', icon: 'Award', color: 'var(--accent)' },
+                { val: '250+', label: 'Lab Hours', icon: 'Clock', color: 'var(--success)' },
+                { val: 'Top 100', label: 'CyberDefenders', icon: 'Trophy', color: '#7c3aed' },
+            ].map((s, i) => (
+                <Card key={i} className="p-5 text-center">
+                    <Icon name={s.icon} className="w-6 h-6 mx-auto mb-2" style={{color:s.color}} />
+                    <div className="font-syne text-2xl font-bold" style={{color:s.color}}>{s.val}</div>
+                    <div className="text-xs mt-1" style={{color:'var(--muted)'}}>{s.label}</div>
+                </Card>
+            ))}
+        </div>
+
+    </div>
+);
+
+const CertsPage = () => (
+    <div className="space-y-8 animate-fade-up">
+        <div>
+            <h2 className="font-syne text-3xl font-bold mt-2" style={{color:'var(--text)'}}>Certifications</h2>
+            <p className="text-sm mt-1" style={{color:'var(--muted)'}}>
+                Add badge PNGs to a <span className="font-mono-custom" style={{color:'var(--accent)'}}>/badges/</span> folder in your repo,
+                named: <span className="font-mono-custom" style={{color:'var(--accent)'}}>ccdl1.png, splunk.png, aplus.png, secplus.png, isc2cc.png, az900.png</span>
+            </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4">
+            {CERTIFICATIONS.map((c, i) => (
+                <Card key={i} className="p-6">
+                    <div className="flex items-start gap-4">
+                        <div className="flex-shrink-0 w-16 h-16 rounded-xl flex items-center justify-center cert-ring overflow-hidden">
+                            <img
+                                src={c.badge}
+                                alt={c.short}
+                                className="w-full h-full object-contain p-1"
+                                onError={e => {
+                                    e.target.style.display = 'none';
+                                    e.target.nextSibling.style.display = 'flex';
+                                }}
+                            />
+                            <span className="font-mono-custom text-xs font-bold text-center leading-tight w-full h-full items-center justify-center" style={{color:c.color,display:'none'}}>{c.short}</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between mb-1">
+                                <h3 className="font-syne font-bold text-sm leading-snug pr-2" style={{color:'var(--text)'}}>{c.name}</h3>
+                                <span className="badge-active text-xs px-2 py-0.5 rounded-full flex-shrink-0">{c.status}</span>
+                            </div>
+                            <p className="text-xs font-medium" style={{color:c.color}}>{c.issuer}</p>
+                            <p className="font-mono-custom text-xs mt-1" style={{color:'var(--muted)'}}>Issued {c.year}</p>
+                        </div>
+                    </div>
+                    <div className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-xl" style={{background:`linear-gradient(to bottom,${c.color},transparent)`}} />
+                </Card>
+            ))}
         </div>
     </div>
+);
 
-    <nav>
-        <div class="nav-content">
-            <div class="logo">&gt;profile.sh</div>
-            <div class="hamburger" onclick="toggleMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <div class="nav-links" id="navLinks">
-                <a href="#about" onclick="closeMenu()">About</a>
-                <a href="#skills" onclick="closeMenu()">Skills</a>
-                <a href="#education" onclick="closeMenu()">Education</a>
-                <a href="#certifications" onclick="closeMenu()">Certifications</a>
-                <a href="#projects" onclick="closeMenu()">Projects</a>
-                <a href="#contact" onclick="closeMenu()">Contact</a>
-            </div>
+const COMPETITIONS = [
+    { name: 'National Cyber League (NCL)', tag: 'CTF', detail: 'Top 15% overall (Rank 1189 / 7875) · Top 9% High School bracket (Rank 91 / 1046)', icon: 'Trophy', accent: '#7c3aed', period: 'Fall 2025' },
+    { name: 'CyberPatriot', tag: 'Team', detail: 'Top 30% — Windows hardening, vulnerability auditing, malware hunting', icon: 'Shield', accent: '#00e5a0', period: '2025' },
+];
+
+const DIFFICULTY_COLOR = { Easy: '#00e5a0', Medium: '#ffb800', Hard: '#ff4545', 'Very Hard': '#ff4545' };
+
+const ProjectsPage = () => {
+    const [tab, setTab] = useState('labs');
+    return (
+    <div className="space-y-8 animate-fade-up">
+        <div>
+            <h2 className="font-syne text-3xl font-bold mt-2" style={{color:'var(--text)'}}>Labs & Projects</h2>
         </div>
-    </nav>
 
-    <section class="hero">
-        <div class="hero-content fade-in">
-            <div class="tag">// Aspiring Networking and Cybersecurity Student</div>
-            <h1>Johann Weingertner</h1>
-            
-            <div class="terminal-window">
-                <div class="terminal-header">
-                    <div class="terminal-dot dot-red"></div>
-                    <div class="terminal-dot dot-yellow"></div>
-                    <div class="terminal-dot dot-green"></div>
-                </div>
-                <div class="terminal-text">
-                    <p><span class="prompt">$</span> <span class="command">./get_profile.sh</span></p>
-                    <p class="output"> Focus Area:</p>
-                    <p class="output"><span class="prompt">&gt;</span> Digital Forensics & Incident Response</p>
-                    <p class="output"><span class="prompt">&gt;</span> Networking & Network Security</p>
-                    <p class="output"><span class="prompt">&gt;</span> Cloud Networking & Cloud Security</p>
-                    <p class="output"><span class="prompt">&gt;</span> SIEM & Security Monitoring</p>
-                    <br>
-                    <p><span class="prompt">$</span> <span class="command">cat status.txt</span></p>
-                    <p class="output">Status: <span class="output-highlight">Currently Learning & Building Skills</span></p>
-                    <p class="output">Goal: <span class="output-highlight">Aspiring Networking & Cybersecurity Professional</span></p>
-                    <br>
-                    <p><span class="prompt">$</span> <span class="command">cat contact.txt</span></p>
-                    <p class="output">GitHub: <a href="https://github.com/JohannWeingertner" target="_blank" class="link">https://github.com/JohannWeingertner</a></p>
-                    <p class="output">LinkedIn: <a href="https://www.linkedin.com/in/johann-weingertner-61b884358/" target="_blank" class="link">https://www.linkedin.com/in/johann-weingertner-61b884358/</a></p>
-                    <br>
-                    <p><span class="prompt">$</span> <span class="output">_</span><span style="animation: blink 1s infinite;">|</span></p>
-                </div>
-            </div>
-
-            <div class="cta-buttons">
-                <a href="#projects" class="btn btn-primary">View Learning Projects</a>
-                <a href="#certifications" class="btn btn-secondary">See Certifications</a>
-            </div>
+        {/* Toggle */}
+        <div className="flex gap-1 p-1 rounded-xl w-fit" style={{background:'rgba(0,200,255,0.05)',border:'1px solid rgba(0,200,255,0.12)'}}>
+            {[{id:'labs',label:'CyberDefenders Labs',icon:'FlaskConical'},{id:'projects',label:'Projects',icon:'Code2'}].map(t => (
+                <button key={t.id} onClick={() => setTab(t.id)}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all"
+                    style={tab === t.id
+                        ? {background:'linear-gradient(135deg,rgba(0,200,255,0.2),rgba(0,102,255,0.15))',color:'var(--accent)',border:'1px solid rgba(0,200,255,0.3)'}
+                        : {color:'var(--muted)',border:'1px solid transparent'}}>
+                    <Icon name={t.icon} className="w-3.5 h-3.5" />
+                    {t.label}
+                </button>
+            ))}
         </div>
-    </section>
 
-    <section id="about">
-        <h2>About Me</h2>
-        <div class="about-container">
-            <div class="about-content fade-in">
-                <div class="about-text">
-                    <p class="about-intro">
-                        Hi! I'm <span class="highlight">serozr</span>, a passionate cybersecurity student 
-                        and aspiring security specialist currently learning and building my skills.
-                    </p>
-                    <p>
-                        As a dedicated student in cybersecurity, I'm focused on mastering ethical hacking, 
-                        network security, and web application security. I believe in learning through 
-                        hands-on practice and continuously expanding my knowledge in this ever-evolving field.
-                    </p>
-                    <p>
-                        This portfolio showcases my learning journey, certifications, and projects as I work 
-                        toward becoming a cybersecurity professional. I'm particularly interested in 
-                        penetration testing, digital forensics, and secure system design.
-                    </p>
-                    <div class="about-stats">
-                        <div class="stat-item">
-                            <div class="stat-number">Student</div>
-                            <div class="stat-label">Current Status</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">Learning</div>
-                            <div class="stat-label">Active Phase</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">Aspiring</div>
-                            <div class="stat-label">Professional Goal</div>
+        {tab === 'labs' && (
+        <div className="space-y-6">
+            <div className="flex items-center mb-2">
+                <a href="https://cyberdefenders.org/p/Afterguard/" target="_blank" rel="noopener noreferrer"
+                   className="flex items-center gap-1 font-mono-custom text-xs ml-auto transition-all"
+                   style={{color:'var(--accent)'}}>
+                    View Full Profile <Icon name="ExternalLink" className="w-3 h-3" />
+                </a>
+            </div>
+
+            {/* Stats row */}
+            {(() => {
+                const total = CD_LABS.length;
+                const counts = CD_LABS.reduce((acc, l) => { acc[l.difficulty] = (acc[l.difficulty]||0)+1; return acc; }, {});
+                const bars = [
+                    { label: 'Easy',    count: counts['Easy']||0,    color: '#00e5a0' },
+                    { label: 'Medium',  count: counts['Medium']||0,  color: '#ffb800' },
+                    { label: 'Hard',    count: counts['Hard']||0,    color: '#ff6b35' },
+                    { label: 'Extreme', count: counts['Extreme']||0, color: '#ff4545' },
+                ];
+                const cats = CD_LABS.reduce((acc, l) => { acc[l.category] = (acc[l.category]||0)+1; return acc; }, {});
+                const maxCat = Math.max(...Object.values(cats));
+                return (
+                <div className="rounded-xl p-6 space-y-6" style={{background:'rgba(0,200,255,0.03)',border:'1px solid rgba(0,200,255,0.12)'}}>
+                    {/* Summary numbers */}
+                    <div className="grid grid-cols-4 gap-3">
+                        {[
+                            { label: 'Total', val: total, color: 'var(--accent)' },
+                            { label: 'Easy', val: counts['Easy']||0, color: '#00e5a0' },
+                            { label: 'Medium', val: counts['Medium']||0, color: '#ffb800' },
+                            { label: 'Hard', val: counts['Hard']||0, color: '#ff6b35' },
+                        ].map((s,i) => (
+                            <div key={i} className="text-center rounded-lg p-3" style={{background:'rgba(0,0,0,0.2)',border:`1px solid ${s.color}20`}}>
+                                <div className="font-syne text-2xl font-black" style={{color:s.color}}>{s.val}</div>
+                                <div className="font-mono-custom text-xs mt-1" style={{color:'var(--muted)'}}>{s.label}</div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Difficulty bar chart */}
+                    <div>
+                        <p className="font-mono-custom text-xs mb-3" style={{color:'var(--muted)'}}>// difficulty breakdown</p>
+                        <div className="space-y-3">
+                            {bars.map((b,i) => (
+                                <div key={i} className="flex items-center gap-3">
+                                    <span className="font-mono-custom text-xs w-14 text-right flex-shrink-0" style={{color:b.color}}>{b.label}</span>
+                                    <div className="flex-1 rounded-full overflow-hidden" style={{height:'8px',background:'rgba(255,255,255,0.05)'}}>
+                                        <div className="h-full rounded-full transition-all" style={{
+                                            width: total ? `${(b.count/total)*100}%` : '0%',
+                                            background:`linear-gradient(90deg,${b.color},${b.color}99)`,
+                                            boxShadow:`0 0 8px ${b.color}60`
+                                        }} />
+                                    </div>
+                                    <span className="font-mono-custom text-xs w-8 flex-shrink-0" style={{color:'var(--muted)'}}>{b.count}</span>
+                                </div>
+                            ))}
                         </div>
                     </div>
-                </div>
-                <div class="about-image">
-                    <div class="code-window">
-                        <div class="code-header">
-                            <div class="code-dot dot-red"></div>
-                            <div class="code-dot dot-yellow"></div>
-                            <div class="code-dot dot-green"></div>
-                            <span class="code-title">profile.json</span>
-                        </div>
-                        <div class="code-content">
-<pre><code><span class="code-keyword">{</span>
-  <span class="code-property">"name"</span>: <span class="code-string">"serozr"</span>,
-  <span class="code-property">"role"</span>: <span class="code-string">"Cybersecurity Student"</span>,
-  <span class="code-property">"status"</span>: <span class="code-string">"Currently Learning"</span>,
-  <span class="code-property">"goal"</span>: <span class="code-string">"Aspiring Security Specialist"</span>,
-  <span class="code-property">"focus_areas"</span>: [
-    <span class="code-string">"Ethical Hacking"</span>,
-    <span class="code-string">"Network Security"</span>,
-    <span class="code-string">"Web App Security"</span>,
-    <span class="code-string">"Digital Forensics"</span>
-  ],
-  <span class="code-property">"currently_learning"</span>: [
-    <span class="code-string">"Penetration Testing"</span>,
-    <span class="code-string">"Security Tools & Frameworks"</span>,
-    <span class="code-string">"Cryptography Basics"</span>
-  ],
-  <span class="code-property">"mindset"</span>: <span class="code-string">"Always learning, always securing"</span>
-<span class="code-keyword">}</span></code></pre>
+
+                    {/* Category breakdown */}
+                    <div>
+                        <p className="font-mono-custom text-xs mb-3" style={{color:'var(--muted)'}}>// by category</p>
+                        <div className="space-y-2">
+                            {Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([cat, count],i) => (
+                                <div key={i} className="flex items-center gap-3">
+                                    <span className="font-mono-custom text-xs w-36 flex-shrink-0 truncate" style={{color:'var(--text)'}}>{cat}</span>
+                                    <div className="flex-1 rounded-full overflow-hidden" style={{height:'6px',background:'rgba(255,255,255,0.05)'}}>
+                                        <div className="h-full rounded-full" style={{
+                                            width:`${(count/maxCat)*100}%`,
+                                            background:'linear-gradient(90deg,var(--accent),var(--accent2))',
+                                            boxShadow:'0 0 6px rgba(0,200,255,0.4)'
+                                        }} />
+                                    </div>
+                                    <span className="font-mono-custom text-xs w-6 flex-shrink-0 text-right" style={{color:'var(--muted)'}}>{count}</span>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
-            </div>
+                );
+            })()}
+
+            {/* Lab cards grid */}
+            {CD_LABS.length === 0 ? (
+                <div className="rounded-xl p-10 text-center" style={{background:'rgba(0,200,255,0.03)',border:'1px dashed rgba(0,200,255,0.2)'}}>
+                    <Icon name="FlaskConical" className="w-8 h-8 mx-auto mb-3" style={{color:'rgba(0,200,255,0.3)'}} />
+                    <p className="font-mono-custom text-xs" style={{color:'var(--muted)'}}>// Add completed labs to CD_LABS in the source to display them here</p>
+                </div>
+            ) : (
+                <div className="grid md:grid-cols-2 gap-3">
+                    {CD_LABS.map((lab, i) => (
+                        <a key={i} href={lab.url} target="_blank" rel="noopener noreferrer">
+                            <Card className="p-5 block">
+                                <div className="flex items-center justify-between mb-2">
+                                    <h3 className="font-syne font-bold text-sm" style={{color:'var(--text)'}}>{lab.name}</h3>
+                                    <Icon name="ExternalLink" className="w-3.5 h-3.5 flex-shrink-0" style={{color:'var(--muted)'}} />
+                                </div>
+                                <div className="flex items-center gap-2 mt-2">
+                                    <span className="font-mono-custom text-xs px-2 py-0.5 rounded" style={{background:'rgba(0,200,255,0.07)',border:'1px solid rgba(0,200,255,0.15)',color:'var(--muted)'}}>{lab.category}</span>
+                                    {lab.difficulty && (
+                                        <span className="font-mono-custom text-xs px-2 py-0.5 rounded" style={{background:`${DIFFICULTY_COLOR[lab.difficulty]||'#888'}18`,border:`1px solid ${DIFFICULTY_COLOR[lab.difficulty]||'#888'}40`,color:DIFFICULTY_COLOR[lab.difficulty]||'#888'}}>{lab.difficulty}</span>
+                                    )}
+                                    {lab.completed && (
+                                        <span className="font-mono-custom text-xs ml-auto" style={{color:'var(--success)'}}>✓ {lab.completed}</span>
+                                    )}
+                                </div>
+                                <div className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-xl" style={{background:'linear-gradient(to bottom,var(--accent),transparent)'}} />
+                            </Card>
+                        </a>
+                    ))}
+                </div>
+            )}
         </div>
-    </section>
+        )}
 
-    <section id="skills">
-        <h2>Technical Skills</h2>
-        <div class="skills-grid">
-            <div class="skill-category fade-in">
-                <h3>Security Fundamentals</h3>
-                <div class="skill-item">
-                    <div class="skill-name">
-                        <span>Network Security</span>
-                        <span>75%</span>
+        {tab === 'projects' && (
+        <div className="space-y-4">
+            {PROJECTS.map((p, i) => (
+                <Card key={i} className="p-6">
+                    <div className="flex items-start gap-5">
+                        <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                             style={{background:`rgba(${p.accent==='#00c8ff'?'0,200,255':p.accent==='#7c3aed'?'124,58,237':p.accent==='#00e5a0'?'0,229,160':p.accent==='#0066ff'?'0,102,255':'255,107,53'},0.12)`,border:`1px solid ${p.accent}30`}}>
+                            <Icon name={p.icon} className="w-5 h-5" style={{color:p.accent}} />
+                        </div>
+                        <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                                <h3 className="font-syne font-bold" style={{color:'var(--text)'}}>{p.name}</h3>
+                                <span className="font-mono-custom text-xs px-2 py-0.5 rounded" style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.08)',color:'var(--muted)'}}>{p.tag}</span>
+                            </div>
+                            <p className="text-sm leading-relaxed" style={{color:'rgba(226,234,246,0.75)',lineHeight:'1.7'}}>{p.detail}</p>
+                        </div>
                     </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" style="width: 0%" data-width="75%"></div>
-                    </div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-name">
-                        <span>Ethical Hacking</span>
-                        <span>70%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" style="width: 0%" data-width="70%"></div>
-                    </div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-name">
-                        <span>Cryptography</span>
-                        <span>65%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" style="width: 0%" data-width="65%"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="skill-category fade-in" style="animation-delay: 0.1s;">
-                <h3>Security Tools</h3>
-                <div class="skill-item">
-                    <div class="skill-name">
-                        <span>Wireshark</span>
-                        <span>70%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" style="width: 0%" data-width="70%"></div>
-                    </div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-name">
-                        <span>Metasploit</span>
-                        <span>65%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" style="width: 0%" data-width="65%"></div>
-                    </div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-name">
-                        <span>Nmap</span>
-                        <span>75%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" style="width: 0%" data-width="75%"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="skill-category fade-in" style="animation-delay: 0.2s;">
-                <h3>Technical Foundations</h3>
-                <div class="skill-item">
-                    <div class="skill-name">
-                        <span>Linux/CLI</span>
-                        <span>80%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" style="width: 0%" data-width="80%"></div>
-                    </div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-name">
-                        <span>Networking</span>
-                        <span>75%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" style="width: 0%" data-width="75%"></div>
-                    </div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-name">
-                        <span>Python Scripting</span>
-                        <span>70%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" style="width: 0%" data-width="70%"></div>
-                    </div>
-                </div>
-            </div>
+                    <div className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-xl" style={{background:`linear-gradient(to bottom,${p.accent},transparent)`}} />
+                </Card>
+            ))}
         </div>
-    </section>
+        )}
+    </div>
+    );
+};
 
-    <section id="education">
-        <h2>Education</h2>
-        <div class="timeline">
-            <div class="timeline-item fade-in">
-                <div class="timeline-dot"></div>
-                <div class="timeline-content">
-                    <h3>Technical Center - Networking & IT</h3>
-                    <div class="timeline-date">2024 - 2026</div>
-                    <p class="timeline-description">
-                        Dual-enrolled program providing hands-on experience with enterprise Cisco 
-                        networking equipment, PC hardware troubleshooting, and IT infrastructure 
-                        fundamentals. Developed practical skills in network configuration, 
-                        hardware repair, and system diagnostics in a lab environment.
-                    </p>
-                </div>
-            </div>
-
-            <div class="timeline-item fade-in" style="animation-delay: 0.1s;">
-                <div class="timeline-dot"></div>
-                <div class="timeline-content">
-                    <h3>Self-Studies</h3>
-                    <div class="timeline-date">2024- Present</div>
-                    <p class="timeline-description">
-                        Independent study program focused on cybersecurity certifications and 
-                        practical skills. Earned Security+, ISC2 CC, and Microsoft 
-                        AZ-900 while building a home security lab and participating in CTF 
-                        competitions to apply theoretical knowledge.
-                    </p>
-                </div>
-            </div>
+const CompetitionsPage = () => (
+    <div className="space-y-8 animate-fade-up">
+        <div>
+            <h2 className="font-syne text-3xl font-bold mt-2" style={{color:'var(--text)'}}>Competitions</h2>
+            <p className="text-sm mt-1" style={{color:'var(--muted)'}}>CTF events and team competitions</p>
         </div>
-    </section>
+        <div className="space-y-4">
+            {COMPETITIONS.map((c, i) => (
+                <Card key={i} className="p-6">
+                    <div className="flex items-start gap-5">
+                        <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                             style={{background:`rgba(${c.accent==='#7c3aed'?'124,58,237':'0,229,160'},0.12)`,border:`1px solid ${c.accent}30`}}>
+                            <Icon name={c.icon} className="w-5 h-5" style={{color:c.accent}} />
+                        </div>
+                        <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                                <h3 className="font-syne font-bold" style={{color:'var(--text)'}}>{c.name}</h3>
+                                <span className="font-mono-custom text-xs px-2 py-0.5 rounded" style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.08)',color:'var(--muted)'}}>{c.tag}</span>
+                                <span className="font-mono-custom text-xs ml-auto" style={{color:'var(--muted)'}}>{c.period}</span>
+                            </div>
+                            <p className="text-sm leading-relaxed" style={{color:'rgba(226,234,246,0.75)',lineHeight:'1.7'}}>{c.detail}</p>
+                        </div>
+                    </div>
+                    <div className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-xl" style={{background:`linear-gradient(to bottom,${c.accent},transparent)`}} />
+                </Card>
+            ))}
+        </div>
+    </div>
+);
 
-    <section id="certifications">
-        <h2>Certifications & Achievements</h2>
-        <div class="certifications-grid">
+const ExperiencePage = () => (
+    <div className="space-y-8 animate-fade-up">
+        <div>
+            <SectionLabel>// work experience</SectionLabel>
+            <h2 className="font-syne text-3xl font-bold mt-2" style={{color:'var(--text)'}}>Professional Background</h2>
+        </div>
 
-            <div class="cert-card fade-in" style="animation-delay: 0.2s;">
-                <div class="cert-icon">💻</div>
-                <div class="cert-badge">
-                    <div class="cert-badge-inner">
-                        <div class="cert-title">IT Fundamentals</div>
-                        <div class="cert-issuer">CompTIA</div>
+        {EXPERIENCE.map((job, i) => (
+            <Card key={i} className="p-7">
+                <div className="flex items-start gap-4 mb-6">
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{background:'rgba(0,200,255,0.1)',border:'1px solid rgba(0,200,255,0.2)'}}>
+                        <Icon name="Briefcase" className="w-5 h-5" style={{color:'var(--accent)'}} />
+                    </div>
+                    <div>
+                        <h3 className="font-syne font-black text-lg" style={{color:'var(--text)'}}>{job.role}</h3>
+                        <p className="font-medium text-sm" style={{color:'var(--accent)'}}>{job.org}</p>
+                        <p className="font-mono-custom text-xs mt-1" style={{color:'var(--muted)'}}>{job.period}</p>
                     </div>
                 </div>
-                <h3>CompTIA A+</h3>
-                <p class="cert-description">
-                    Industry-standard certification validating foundational IT skills in hardware, 
-                    operating systems, networking, and troubleshooting for technical support roles.
+                <div className="space-y-3 ml-14">
+                    {job.bullets.map((b,j) => (
+                        <div key={j} className="flex items-start gap-3 text-sm" style={{color:'rgba(226,234,246,0.8)'}}>
+                            <span className="font-mono-custom mt-0.5 flex-shrink-0" style={{color:'var(--accent)'}}>›</span>
+                            {b}
+                        </div>
+                    ))}
+                </div>
+            </Card>
+        ))}
+
+        {/* Education */}
+        <div>
+            <SectionLabel>// education</SectionLabel>
+            <Card className="p-7 mt-4">
+                <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{background:'rgba(0,229,160,0.1)',border:'1px solid rgba(0,229,160,0.2)'}}>
+                        <Icon name="GraduationCap" className="w-5 h-5" style={{color:'var(--success)'}} />
+                    </div>
+                    <div>
+                        <h3 className="font-syne font-black text-lg" style={{color:'var(--text)'}}>Cisco Networking Academy</h3>
+                        <p className="font-medium text-sm" style={{color:'var(--success)'}}>Chesterfield Technical Center</p>
+                        <p className="text-xs mt-1" style={{color:'var(--muted)'}}>Dual-enrolled college-level IT coursework via Brightpoint Community College</p>
+                        <p className="font-mono-custom text-xs mt-2" style={{color:'var(--muted)'}}>Aug 2024 – Expected Dec 2026</p>
+                    </div>
+                </div>
+            </Card>
+        </div>
+    </div>
+);
+
+const SkillsPage = () => (
+    <div className="space-y-8 animate-fade-up">
+        <div>
+            <SectionLabel>// skills & tools</SectionLabel>
+            <h2 className="font-syne text-3xl font-bold mt-2" style={{color:'var(--text)'}}>Technical Arsenal</h2>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4">
+            {SKILLS.map((group, i) => (
+                <Card key={i} className="p-6">
+                    <h3 className="font-mono-custom text-xs mb-4" style={{color:'var(--accent)'}}>{group.category.toUpperCase()}</h3>
+                    <div className="flex flex-wrap gap-2">
+                        {group.items.map((item,j) => (
+                            <span key={j} className="skill-tag">{item}</span>
+                        ))}
+                    </div>
+                </Card>
+            ))}
+        </div>
+
+        {/* Contact block removed — add contact info to your LinkedIn */}
+    </div>
+);
+
+// ─── Main App ─────────────────────────────────────────────────
+const App = () => {
+    const [page, setPage] = useState('home');
+    const [mobileOpen, setMobileOpen] = useState(false);
+
+    const pages = { home: <HomePage />, certs: <CertsPage />, projects: <ProjectsPage />, competitions: <CompetitionsPage />, experience: <ExperiencePage />, skills: <SkillsPage /> };
+
+    return (
+        <div style={{minHeight:'100vh',background:'var(--bg)',backgroundColor:'#080c12'}}>
+            {/* Nav */}
+            <nav className="sticky top-0 z-50 scanlines" style={{background:'rgba(8,12,18,0.92)',backdropFilter:'blur(16px)',borderBottom:'1px solid rgba(0,200,255,0.08)'}}>
+                <div className="max-w-5xl mx-auto px-4">
+                    <div className="flex items-center justify-between py-4">
+                        {/* Logo */}
+                        <button onClick={() => setPage('home')} className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{background:'linear-gradient(135deg,var(--accent),var(--accent2))'}}>
+                                <Icon name="Shield" className="w-4 h-4" style={{color:'#080c12'}} />
+                            </div>
+                            <div>
+                                <span className="font-syne font-black text-lg tracking-tight" style={{color:'var(--text)'}}>Afterguard</span>
+                            </div>
+                        </button>
+
+                        {/* Desktop Nav */}
+                        <div className="hidden md:flex items-center gap-1">
+                            {NAV_ITEMS.map(item => (
+                                <button key={item.id} onClick={() => setPage(item.id)}
+                                    className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${page === item.id ? 'nav-active' : ''}`}
+                                    style={page !== item.id ? {color:'var(--muted)'} : {}}>
+                                    <Icon name={item.icon} className="w-3.5 h-3.5" />
+                                    {item.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Mobile hamburger */}
+                        <button className="md:hidden flex flex-col gap-1.5 p-2" onClick={() => setMobileOpen(!mobileOpen)}>
+                            <span className="hamburger-line" style={mobileOpen ? {transform:'rotate(45deg) translate(4px,5px)'} : {}} />
+                            <span className="hamburger-line" style={mobileOpen ? {opacity:0} : {}} />
+                            <span className="hamburger-line" style={mobileOpen ? {transform:'rotate(-45deg) translate(4px,-5px)'} : {}} />
+                        </button>
+                    </div>
+
+                    {/* Mobile dropdown */}
+                    {mobileOpen && (
+                        <div className="md:hidden pb-4 animate-slide-down" style={{borderTop:'1px solid rgba(0,200,255,0.08)'}}>
+                            {NAV_ITEMS.map(item => (
+                                <button key={item.id} onClick={() => { setPage(item.id); setMobileOpen(false); }}
+                                    className="flex items-center gap-3 w-full px-3 py-3 text-sm font-medium transition-all"
+                                    style={page === item.id ? {color:'var(--accent)'} : {color:'var(--muted)'}}>
+                                    <Icon name={item.icon} className="w-4 h-4" />
+                                    {item.label}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </nav>
+
+            {/* Main content */}
+            <main className="max-w-5xl mx-auto px-4 py-12">
+                {pages[page]}
+            </main>
+
+            {/* Footer */}
+            <footer className="text-center py-8 mt-8" style={{borderTop:'1px solid rgba(0,200,255,0.06)'}}>
+                <p className="font-mono-custom text-xs" style={{color:'rgba(107,127,160,0.5)'}}>
+                    © 2026 Afterguard · Johann Weingertner · johannweingertner.github.io
                 </p>
-                <div class="cert-footer">
-                    <span class="cert-date">2025</span>
-                    <a href="https://www.credly.com/badges/5bfd8404-b0b0-46f3-84b5-4ac857e799b2/public_url" class="cert-link">View &rarr;</a>
-                </div>
-            </div>
-
-            <div class="cert-card fade-in" style="animation-delay: 0.2s;">
-                <div class="cert-icon">🛡️</div>
-                <div class="cert-badge">
-                    <div class="cert-badge-inner">
-                        <div class="cert-title">Cybersecurity</div>
-                        <div class="cert-issuer">ISC2</div>
-                    </div>
-                </div>
-                <h3>ISC2 Certified in Cybersecurity (CC)</h3>
-                <p class="cert-description">
-                    Entry-level cybersecurity certification covering security principles, risk management, 
-                    incident response, and access controls. Establishes foundational knowledge for 
-                    security professionals.
-                </p>
-                <div class="cert-footer">
-                    <span class="cert-date">2025</span>
-                    <a href="#" class="cert-link">View &rarr;</a>
-                </div>
-            </div>
-
-            <div class="cert-card fade-in" style="animation-delay: 0.3s;">
-                <div class="cert-icon">🛡️</div>
-                <div class="cert-badge">
-                    <div class="cert-badge-inner">
-                        <div class="cert-title">Cybersecurity</div>
-                        <div class="cert-issuer">CompTIA</div>
-                    </div>
-                </div>
-                <h3>CompTIA Security+</h3>
-                <p class="cert-description">
-                    Globally recognized certification validating hands-on skills for core cybersecurity 
-                    functions. Establishes the foundational knowledge required for job roles such as 
-                    Information Security Analyst, Cyber Security Consultant, and Systems Administrator.
-                </p>
-                <div class="cert-footer">
-                    <span class="cert-date">2025</span>
-                    <a href="https://www.credly.com/badges/65d1006f-59af-416c-a8d8-a9926c01f7be/public_url" target="_blank" class="cert-link">Verify &rarr;</a>
-                </div>
-            </div>
-
-            <div class="cert-card fade-in" style="animation-delay: 0.4s;">
-                <div class="cert-icon">☁️</div>
-                <div class="cert-badge">
-                    <div class="cert-badge-inner">
-                        <div class="cert-title">Cloud Fundamentals</div>
-                        <div class="cert-issuer">Microsoft</div>
-                    </div>
-                </div>
-                <h3>Microsoft Azure Fundamentals (AZ-900)</h3>
-                <p class="cert-description">
-                    Foundational cloud certification covering core Azure services, cloud concepts, 
-                    security, privacy, compliance, and pricing. Validates understanding of cloud 
-                    computing for security and IT professionals.
-                </p>
-                <div class="cert-footer">
-                    <span class="cert-date">2025</span>
-                    <a href="https://learn.microsoft.com/en-us/users/jw-2523/credentials/253ac93627aa8722" target="_blank" class="cert-link">Verify &rarr;</a>
-                </div>
-            </div>
-
-            <div class="cert-card fade-in" style="animation-delay: 0.5s;">
-                <div class="cert-icon">🏴‍☠️</div>
-                <div class="cert-badge award-badge">
-                    <div class="cert-badge-inner">
-                        <div class="cert-title">CTF Achievement</div>
-                        <div class="cert-issuer">National Cyber League (NCL)</div>
-                    </div>
-                </div>
-                <h3>NCL Fall 2025 CTF Competitor</h3>
-                <p class="cert-description">
-                    Competed in the National Cyber League's Fall 2025 Capture The Flag competition.
-                    Placed in the top 15% of all participants (Rank: 1189 / 7875) and top 9% in the 
-                    High School bracket (Rank: 91 / 1046), demonstrating practical skills across 
-                    various cybersecurity challenge categories.
-                </p>
-                <div class="cert-footer">
-                    <span class="cert-date">Fall 2025</span>
-                    <span class="cert-badge-text"></span>
-                </div>
-            </div>
+            </footer>
         </div>
-    </section>
+    );
+};
 
-    <section id="projects">
-        <h2>Learning Projects</h2>
-        <div class="projects-grid">
-            <div class="project-card fade-in">
-                <h3>🔐 Home Lab</h3>
-                <p>Designed and deployed a robust home network infrastructure with 4 dedicated servers: 
-                3 Dell Optiplex nodes running Proxmox virtualization, and a mini PC running OPNsense 
-                as the primary firewall/router to ISP. The lab hosts multiple services 
-                including a virtualized Active Directory domain and network, Vaultwarden password manager, 
-                patch management systems, and a minecraft server.</p>
-                <div class="project-tags">
-                    <span class="project-tag">Proxmox</span>
-                    <span class="project-tag">OPNsense</span>
-                    <span class="project-tag">Active Directory</span>
-                    <span class="project-tag">Vaultwarden</span>
-                    <span class="project-tag">Network Security</span>
-                    <span class="project-tag">Virtualization</span>
-                </div>
-                <a href="#" class="project-link">View Network Diagram &rarr;</a>
-            </div>
-            
-            
-        </div>
-    </section>
-
-    <section id="contact">
-        <h2>Connect With Me</h2>
-        <div class="contact-container">
-            <div class="contact-grid">
-                <div class="contact-item fade-in">
-                    <div class="contact-icon">📧</div>
-                    <h3>Email</h3>
-                    <a href="mailto:johannweingertner@gmail.com" class="contact-link">johannweingertner@gmail.com</a>
-                    <p class="contact-note">Feel free to reach out for any job opportunities</p>
-                </div>
-
-                <div class="contact-item fade-in" style="animation-delay: 0.1s;">
-                    <div class="contact-icon">💼</div>
-                    <h3>GitHub</h3>
-                    <a href="https://github.com/JohannWeingertner" target="_blank" class="contact-link">github.com/JohannWeingertner</a>
-                    <p class="contact-note">Projects</p>
-                </div>
-
-                <div class="contact-item fade-in" style="animation-delay: 0.2s;">
-                    <div class="contact-icon">🔗</div>
-                    <h3>LinkedIn</h3>
-                    <a href="https://www.linkedin.com/in/johann-weingertner-61b884358/" target="_blank" class="contact-link">linkedin.com/in/johann-weingertner-61b884358</a>
-                    <p class="contact-note">Professional networking</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <p>&copy; 2025 <span class="signature">serozr</span>. Portfolio template based on the original design by <a href="https://github.com/serozr" target="_blank" class="signature">serozr</a>.</p>
-    </footer>
-
-    <script src="src/js/main.js"></script>
+ReactDOM.render(<App />, document.getElementById('root'));
+</script>
 </body>
 </html>
