@@ -137,13 +137,137 @@
             0%, 100% { box-shadow: 0 0 6px rgba(0,229,160,0.6); }
             50%       { box-shadow: 0 0 14px rgba(0,229,160,1); }
         }
-        @keyframes scanline-drift {
-            0%   { background-position: 0 0; }
-            100% { background-position: 0 100px; }
-        }
         @keyframes blink {
             0%, 100% { opacity: 1; }
             50%       { opacity: 0; }
+        }
+
+        /* Floating particles */
+        @keyframes float-up {
+            0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+            5%   { opacity: 0.6; }
+            80%  { opacity: 0; }
+            100% { transform: translateY(-40vh) translateX(20px) scale(0.3); opacity: 0; }
+        }
+        .particle {
+            position: fixed;
+            width: 2px;
+            height: 2px;
+            border-radius: 50%;
+            background: var(--accent);
+            pointer-events: none;
+            animation: float-up linear infinite;
+            z-index: 0;
+        }
+
+        /* Glitch effect on Afterguard title */
+        @keyframes glitch-1 {
+            0%, 100% { clip-path: inset(0 0 100% 0); transform: translate(0); }
+            10% { clip-path: inset(20% 0 60% 0); transform: translate(-3px, 1px); }
+            20% { clip-path: inset(60% 0 10% 0); transform: translate(3px, -1px); }
+            30% { clip-path: inset(0 0 100% 0); transform: translate(0); }
+        }
+        @keyframes glitch-2 {
+            0%, 100% { clip-path: inset(0 0 100% 0); transform: translate(0); }
+            15% { clip-path: inset(40% 0 40% 0); transform: translate(3px, 2px); }
+            25% { clip-path: inset(70% 0 5% 0); transform: translate(-3px, -1px); }
+            35% { clip-path: inset(0 0 100% 0); transform: translate(0); }
+        }
+        .glitch-wrap { position: relative; display: inline-block; }
+        .glitch-wrap::before,
+        .glitch-wrap::after {
+            content: attr(data-text);
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg,var(--accent),var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .glitch-wrap::before { animation: glitch-1 4s infinite 2s; color: #ff4545; }
+        .glitch-wrap::after  { animation: glitch-2 4s infinite 2.1s; color: var(--accent2); }
+
+        /* Shimmer sweep on cards */
+        @keyframes shimmer {
+            0%   { transform: translateX(-100%) skewX(-15deg); }
+            100% { transform: translateX(300%) skewX(-15deg); }
+        }
+        .shimmer-card { overflow: hidden; }
+        .shimmer-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,200,255,0.06), transparent);
+            animation: shimmer 3.5s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        /* Typing cursor */
+        @keyframes type-cursor {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .type-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background: var(--accent);
+            margin-left: 2px;
+            vertical-align: text-bottom;
+            animation: type-cursor 0.8s step-end infinite;
+        }
+
+        /* Nav beam sweep */
+        @keyframes beam {
+            0%   { transform: translateX(-100%); }
+            100% { transform: translateX(400%); }
+        }
+        .nav-beam {
+            overflow: hidden;
+        }
+        .nav-beam::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 25%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            animation: beam 3s ease-in-out infinite;
+        }
+
+        /* Stat counter pop */
+        @keyframes pop-in {
+            0%   { transform: scale(0.5); opacity: 0; }
+            70%  { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .pop-in { animation: pop-in 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
+        .pop-in-1 { animation: pop-in 0.5s 0.1s cubic-bezier(0.34,1.56,0.64,1) both; }
+        .pop-in-2 { animation: pop-in 0.5s 0.2s cubic-bezier(0.34,1.56,0.64,1) both; }
+
+        /* Border rotate glow on hero */
+        @keyframes border-spin {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .hero-border {
+            background: linear-gradient(135deg,rgba(0,200,255,0.5),rgba(0,102,255,0.2),rgba(124,58,237,0.4),rgba(0,200,255,0.5));
+            background-size: 300% 300%;
+            animation: border-spin 4s ease infinite;
+        }
+
+        /* Scroll reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .animate-fade-up { animation: fadeUp 0.5s ease-out both; }
@@ -222,6 +346,43 @@
             border-radius: 2px;
             transition: all 0.3s;
         }
+
+        /* Cert modal */
+        @keyframes modal-in {
+            from { opacity: 0; transform: scale(0.92) translateY(12px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(6px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            animation: fadeUp 0.2s ease both;
+        }
+        .modal-box {
+            background: #0d1520;
+            border: 1px solid rgba(0,200,255,0.25);
+            border-radius: 16px;
+            max-width: 540px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: modal-in 0.25s cubic-bezier(0.34,1.3,0.64,1) both;
+            box-shadow: 0 0 60px rgba(0,200,255,0.1), 0 30px 80px rgba(0,0,0,0.6);
+        }
+        .modal-box::-webkit-scrollbar { width: 4px; }
+        .modal-box::-webkit-scrollbar-thumb { background: rgba(0,200,255,0.2); border-radius: 2px; }
+
+        @keyframes pop-in {
+            0%   { transform: scale(0.5); opacity: 0; }
+            70%  { transform: scale(1.08); }
+            100% { transform: scale(1); opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -229,6 +390,68 @@
 
 <script type="text/babel">
 const { useState, useEffect, useRef } = React;
+
+// ─── Particles ───────────────────────────────────────────────
+const Particles = () => {
+    useEffect(() => {
+        const container = document.getElementById('particles');
+        if (!container) return;
+        const count = 18;
+        const particles = [];
+        for (let i = 0; i < count; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            const size = Math.random() * 3 + 1;
+            p.style.cssText = `
+                left: ${Math.random() * 100}%;
+                bottom: -10px;
+                width: ${size}px;
+                height: ${size}px;
+                animation-duration: ${Math.random() * 12 + 8}s;
+                animation-delay: ${Math.random() * 8}s;
+                opacity: ${Math.random() * 0.5 + 0.1};
+                background: ${Math.random() > 0.5 ? '#00c8ff' : Math.random() > 0.5 ? '#0066ff' : '#7c3aed'};
+            `;
+            container.appendChild(p);
+            particles.push(p);
+        }
+        return () => particles.forEach(p => p.remove());
+    }, []);
+    return <div id="particles" style={{position:'fixed',inset:0,pointerEvents:'none',zIndex:1,overflow:'hidden',clipPath:'inset(0)'}} />;
+};
+
+// ─── Typing effect hook ──────────────────────────────────────
+const useTyping = (text, speed = 40, delay = 500) => {
+    const [displayed, setDisplayed] = useState('');
+    const [done, setDone] = useState(false);
+    useEffect(() => {
+        setDisplayed('');
+        setDone(false);
+        let i = 0;
+        const timeout = setTimeout(() => {
+            const interval = setInterval(() => {
+                i++;
+                setDisplayed(text.slice(0, i));
+                if (i >= text.length) { clearInterval(interval); setDone(true); }
+            }, speed);
+            return () => clearInterval(interval);
+        }, delay);
+        return () => clearTimeout(timeout);
+    }, [text]);
+    return { displayed, done };
+};
+
+// ─── Scroll reveal hook ──────────────────────────────────────
+const useScrollReveal = () => {
+    useEffect(() => {
+        const els = document.querySelectorAll('.reveal');
+        const obs = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+        }, { threshold: 0.1 });
+        els.forEach(el => obs.observe(el));
+        return () => obs.disconnect();
+    });
+};
 
 // ─── Icon helper ─────────────────────────────────────────────
 const Icon = ({ name, className = "w-5 h-5", ...props }) => {
@@ -245,12 +468,80 @@ const Icon = ({ name, className = "w-5 h-5", ...props }) => {
 
 // ─── Data ────────────────────────────────────────────────────
 const CERTIFICATIONS = [
-    { name: 'Certified CyberDefenders Level 1', short: 'CCDL1', issuer: 'CyberDefenders', year: 2026, status: 'Active', color: '#00c8ff', badge: '/badges/ccdl1.png' },
-    { name: 'Core Certified Power User', short: 'SPLK-1002', issuer: 'Splunk', year: 2026, status: 'Active', color: '#ff6b35', badge: '/badges/splunk.png' },
-    { name: 'CompTIA A+', short: 'A+', issuer: 'CompTIA', year: 2025, status: 'Active', color: '#c8302a', badge: '/badges/aplus.png' },
-    { name: 'CompTIA Security+', short: 'SY0-701', issuer: 'CompTIA', year: 2025, status: 'Active', color: '#c8302a', badge: '/badges/secplus.png' },
-    { name: 'Certified in Cybersecurity', short: 'CC', issuer: 'ISC2', year: 2025, status: 'Active', color: '#00a3e0', badge: '/badges/isc2cc.png' },
-    { name: 'Azure Fundamentals', short: 'AZ-900', issuer: 'Microsoft', year: 2025, status: 'Active', color: '#0078d4', badge: '/badges/az900.png' },
+    {
+        name: 'Certified CyberDefenders Level 1', short: 'CCDL1', issuer: 'CyberDefenders', year: 2026, status: 'Active', color: '#00c8ff', badge: '/badges/ccdl1.png',
+        featured: true,
+        description: 'Hands-on blue team certification covering real-world attack investigations across multiple artifact types.',
+        learned: [
+            'Monitored and investigated endpoints using Windows & Linux logs',
+            'Detected AD privilege escalation and suspicious activity',
+            'Analyzed network traffic using Wireshark for port scans and beaconing',
+            'Threat hunted in Splunk (SPL) and Microsoft Sentinel (KQL)',
+            'Analyzed phishing emails and malicious documents for VBA macros and template injection',
+            'Performed Windows & Linux forensic investigations (logs, registry, memory, OS artifacts)',
+            'Investigated AWS CloudTrail and GuardDuty for cloud-based threats',
+            'Identified IOCs through log and user behavior analysis',
+        ],
+    },
+    {
+        name: 'Core Certified Power User', short: 'SPLK-1002', issuer: 'Splunk', year: 2026, status: 'Active', color: '#ff6b35', badge: '/badges/splunk.png',
+        description: 'Advanced Splunk certification validating expertise in search processing language and data analysis.',
+        learned: [
+            'Advanced SPL for complex search queries and data correlation',
+            'Built dashboards, reports, and alerts for security monitoring',
+            'Used statistical and eval commands for threat analysis',
+            'Created knowledge objects including field extractions and lookups',
+            'Investigated security incidents using Splunk SIEM workflows',
+        ]
+    },
+    {
+        name: 'CompTIA A+', short: 'A+', issuer: 'CompTIA', year: 2025, status: 'Active', color: '#c8302a', badge: '/badges/aplus.png',
+        description: 'Industry-standard certification validating foundational IT skills across hardware, OS, networking, and troubleshooting.',
+        learned: [
+            'Hardware installation, configuration, and troubleshooting',
+            'Windows, macOS, and Linux operating system support',
+            'Networking fundamentals including TCP/IP, DNS, DHCP',
+            'Mobile device management and support',
+            'Security best practices and endpoint hardening',
+            'Virtualization and cloud computing basics',
+        ]
+    },
+    {
+        name: 'CompTIA Security+', short: 'SY0-701', issuer: 'CompTIA', year: 2025, status: 'Active', color: '#c8302a', badge: '/badges/secplus.png',
+        description: 'Globally recognized certification validating core cybersecurity skills required for security analyst roles.',
+        learned: [
+            'Threats, attacks, and vulnerability identification',
+            'Security architecture and network design principles',
+            'Implementation of security controls and protocols',
+            'Identity and access management (IAM)',
+            'Risk management and incident response procedures',
+            'Cryptography and PKI fundamentals',
+            'Cloud and virtualization security',
+        ]
+    },
+    {
+        name: 'Certified in Cybersecurity', short: 'CC', issuer: 'ISC2', year: 2025, status: 'Active', color: '#00a3e0', badge: '/badges/isc2cc.png',
+        description: 'Entry-level ISC2 certification covering foundational cybersecurity principles and practices.',
+        learned: [
+            'Security principles and the CIA triad',
+            'Business continuity, disaster recovery, and incident response',
+            'Access controls and identity management',
+            'Network security fundamentals',
+            'Security operations and monitoring basics',
+        ]
+    },
+    {
+        name: 'Azure Fundamentals', short: 'AZ-900', issuer: 'Microsoft', year: 2025, status: 'Active', color: '#0078d4', badge: '/badges/az900.png',
+        description: 'Microsoft certification validating foundational knowledge of cloud concepts and Azure services.',
+        learned: [
+            'Core cloud computing concepts and deployment models',
+            'Azure core services: compute, networking, storage',
+            'Azure security, privacy, compliance, and trust',
+            'Azure pricing, SLAs, and service lifecycle',
+            'Identity services including Azure Active Directory',
+            'Cloud security tools and best practices',
+        ]
+    },
 ];
 
 // ── CyberDefenders completed labs ────────────────────────────
@@ -335,16 +626,17 @@ const Card = ({ children, className = '', ...props }) => (
 );
 
 // ─── Pages ───────────────────────────────────────────────────
-const HomePage = () => (
+const HomePage = () => {
+    const tagline = '// Networking & Cybersecurity';
+    const { displayed, done } = useTyping(tagline, 45, 600);
+    return (
     <div className="space-y-12 animate-fade-up">
         {/* Hero */}
-        <div className="relative rounded-2xl overflow-hidden corner-tl corner-br p-px" style={{background:'linear-gradient(135deg,rgba(0,200,255,0.3),rgba(0,102,255,0.15),rgba(124,58,237,0.2))'}}>
+        <div className="relative rounded-2xl overflow-hidden corner-tl corner-br p-px hero-border">
             <div className="rounded-2xl p-10 md:p-16 relative" style={{background:'linear-gradient(135deg,#090f1a,#0a1525)'}}>
-                {/* Ambient glow blobs */}
                 <div className="absolute top-0 right-0 w-96 h-96 rounded-full opacity-10" style={{background:'radial-gradient(circle,#00c8ff,transparent 70%)',filter:'blur(60px)'}} />
                 <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full opacity-8" style={{background:'radial-gradient(circle,#7c3aed,transparent 70%)',filter:'blur(50px)'}} />
 
-                {/* Status */}
                 <div className="flex items-center gap-2 mb-8">
                     <span className="w-2 h-2 rounded-full animate-glow-dot" style={{background:'var(--success)'}} />
                     <span className="font-mono-custom text-xs" style={{color:'var(--success)'}}>AVAILABLE FOR HIRE</span>
@@ -352,38 +644,35 @@ const HomePage = () => (
 
                 <div className="relative z-10">
                     <SectionLabel>portfolio / networking & cybersecurity</SectionLabel>
-                    <h1 className="font-syne font-black mt-3 mb-4 leading-tight tracking-tight glow-text" style={{color:'var(--text)',fontSize:'clamp(2.5rem,6vw,4.5rem)'}}>
-                        <span style={{background:'linear-gradient(90deg,var(--accent),var(--accent2))',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>Afterguard</span>
+                    <h1 className="font-syne font-black mt-3 mb-4 leading-tight tracking-tight" style={{fontSize:'clamp(2.5rem,6vw,4.5rem)'}}>
+                        <span className="glitch-wrap" data-text="Afterguard" style={{background:'linear-gradient(90deg,var(--accent),var(--accent2))',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',display:'inline-block'}}>
+                            Afterguard
+                        </span>
                     </h1>
-                    <p className="font-mono-custom text-sm mb-6" style={{color:'var(--muted)'}}>
-                        // Networking & Cybersecurity
+                    <p className="font-mono-custom text-sm mb-6" style={{color:'var(--muted)',minHeight:'1.5em'}}>
+                        {displayed}{!done && <span className="type-cursor" />}
                     </p>
-
                     <p className="text-base leading-relaxed max-w-2xl" style={{color:'rgba(226,234,246,0.75)',lineHeight:'1.8'}}>
                         Aspiring networking and cybersecurity professional with hands-on experience across both disciplines.
                         On the networking side, I've worked with Cisco devices, built homelabs to practice real-world concepts,
-                        and am actively studying for my CCNA. On the security side, I've job shadowed at Chesterfield County,
+                        and actively studying for my CCNA. On the security side, I've job shadowed at Chesterfield County,
                         accumulated 250+ hours in the CyberDefenders CyberRange (Top 100), and hold 6 active industry certifications.
                     </p>
-
                     <div className="flex flex-wrap gap-4 mt-8">
                         <a href="https://www.linkedin.com/in/johann-weingertner-61b884358/" target="_blank" rel="noopener noreferrer"
                            className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all"
                            style={{background:'linear-gradient(135deg,var(--accent),var(--accent2))',color:'#080c12'}}>
-                            <Icon name="Linkedin" className="w-4 h-4" />
-                            LinkedIn
+                            <Icon name="Linkedin" className="w-4 h-4" />LinkedIn
                         </a>
                         <a href="https://github.com/JohannWeingertner" target="_blank" rel="noopener noreferrer"
                            className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all"
                            style={{border:'1px solid rgba(255,255,255,0.1)',color:'var(--muted)',background:'rgba(255,255,255,0.03)'}}>
-                            <Icon name="Github" className="w-4 h-4" />
-                            GitHub
+                            <Icon name="Github" className="w-4 h-4" />GitHub
                         </a>
                         <a href="https://cyberdefenders.org/p/Afterguard/" target="_blank" rel="noopener noreferrer"
                            className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all"
                            style={{border:'1px solid rgba(0,200,255,0.25)',color:'var(--accent)',background:'rgba(0,200,255,0.05)'}}>
-                            <Icon name="Shield" className="w-4 h-4" />
-                            CyberDefenders
+                            <Icon name="Shield" className="w-4 h-4" />CyberDefenders
                         </a>
                     </div>
                 </div>
@@ -393,58 +682,183 @@ const HomePage = () => (
         {/* Stats row */}
         <div className="grid grid-cols-3 gap-4">
             {[
-                { val: '6', label: 'Certifications', icon: 'Award', color: 'var(--accent)' },
-                { val: '250+', label: 'Lab Hours', icon: 'Clock', color: 'var(--success)' },
-                { val: 'Top 100', label: 'CyberDefenders', icon: 'Trophy', color: '#7c3aed' },
+                { val: '6', label: 'Certifications', icon: 'Award', color: 'var(--accent)', delay: '0s' },
+                { val: '250+', label: 'Lab Hours', icon: 'Clock', color: 'var(--success)', delay: '0.1s' },
+                { val: 'Top 100', label: 'CyberDefenders', icon: 'Trophy', color: '#7c3aed', delay: '0.2s' },
             ].map((s, i) => (
-                <Card key={i} className="p-5 text-center">
+                <Card key={i} className="p-5 text-center shimmer-card" style={{animation:`pop-in 0.5s ${s.delay} cubic-bezier(0.34,1.56,0.64,1) both`}}>
                     <Icon name={s.icon} className="w-6 h-6 mx-auto mb-2" style={{color:s.color}} />
                     <div className="font-syne text-2xl font-bold" style={{color:s.color}}>{s.val}</div>
                     <div className="text-xs mt-1" style={{color:'var(--muted)'}}>{s.label}</div>
                 </Card>
             ))}
         </div>
-
     </div>
-);
+    );
+};
 
-const CertsPage = () => (
+const CertModal = ({ cert, onClose }) => {
+    useEffect(() => {
+        const handler = e => { if (e.key === 'Escape') onClose(); };
+        document.addEventListener('keydown', handler);
+        return () => document.removeEventListener('keydown', handler);
+    }, []);
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-box" onClick={e => e.stopPropagation()}>
+                {/* Header */}
+                <div className="p-6 pb-4" style={{borderBottom:'1px solid rgba(0,200,255,0.1)'}}>
+                    <div className="flex items-start gap-4">
+                        <div className="w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0 cert-ring overflow-hidden">
+                            <img src={cert.badge} alt={cert.short} className="w-full h-full object-contain p-1"
+                                onError={e => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }} />
+                            <span className="font-mono-custom text-xs font-bold text-center leading-tight w-full h-full items-center justify-center" style={{color:cert.color,display:'none'}}>{cert.short}</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <div className="flex items-start justify-between gap-2">
+                                <h2 className="font-syne font-bold text-lg leading-snug" style={{color:'var(--text)'}}>{cert.name}</h2>
+                                <button onClick={onClose} className="flex-shrink-0 p-1 rounded-lg transition-all" style={{color:'var(--muted)'}}>
+                                    <Icon name="X" className="w-5 h-5" />
+                                </button>
+                            </div>
+                            <p className="text-sm font-medium mt-1" style={{color:cert.color}}>{cert.issuer}</p>
+                            <div className="flex items-center gap-2 mt-2">
+                                <span className="badge-active text-xs px-2 py-0.5 rounded-full">{cert.status}</span>
+                                <span className="font-mono-custom text-xs" style={{color:'var(--muted)'}}>Issued {cert.year}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {cert.description && (
+                        <p className="text-sm mt-4 leading-relaxed" style={{color:'rgba(226,234,246,0.7)'}}>{cert.description}</p>
+                    )}
+                </div>
+                {/* What I learned */}
+                {cert.learned && (
+                <div className="p-6" style={{borderBottom: cert.practical ? '1px solid rgba(0,200,255,0.08)' : 'none'}}>
+                    <p className="font-mono-custom text-xs mb-4" style={{color:'var(--accent)'}}>// WHAT I LEARNED</p>
+                    <div className="space-y-2.5">
+                        {cert.learned.map((item, i) => (
+                            <div key={i} className="flex items-start gap-3 text-sm" style={{color:'rgba(226,234,246,0.85)'}}>
+                                <span className="font-mono-custom flex-shrink-0 mt-0.5" style={{color:cert.color}}>›</span>
+                                {item}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                )}
+                {/* Practical hands-on experience */}
+                {cert.practical && (
+                <div className="p-6">
+                    <div className="space-y-3">
+                        {cert.practical.map((item, i) => (
+                            <div key={i} className="rounded-lg p-3" style={{background:'rgba(0,229,160,0.04)',border:'1px solid rgba(0,229,160,0.12)'}}>
+                                <span className="font-mono-custom text-xs font-bold" style={{color:'var(--success)'}}>{item.tool}</span>
+                                <p className="text-sm mt-1" style={{color:'rgba(226,234,246,0.75)'}}>{item.task}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                )}
+                {/* Accent strip */}
+                <div className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-2xl" style={{background:`linear-gradient(to bottom,${cert.color},transparent)`}} />
+            </div>
+        </div>
+    );
+};
+
+const CertsPage = () => {
+    const [selected, setSelected] = useState(null);
+    const featured = CERTIFICATIONS.find(c => c.featured);
+    const rest = CERTIFICATIONS.filter(c => !c.featured);
+    return (
     <div className="space-y-8 animate-fade-up">
         <div>
             <h2 className="font-syne text-3xl font-bold mt-2" style={{color:'var(--text)'}}>Certifications</h2>
+            <p className="text-sm mt-1" style={{color:'var(--muted)'}}>Click any certification to see what I learned</p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-4">
-            {CERTIFICATIONS.map((c, i) => (
-                <Card key={i} className="p-6">
-                    <div className="flex items-start gap-4">
-                        <div className="flex-shrink-0 w-16 h-16 rounded-xl flex items-center justify-center cert-ring overflow-hidden">
-                            <img
-                                src={c.badge}
-                                alt={c.short}
-                                className="w-full h-full object-contain p-1"
-                                onError={e => {
-                                    e.target.style.display = 'none';
-                                    e.target.nextSibling.style.display = 'flex';
-                                }}
-                            />
-                            <span className="font-mono-custom text-xs font-bold text-center leading-tight w-full h-full items-center justify-center" style={{color:c.color,display:'none'}}>{c.short}</span>
+        {/* ── Featured CCDL1 card ── */}
+        {featured && (
+        <button onClick={() => setSelected(featured)} className="w-full text-left">
+            <div className="relative rounded-2xl overflow-hidden cursor-pointer group"
+                 style={{background:'linear-gradient(135deg,rgba(0,200,255,0.08),rgba(0,102,255,0.05))',border:'1px solid rgba(0,200,255,0.3)',transition:'all 0.3s'}}
+                 onMouseEnter={e => { e.currentTarget.style.border='1px solid rgba(0,200,255,0.6)'; e.currentTarget.style.boxShadow='0 0 40px rgba(0,200,255,0.12)'; }}
+                 onMouseLeave={e => { e.currentTarget.style.border='1px solid rgba(0,200,255,0.3)'; e.currentTarget.style.boxShadow='none'; }}>
+                {/* Glow blob */}
+                <div className="absolute top-0 right-0 w-64 h-64 rounded-full pointer-events-none" style={{background:'radial-gradient(circle,rgba(0,200,255,0.12),transparent 70%)',filter:'blur(40px)'}} />
+                {/* Featured badge */}
+                <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1 rounded-full" style={{background:'rgba(0,200,255,0.12)',border:'1px solid rgba(0,200,255,0.3)'}}>
+                    <span className="w-1.5 h-1.5 rounded-full animate-glow-dot" style={{background:'var(--accent)'}} />
+                    <span className="font-mono-custom text-xs" style={{color:'var(--accent)'}}>FEATURED</span>
+                </div>
+                <div className="p-8 flex flex-col md:flex-row items-center md:items-start gap-6">
+                    {/* Large badge */}
+                    <div className="flex-shrink-0 w-24 h-24 rounded-2xl flex items-center justify-center overflow-hidden"
+                         style={{background:'linear-gradient(135deg,rgba(0,200,255,0.15),rgba(0,102,255,0.1))',border:'2px solid rgba(0,200,255,0.35)',boxShadow:'0 0 24px rgba(0,200,255,0.2)'}}>
+                        <img src={featured.badge} alt={featured.short} className="w-full h-full object-contain p-2"
+                             onError={e => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }} />
+                        <span className="font-mono-custom text-sm font-bold text-center leading-tight w-full h-full items-center justify-center" style={{color:featured.color,display:'none'}}>{featured.short}</span>
+                    </div>
+                    <div className="flex-1 text-center md:text-left">
+                        <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-2">
+                            <span className="badge-active text-xs px-2 py-0.5 rounded-full">{featured.status}</span>
+                            <span className="font-mono-custom text-xs" style={{color:'var(--muted)'}}>Issued {featured.year}</span>
                         </div>
-                        <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between mb-1">
-                                <h3 className="font-syne font-bold text-sm leading-snug pr-2" style={{color:'var(--text)'}}>{c.name}</h3>
-                                <span className="badge-active text-xs px-2 py-0.5 rounded-full flex-shrink-0">{c.status}</span>
-                            </div>
-                            <p className="text-xs font-medium" style={{color:c.color}}>{c.issuer}</p>
-                            <p className="font-mono-custom text-xs mt-1" style={{color:'var(--muted)'}}>Issued {c.year}</p>
+                        <h3 className="font-syne font-black text-xl mb-1" style={{color:'var(--text)'}}>{featured.name}</h3>
+                        <p className="text-sm font-semibold mb-3" style={{color:featured.color}}>{featured.issuer}</p>
+                        <p className="text-sm leading-relaxed mb-4" style={{color:'rgba(226,234,246,0.7)'}}>{featured.description}</p>
+                        {/* Tool tags */}
+                        <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                            {['Wireshark','Splunk','Sentinel KQL','Volatility3','Autopsy','AWS CloudTrail','OleTools'].map((t,i) => (
+                                <span key={i} className="skill-tag">{t}</span>
+                            ))}
+                        </div>
+                        <div className="mt-4 flex items-center gap-1.5 justify-center md:justify-start text-sm font-medium" style={{color:'var(--accent)'}}>
+                            View full details & hands-on experience <Icon name="ChevronRight" className="w-4 h-4" />
                         </div>
                     </div>
-                    <div className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-xl" style={{background:`linear-gradient(to bottom,${c.color},transparent)`}} />
-                </Card>
+                </div>
+                {/* Bottom accent line */}
+                <div className="absolute bottom-0 left-0 right-0 h-0.5" style={{background:'linear-gradient(90deg,transparent,rgba(0,200,255,0.5),transparent)'}} />
+            </div>
+        </button>
+        )}
+
+        {/* ── Rest of certs ── */}
+        <div className="grid md:grid-cols-2 gap-4">
+            {rest.map((c, i) => (
+                <button key={i} onClick={() => setSelected(c)} className="text-left w-full">
+                    <Card className="p-6 cursor-pointer">
+                        <div className="flex items-start gap-4">
+                            <div className="flex-shrink-0 w-16 h-16 rounded-xl flex items-center justify-center cert-ring overflow-hidden">
+                                <img src={c.badge} alt={c.short} className="w-full h-full object-contain p-1"
+                                    onError={e => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }} />
+                                <span className="font-mono-custom text-xs font-bold text-center leading-tight w-full h-full items-center justify-center" style={{color:c.color,display:'none'}}>{c.short}</span>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between mb-1">
+                                    <h3 className="font-syne font-bold text-sm leading-snug pr-2" style={{color:'var(--text)'}}>{c.name}</h3>
+                                    <span className="badge-active text-xs px-2 py-0.5 rounded-full flex-shrink-0">{c.status}</span>
+                                </div>
+                                <p className="text-xs font-medium" style={{color:c.color}}>{c.issuer}</p>
+                                <div className="flex items-center justify-between mt-1">
+                                    <p className="font-mono-custom text-xs" style={{color:'var(--muted)'}}>Issued {c.year}</p>
+                                    <span className="font-mono-custom text-xs flex items-center gap-1" style={{color:'var(--accent)'}}>
+                                        View details <Icon name="ChevronRight" className="w-3 h-3" />
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-xl" style={{background:`linear-gradient(to bottom,${c.color},transparent)`}} />
+                    </Card>
+                </button>
             ))}
         </div>
+
+        {selected && <CertModal cert={selected} onClose={() => setSelected(null)} />}
     </div>
-);
+    );
+};
 
 const COMPETITIONS = [
     { name: 'National Cyber League (NCL)', tag: 'CTF', detail: 'Top 15% overall (Rank 1189 / 7875) · Top 9% High School bracket (Rank 91 / 1046)', icon: 'Trophy', accent: '#7c3aed', period: 'Fall 2025' },
@@ -649,8 +1063,7 @@ const CompetitionsPage = () => (
 const ExperiencePage = () => (
     <div className="space-y-8 animate-fade-up">
         <div>
-            <SectionLabel>// work experience</SectionLabel>
-            <h2 className="font-syne text-3xl font-bold mt-2" style={{color:'var(--text)'}}>Professional Background</h2>
+            <h2 className="font-syne text-3xl font-bold mt-2" style={{color:'var(--text)'}}>Experience</h2>
         </div>
 
         {EXPERIENCE.map((job, i) => (
@@ -678,7 +1091,7 @@ const ExperiencePage = () => (
 
         {/* Education */}
         <div>
-            <SectionLabel>// education</SectionLabel>
+            <h3 className="font-syne text-xl font-bold mb-4" style={{color:'var(--text)'}}>Education</h3>
             <Card className="p-7 mt-4">
                 <div className="flex items-start gap-4">
                     <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{background:'rgba(0,229,160,0.1)',border:'1px solid rgba(0,229,160,0.2)'}}>
@@ -699,8 +1112,7 @@ const ExperiencePage = () => (
 const SkillsPage = () => (
     <div className="space-y-8 animate-fade-up">
         <div>
-            <SectionLabel>// skills & tools</SectionLabel>
-            <h2 className="font-syne text-3xl font-bold mt-2" style={{color:'var(--text)'}}>Technical Arsenal</h2>
+            <h2 className="font-syne text-3xl font-bold mt-2" style={{color:'var(--text)'}}>Skills & Tools</h2>
         </div>
 
         <div className="grid md:grid-cols-2 gap-4">
@@ -729,8 +1141,9 @@ const App = () => {
 
     return (
         <div style={{minHeight:'100vh',background:'var(--bg)',backgroundColor:'#080c12'}}>
+            <Particles />
             {/* Nav */}
-            <nav className="sticky top-0 z-50 scanlines" style={{background:'rgba(8,12,18,0.92)',backdropFilter:'blur(16px)',borderBottom:'1px solid rgba(0,200,255,0.08)'}}>
+            <nav className="sticky top-0 z-50 scanlines nav-beam" style={{background:'rgba(8,12,18,0.92)',backdropFilter:'blur(16px)',borderBottom:'1px solid rgba(0,200,255,0.08)',position:'relative'}}>
                 <div className="max-w-5xl mx-auto px-4">
                     <div className="flex items-center justify-between py-4">
                         {/* Logo */}
