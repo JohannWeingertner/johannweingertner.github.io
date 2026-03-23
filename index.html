@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Afterguard Profile</title>
+    <title>Afterguard — Johann Weingertner</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -807,15 +807,9 @@ const CertsPage = () => {
                         <h3 className="font-syne font-black text-xl mb-1" style={{color:'var(--text)'}}>{featured.name}</h3>
                         <p className="text-sm font-semibold mb-3" style={{color:featured.color}}>{featured.issuer}</p>
                         <p className="text-sm leading-relaxed mb-4" style={{color:'rgba(226,234,246,0.7)'}}>{featured.description}</p>
-                        {/* Tool tags */}
-                        <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-                            {['Wireshark','Splunk','Sentinel KQL','Volatility3','Autopsy','AWS CloudTrail','OleTools'].map((t,i) => (
-                                <span key={i} className="skill-tag">{t}</span>
-                            ))}
-                        </div>
                         <div className="mt-4 flex items-center gap-1.5 justify-center md:justify-start text-sm font-medium" style={{color:'var(--accent)'}}>
-                            View full details & hands-on experience <Icon name="ChevronRight" className="w-4 h-4" />
-                        </div>
+                                    View full details <Icon name="ChevronRight" className="w-4 h-4" />
+                                </div>
                     </div>
                 </div>
                 {/* Bottom accent line */}
