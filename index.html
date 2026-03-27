@@ -3,25 +3,1099 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Portfolio</title>
+    <title>Afterguard — Johann Weingertner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- ── Data files — edit these to update content ── -->
+    <script src="/data/certifications.js"></script>
+    <script src="/data/labs.js"></script>
     <style>
-        /* Smooth hover effects for buttons and interactive elements */
-        button, a {
-            transition: background-color 0.3s ease, transform 0.3s ease;
+        :root {
+            --bg:        #080c12;
+            --surface:   #0d1520;
+            --surface2:  #111b2a;
+            --border:    rgba(0,200,255,0.12);
+            --border2:   rgba(0,200,255,0.22);
+            --accent:    #00c8ff;
+            --accent2:   #0066ff;
+            --accent3:   #7c3aed;
+            --text:      #e2eaf6;
+            --muted:     #6b7fa0;
+            --danger:    #ff4545;
+            --success:   #00e5a0;
         }
-        button:hover, a:hover {
-            background-color: #f0f0f0;
-            transform: scale(1.05);
+
+        * { box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+        }
+
+        /* Noise grain overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.4;
+        }
+
+        /* Scanline effect on nav */
+        .scanlines {
+            background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,200,255,0.015) 2px, rgba(0,200,255,0.015) 4px);
+        }
+
+        /* Syne for headings */
+        .font-syne { font-family: 'Inter', sans-serif; }
+        .font-mono-custom { font-family: 'Space Mono', monospace; }
+
+        /* Glow effects */
+        .glow-accent { box-shadow: 0 0 20px rgba(0,200,255,0.25), 0 0 60px rgba(0,200,255,0.08); }
+        .glow-text { text-shadow: 0 0 30px rgba(0,200,255,0.4); }
+        .glow-dot { box-shadow: 0 0 6px rgba(0,229,160,0.8); }
+
+        /* Animated gradient border */
+        .grad-border {
+            border: 1px solid transparent;
+            background: linear-gradient(var(--surface), var(--surface)) padding-box,
+                        linear-gradient(135deg, rgba(0,200,255,0.4), rgba(0,102,255,0.2), rgba(124,58,237,0.3)) border-box;
+            transition: background 0.25s ease;
+        }
+
+        .grad-border:hover {
+            background: linear-gradient(var(--surface2), var(--surface2)) padding-box,
+                        linear-gradient(135deg, rgba(0,200,255,0.7), rgba(0,102,255,0.4), rgba(124,58,237,0.5)) border-box;
+        }
+
+        /* Nav active pill */
+        .nav-active {
+            background: linear-gradient(135deg, rgba(0,200,255,0.15), rgba(0,102,255,0.1));
+            border: 1px solid rgba(0,200,255,0.3);
+            color: var(--accent);
+        }
+
+        /* Skill tag */
+        .skill-tag {
+            background: rgba(0,200,255,0.06);
+            border: 1px solid rgba(0,200,255,0.2);
+            color: rgba(0,200,255,0.9);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            padding: 3px 10px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .skill-tag:hover {
+            background: rgba(0,200,255,0.12);
+            border-color: rgba(0,200,255,0.4);
+        }
+
+        /* Timeline line */
+        .timeline-line {
+            width: 1px;
+            background: linear-gradient(to bottom, rgba(0,200,255,0.5), rgba(0,200,255,0));
+            position: absolute;
+            left: 11px;
+            top: 24px;
+            bottom: 0;
+        }
+
+        /* Section marker */
+        .section-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--accent);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        /* Cert badge ring */
+        .cert-ring {
+            background: linear-gradient(135deg, rgba(0,200,255,0.2), rgba(124,58,237,0.2));
+            border: 1px solid rgba(0,200,255,0.3);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: rgba(0,200,255,0.2); border-radius: 3px; }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 6px rgba(0,229,160,0.6); }
+            50%       { box-shadow: 0 0 14px rgba(0,229,160,1); }
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0; }
+        }
+
+        /* Floating particles */
+        @keyframes float-up {
+            0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+            5%   { opacity: 0.6; }
+            80%  { opacity: 0; }
+            100% { transform: translateY(-40vh) translateX(20px) scale(0.3); opacity: 0; }
+        }
+        .particle {
+            position: fixed;
+            width: 2px;
+            height: 2px;
+            border-radius: 50%;
+            background: var(--accent);
+            pointer-events: none;
+            animation: float-up linear infinite;
+            z-index: 0;
+        }
+
+        /* Glitch effect on Afterguard title */
+        @keyframes glitch-1 {
+            0%, 100% { clip-path: inset(0 0 100% 0); transform: translate(0); }
+            10% { clip-path: inset(20% 0 60% 0); transform: translate(-3px, 1px); }
+            20% { clip-path: inset(60% 0 10% 0); transform: translate(3px, -1px); }
+            30% { clip-path: inset(0 0 100% 0); transform: translate(0); }
+        }
+        @keyframes glitch-2 {
+            0%, 100% { clip-path: inset(0 0 100% 0); transform: translate(0); }
+            15% { clip-path: inset(40% 0 40% 0); transform: translate(3px, 2px); }
+            25% { clip-path: inset(70% 0 5% 0); transform: translate(-3px, -1px); }
+            35% { clip-path: inset(0 0 100% 0); transform: translate(0); }
+        }
+        .glitch-wrap { position: relative; display: inline-block; }
+        .glitch-wrap::before,
+        .glitch-wrap::after {
+            content: attr(data-text);
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg,var(--accent),var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .glitch-wrap::before { animation: glitch-1 4s infinite 2s; color: #ff4545; }
+        .glitch-wrap::after  { animation: glitch-2 4s infinite 2.1s; color: var(--accent2); }
+
+        /* Shimmer sweep on cards */
+        @keyframes shimmer {
+            0%   { transform: translateX(-100%) skewX(-15deg); }
+            100% { transform: translateX(300%) skewX(-15deg); }
+        }
+        .shimmer-card { overflow: hidden; }
+        .shimmer-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,200,255,0.06), transparent);
+            animation: shimmer 3.5s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        /* Typing cursor */
+        @keyframes type-cursor {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .type-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background: var(--accent);
+            margin-left: 2px;
+            vertical-align: text-bottom;
+            animation: type-cursor 0.8s step-end infinite;
+        }
+
+        /* Nav beam sweep */
+        @keyframes beam {
+            0%   { transform: translateX(-100%); }
+            100% { transform: translateX(400%); }
+        }
+        .nav-beam {
+            overflow: hidden;
+        }
+        .nav-beam::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 25%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            animation: beam 3s ease-in-out infinite;
+        }
+
+        /* Stat counter pop */
+        @keyframes pop-in {
+            0%   { transform: scale(0.5); opacity: 0; }
+            70%  { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .pop-in { animation: pop-in 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
+        .pop-in-1 { animation: pop-in 0.5s 0.1s cubic-bezier(0.34,1.56,0.64,1) both; }
+        .pop-in-2 { animation: pop-in 0.5s 0.2s cubic-bezier(0.34,1.56,0.64,1) both; }
+
+        /* Border rotate glow on hero */
+        @keyframes border-spin {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .hero-border {
+            background: linear-gradient(135deg,rgba(0,200,255,0.5),rgba(0,102,255,0.2),rgba(124,58,237,0.4),rgba(0,200,255,0.5));
+            background-size: 300% 300%;
+            animation: border-spin 4s ease infinite;
+        }
+
+        /* Scroll reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .animate-fade-up { animation: fadeUp 0.5s ease-out both; }
+        .animate-fade-up-1 { animation: fadeUp 0.5s 0.1s ease-out both; }
+        .animate-fade-up-2 { animation: fadeUp 0.5s 0.2s ease-out both; }
+        .animate-fade-up-3 { animation: fadeUp 0.5s 0.3s ease-out both; }
+        .animate-glow-dot { animation: pulse-glow 2s ease-in-out infinite; }
+        .cursor-blink { animation: blink 1s step-end infinite; }
+
+        /* Progress bar for skills */
+        .progress-bar {
+            height: 2px;
+            background: linear-gradient(to right, var(--accent), var(--accent2));
+            border-radius: 2px;
+            position: relative;
+        }
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -3px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 8px rgba(0,200,255,0.8);
+        }
+
+        /* Card hover lift */
+        .card-hover {
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 20px rgba(0,200,255,0.08);
+        }
+
+        /* Mobile menu */
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-down { animation: slideDown 0.18s ease-out; }
+
+        /* Corner decoration */
+        .corner-tl::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 20px; height: 20px;
+            border-top: 2px solid rgba(0,200,255,0.6);
+            border-left: 2px solid rgba(0,200,255,0.6);
+        }
+        .corner-br::after {
+            content: '';
+            position: absolute;
+            bottom: 0; right: 0;
+            width: 20px; height: 20px;
+            border-bottom: 2px solid rgba(0,200,255,0.3);
+            border-right: 2px solid rgba(0,200,255,0.3);
+        }
+
+        /* Badge status */
+        .badge-active {
+            background: rgba(0,229,160,0.12);
+            border: 1px solid rgba(0,229,160,0.3);
+            color: var(--success);
+        }
+
+        /* Mobile nav toggle */
+        .hamburger-line {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: var(--muted);
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        /* Cert modal */
+        @keyframes modal-in {
+            from { opacity: 0; transform: scale(0.92) translateY(12px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(6px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            animation: fadeUp 0.2s ease both;
+        }
+        .modal-box {
+            background: #0d1520;
+            border: 1px solid rgba(0,200,255,0.25);
+            border-radius: 16px;
+            max-width: 540px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: modal-in 0.25s cubic-bezier(0.34,1.3,0.64,1) both;
+            box-shadow: 0 0 60px rgba(0,200,255,0.1), 0 30px 80px rgba(0,0,0,0.6);
+        }
+        .modal-box::-webkit-scrollbar { width: 4px; }
+        .modal-box::-webkit-scrollbar-thumb { background: rgba(0,200,255,0.2); border-radius: 2px; }
+
+        @keyframes pop-in {
+            0%   { transform: scale(0.5); opacity: 0; }
+            70%  { transform: scale(1.08); }
+            100% { transform: scale(1); opacity: 1; }
         }
     </style>
 </head>
 <body>
-    <h1>Welcome to My Portfolio</h1>
-    <h2>Certifications</h2>
-    <p id="certificationCount"></p>
-    <script>
-        const CERTIFICATIONS = ['Certificate 1', 'Certificate 2', 'Certificate 3']; // replace with actual certifications
-        document.getElementById('certificationCount').innerText = `I have ${CERTIFICATIONS.length} certifications.`;
-    </script>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+// ─── Particles ───────────────────────────────────────────────
+const Particles = () => {
+    useEffect(() => {
+        const container = document.getElementById('particles');
+        if (!container) return;
+        const count = 18;
+        const particles = [];
+        for (let i = 0; i < count; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            const size = Math.random() * 3 + 1;
+            p.style.cssText = `
+                left: ${Math.random() * 100}%;
+                bottom: -10px;
+                width: ${size}px;
+                height: ${size}px;
+                animation-duration: ${Math.random() * 12 + 8}s;
+                animation-delay: ${Math.random() * 8}s;
+                opacity: ${Math.random() * 0.5 + 0.1};
+                background: ${Math.random() > 0.5 ? '#00c8ff' : Math.random() > 0.5 ? '#0066ff' : '#7c3aed'};
+            `;
+            container.appendChild(p);
+            particles.push(p);
+        }
+        return () => particles.forEach(p => p.remove());
+    }, []);
+    return <div id="particles" style={{position:'fixed',inset:0,pointerEvents:'none',zIndex:1,overflow:'hidden',clipPath:'inset(0)'}} />;
+};
+
+// ─── Typing effect hook ──────────────────────────────────────
+const useTyping = (text, speed = 40, delay = 500) => {
+    const [displayed, setDisplayed] = useState('');
+    const [done, setDone] = useState(false);
+    useEffect(() => {
+        setDisplayed('');
+        setDone(false);
+        let i = 0;
+        const timeout = setTimeout(() => {
+            const interval = setInterval(() => {
+                i++;
+                setDisplayed(text.slice(0, i));
+                if (i >= text.length) { clearInterval(interval); setDone(true); }
+            }, speed);
+            return () => clearInterval(interval);
+        }, delay);
+        return () => clearTimeout(timeout);
+    }, [text]);
+    return { displayed, done };
+};
+
+// ─── Scroll reveal hook ──────────────────────────────────────
+const useScrollReveal = () => {
+    useEffect(() => {
+        const els = document.querySelectorAll('.reveal');
+        const obs = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+        }, { threshold: 0.1 });
+        els.forEach(el => obs.observe(el));
+        return () => obs.disconnect();
+    });
+};
+
+// ─── Icon helper ─────────────────────────────────────────────
+const Icon = ({ name, className = "w-5 h-5", ...props }) => {
+    const ref = useRef(null);
+    useEffect(() => {
+        if (ref.current && lucide[name]) {
+            const el = lucide.createElement(lucide[name], { class: className });
+            ref.current.innerHTML = '';
+            ref.current.appendChild(el);
+        }
+    }, [name, className]);
+    return <i ref={ref} className={`flex-shrink-0 ${className}`} {...props} />;
+};
+
+// ─── Data loaded from /data/certifications.js and /data/labs.js ───
+
+const SKILLS = [
+    { category: 'SIEM & Threat Hunting', items: ['Splunk SPL', 'Microsoft Sentinel KQL', 'Log Analysis', 'Threat Hunting', 'AWS CloudTrail', 'Azure Sentinel'] },
+    { category: 'Digital Forensics', items: ['Memory Forensics', 'Disk Forensics', 'Windows Event Log Analysis', 'FTK Imager', 'Autopsy', 'Volatility', 'Eric Zimmerman Tools'] },
+    { category: 'Network & Traffic', items: ['Network Traffic Analysis', 'Wireshark', 'Port Scan Detection', 'Beaconing Analysis'] },
+    { category: 'Cloud & Infrastructure', items: ['Cloud Security (Azure & AWS)', 'Active Directory', 'DHCP/DNS', 'GuardDuty'] },
+    { category: 'Intel & OSINT', items: ['OSINT', 'OleTools', 'Phishing Analysis', 'VBA Macro Analysis', 'IOC Identification'] },
+];
+
+const PROJECTS = [
+    { name: 'Active Directory Lab', tag: 'Lab', detail: 'Deployed Windows Server DC, configured domain, joined client, managed users', icon: 'Server', accent: '#0066ff' },
+    { name: 'School Gaming Tournament', tag: 'Infrastructure', detail: 'Deployed LAN for 50+ concurrent players, configured DHCP/DNS, resolved misconfiguration under pressure', icon: 'Network', accent: '#ff6b35' },
+];
+
+const EXPERIENCE = [
+    {
+        role: 'Cybersecurity Intern',
+        org: 'Chesterfield County IST Department',
+        period: 'June 2025 – February 2026',
+        bullets: [
+            'Participated in tabletop exercise simulating cybersecurity incident response',
+            'Gained exposure to enterprise ticketing, security workflows, and professional mindset',
+            'Developed understanding of compliance auditing and cybersecurity insurance requirements',
+            'Observed security team communication and documentation practices',
+        ]
+    }
+];
+
+// ─── Nav ─────────────────────────────────────────────────────
+const NAV_ITEMS = [
+    { id: 'home', label: 'Home', icon: 'User' },
+    { id: 'certs', label: 'Certifications', icon: 'Award' },
+    { id: 'projects', label: 'Labs & Projects', icon: 'FlaskConical' },
+    { id: 'competitions', label: 'Competitions', icon: 'Trophy' },
+    { id: 'experience', label: 'Experience', icon: 'Briefcase' },
+    { id: 'skills', label: 'Skills', icon: 'Cpu' },
+];
+
+// ─── Components ──────────────────────────────────────────────
+const SectionLabel = ({ children }) => (
+    <span className="section-label">{children}</span>
+);
+
+const Card = ({ children, className = '', ...props }) => (
+    <div className={`grad-border rounded-xl card-hover relative overflow-hidden ${className}`} {...props}>
+        {children}
+    </div>
+);
+
+// ─── Pages ───────────────────────────────────────────────────
+const HomePage = () => {
+    const tagline = '// Networking & Cybersecurity';
+    const { displayed, done } = useTyping(tagline, 45, 600);
+    return (
+    <div className="space-y-12 animate-fade-up">
+        {/* Hero */}
+        <div className="relative rounded-2xl overflow-hidden corner-tl corner-br p-px hero-border">
+            <div className="rounded-2xl p-10 md:p-16 relative" style={{background:'linear-gradient(135deg,#090f1a,#0a1525)'}}>
+                <div className="absolute top-0 right-0 w-96 h-96 rounded-full opacity-10" style={{background:'radial-gradient(circle,#00c8ff,transparent 70%)',filter:'blur(60px)'}} />
+                <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full opacity-8" style={{background:'radial-gradient(circle,#7c3aed,transparent 70%)',filter:'blur(50px)'}} />
+
+                <div className="flex items-center gap-2 mb-8">
+                    <span className="w-2 h-2 rounded-full animate-glow-dot" style={{background:'var(--success)'}} />
+                    <span className="font-mono-custom text-xs" style={{color:'var(--success)'}}>AVAILABLE FOR HIRE</span>
+                </div>
+
+                <div className="relative z-10">
+                    <SectionLabel>portfolio / networking & cybersecurity</SectionLabel>
+                    <h1 className="font-syne font-black mt-3 mb-4 leading-tight tracking-tight" style={{fontSize:'clamp(2.5rem,6vw,4.5rem)'}}>
+                        <span className="glitch-wrap" data-text="Afterguard" style={{background:'linear-gradient(90deg,var(--accent),var(--accent2))',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',display:'inline-block'}}>
+                            Afterguard
+                        </span>
+                    </h1>
+                    <p className="font-mono-custom text-sm mb-6" style={{color:'var(--muted)',minHeight:'1.5em'}}>
+                        {displayed}{!done && <span className="type-cursor" />}
+                    </p>
+                    <p className="text-base leading-relaxed max-w-2xl" style={{color:'rgba(226,234,246,0.75)',lineHeight:'1.8'}}>
+                        Aspiring networking and cybersecurity professional with hands-on experience across both disciplines.
+                        On the networking side, I've worked with Cisco devices, built homelabs to practice real-world concepts,
+                        and actively studying for my CCNA. On the security side, I've job shadowed at Chesterfield County,
+                        accumulated 250+ hours in the CyberDefenders CyberRange (Top 100), and hold 6 active industry certifications.
+                    </p>
+                    <div className="flex flex-wrap gap-4 mt-8">
+                        <a href="https://www.linkedin.com/in/johann-weingertner-61b884358/" target="_blank" rel="noopener noreferrer"
+                           className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all"
+                           style={{background:'linear-gradient(135deg,var(--accent),var(--accent2))',color:'#080c12'}}>
+                            <Icon name="Linkedin" className="w-4 h-4" />LinkedIn
+                        </a>
+                        <a href="https://github.com/JohannWeingertner" target="_blank" rel="noopener noreferrer"
+                           className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all"
+                           style={{border:'1px solid rgba(255,255,255,0.1)',color:'var(--muted)',background:'rgba(255,255,255,0.03)'}}>
+                            <Icon name="Github" className="w-4 h-4" />GitHub
+                        </a>
+                        <a href="https://cyberdefenders.org/p/Afterguard/" target="_blank" rel="noopener noreferrer"
+                           className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all"
+                           style={{border:'1px solid rgba(0,200,255,0.25)',color:'var(--accent)',background:'rgba(0,200,255,0.05)'}}>
+                            <Icon name="Shield" className="w-4 h-4" />CyberDefenders
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {/* Stats row */}
+        <div className="grid grid-cols-3 gap-4">
+            {[
+                { val: '6', label: 'Certifications', icon: 'Award', color: 'var(--accent)', delay: '0s' },
+                { val: '250+', label: 'Lab Hours', icon: 'Clock', color: 'var(--success)', delay: '0.1s' },
+                { val: 'Top 100', label: 'CyberDefenders', icon: 'Trophy', color: '#7c3aed', delay: '0.2s' },
+            ].map((s, i) => (
+                <Card key={i} className="p-5 text-center shimmer-card" style={{animation:`pop-in 0.5s ${s.delay} cubic-bezier(0.34,1.56,0.64,1) both`}}>
+                    <Icon name={s.icon} className="w-6 h-6 mx-auto mb-2" style={{color:s.color}} />
+                    <div className="font-syne text-2xl font-bold" style={{color:s.color}}>{s.val}</div>
+                    <div className="text-xs mt-1" style={{color:'var(--muted)'}}>{s.label}</div>
+                </Card>
+            ))}
+        </div>
+    </div>
+    );
+};
+
+const CertModal = ({ cert, onClose }) => {
+    useEffect(() => {
+        const handler = e => { if (e.key === 'Escape') onClose(); };
+        document.addEventListener('keydown', handler);
+        return () => document.removeEventListener('keydown', handler);
+    }, []);
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-box" onClick={e => e.stopPropagation()}>
+                {/* Header */}
+                <div className="p-6 pb-4" style={{borderBottom:'1px solid rgba(0,200,255,0.1)'}}>
+                    <div className="flex items-start gap-4">
+                        <div className="w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0 cert-ring overflow-hidden">
+                            <img src={cert.badge} alt={cert.short} className="w-full h-full object-contain p-1"
+                                onError={e => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }} />
+                            <span className="font-mono-custom text-xs font-bold text-center leading-tight w-full h-full items-center justify-center" style={{color:cert.color,display:'none'}}>{cert.short}</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <div className="flex items-start justify-between gap-2">
+                                <h2 className="font-syne font-bold text-lg leading-snug" style={{color:'var(--text)'}}>{cert.name}</h2>
+                                <button onClick={onClose} className="flex-shrink-0 p-1 rounded-lg transition-all" style={{color:'var(--muted)'}}>
+                                    <Icon name="X" className="w-5 h-5" />
+                                </button>
+                            </div>
+                            <p className="text-sm font-medium mt-1" style={{color:cert.color}}>{cert.issuer}</p>
+                            <div className="flex items-center gap-2 mt-2">
+                                <span className="badge-active text-xs px-2 py-0.5 rounded-full">{cert.status}</span>
+                                <span className="font-mono-custom text-xs" style={{color:'var(--muted)'}}>Issued {cert.year}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {cert.description && (
+                        <p className="text-sm mt-4 leading-relaxed" style={{color:'rgba(226,234,246,0.7)'}}>{cert.description}</p>
+                    )}
+                </div>
+                {/* What I learned */}
+                {cert.learned && (
+                <div className="p-6" style={{borderBottom: cert.practical ? '1px solid rgba(0,200,255,0.08)' : 'none'}}>
+                    <p className="font-mono-custom text-xs mb-4" style={{color:'var(--accent)'}}>// WHAT I LEARNED</p>
+                    <div className="space-y-2.5">
+                        {cert.learned.map((item, i) => (
+                            <div key={i} className="flex items-start gap-3 text-sm" style={{color:'rgba(226,234,246,0.85)'}}>
+                                <span className="font-mono-custom flex-shrink-0 mt-0.5" style={{color:cert.color}}>›</span>
+                                {item}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                )}
+                {/* Practical hands-on experience */}
+                {cert.practical && (
+                <div className="p-6">
+                    <div className="space-y-3">
+                        {cert.practical.map((item, i) => (
+                            <div key={i} className="rounded-lg p-3" style={{background:'rgba(0,229,160,0.04)',border:'1px solid rgba(0,229,160,0.12)'}}>
+                                <span className="font-mono-custom text-xs font-bold" style={{color:'var(--success)'}}>{item.tool}</span>
+                                <p className="text-sm mt-1" style={{color:'rgba(226,234,246,0.75)'}}>{item.task}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                )}
+                {/* Accent strip */}
+                <div className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-2xl" style={{background:`linear-gradient(to bottom,${cert.color},transparent)`}} />
+            </div>
+        </div>
+    );
+};
+
+const CertsPage = () => {
+    const [selected, setSelected] = useState(null);
+    const featured = CERTIFICATIONS.find(c => c.featured);
+    const rest = CERTIFICATIONS.filter(c => !c.featured);
+    return (
+    <div className="space-y-8 animate-fade-up">
+        <div>
+            <h2 className="font-syne text-3xl font-bold mt-2" style={{color:'var(--text)'}}>Certifications</h2>
+            <p className="text-sm mt-1" style={{color:'var(--muted)'}}>Click any certification to see what I learned</p>
+        </div>
+
+        {/* ── Featured CCDL1 card ── */}
+        {featured && (
+        <button onClick={() => setSelected(featured)} className="w-full text-left">
+            <div className="relative rounded-2xl overflow-hidden cursor-pointer group"
+                 style={{background:'linear-gradient(135deg,rgba(0,200,255,0.08),rgba(0,102,255,0.05))',border:'1px solid rgba(0,200,255,0.3)',transition:'all 0.3s'}}
+                 onMouseEnter={e => { e.currentTarget.style.border='1px solid rgba(0,200,255,0.6)'; e.currentTarget.style.boxShadow='0 0 40px rgba(0,200,255,0.12)'; }}
+                 onMouseLeave={e => { e.currentTarget.style.border='1px solid rgba(0,200,255,0.3)'; e.currentTarget.style.boxShadow='none'; }}>
+                {/* Glow blob */}
+                <div className="absolute top-0 right-0 w-64 h-64 rounded-full pointer-events-none" style={{background:'radial-gradient(circle,rgba(0,200,255,0.12),transparent 70%)',filter:'blur(40px)'}} />
+                {/* Featured badge */}
+                <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1 rounded-full" style={{background:'rgba(0,200,255,0.12)',border:'1px solid rgba(0,200,255,0.3)'}}>
+                    <span className="w-1.5 h-1.5 rounded-full animate-glow-dot" style={{background:'var(--accent)'}} />
+                    <span className="font-mono-custom text-xs" style={{color:'var(--accent)'}}>FEATURED</span>
+                </div>
+                <div className="p-8 flex flex-col md:flex-row items-center md:items-start gap-6">
+                    {/* Large badge */}
+                    <div className="flex-shrink-0 w-24 h-24 rounded-2xl flex items-center justify-center overflow-hidden"
+                         style={{background:'linear-gradient(135deg,rgba(0,200,255,0.15),rgba(0,102,255,0.1))',border:'2px solid rgba(0,200,255,0.35)',boxShadow:'0 0 24px rgba(0,200,255,0.2)'}}>
+                        <img src={featured.badge} alt={featured.short} className="w-full h-full object-contain p-2"
+                             onError={e => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }} />
+                        <span className="font-mono-custom text-sm font-bold text-center leading-tight w-full h-full items-center justify-center" style={{color:featured.color,display:'none'}}>{featured.short}</span>
+                    </div>
+                    <div className="flex-1 text-center md:text-left">
+                        <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-2">
+                            <span className="badge-active text-xs px-2 py-0.5 rounded-full">{featured.status}</span>
+                            <span className="font-mono-custom text-xs" style={{color:'var(--muted)'}}>Issued {featured.year}</span>
+                        </div>
+                        <h3 className="font-syne font-black text-xl mb-1" style={{color:'var(--text)'}}>{featured.name}</h3>
+                        <p className="text-sm font-semibold mb-3" style={{color:featured.color}}>{featured.issuer}</p>
+                        <p className="text-sm leading-relaxed mb-4" style={{color:'rgba(226,234,246,0.7)'}}>{featured.description}</p>
+                        <div className="mt-4 flex items-center gap-1.5 justify-center md:justify-start text-sm font-medium" style={{color:'var(--accent)'}}>
+                                    View full details <Icon name="ChevronRight" className="w-4 h-4" />
+                                </div>
+                    </div>
+                </div>
+                {/* Bottom accent line */}
+                <div className="absolute bottom-0 left-0 right-0 h-0.5" style={{background:'linear-gradient(90deg,transparent,rgba(0,200,255,0.5),transparent)'}} />
+            </div>
+        </button>
+        )}
+
+        {/* ── Rest of certs ── */}
+        <div className="grid md:grid-cols-2 gap-4">
+            {rest.map((c, i) => (
+                <button key={i} onClick={() => setSelected(c)} className="text-left w-full">
+                    <Card className="p-6 cursor-pointer">
+                        <div className="flex items-start gap-4">
+                            <div className="flex-shrink-0 w-16 h-16 rounded-xl flex items-center justify-center cert-ring overflow-hidden">
+                                <img src={c.badge} alt={c.short} className="w-full h-full object-contain p-1"
+                                    onError={e => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }} />
+                                <span className="font-mono-custom text-xs font-bold text-center leading-tight w-full h-full items-center justify-center" style={{color:c.color,display:'none'}}>{c.short}</span>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between mb-1">
+                                    <h3 className="font-syne font-bold text-sm leading-snug pr-2" style={{color:'var(--text)'}}>{c.name}</h3>
+                                    <span className="badge-active text-xs px-2 py-0.5 rounded-full flex-shrink-0">{c.status}</span>
+                                </div>
+                                <p className="text-xs font-medium" style={{color:c.color}}>{c.issuer}</p>
+                                <div className="flex items-center justify-between mt-1">
+                                    <p className="font-mono-custom text-xs" style={{color:'var(--muted)'}}>Issued {c.year}</p>
+                                    <span className="font-mono-custom text-xs flex items-center gap-1" style={{color:'var(--accent)'}}>
+                                        View details <Icon name="ChevronRight" className="w-3 h-3" />
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-xl" style={{background:`linear-gradient(to bottom,${c.color},transparent)`}} />
+                    </Card>
+                </button>
+            ))}
+        </div>
+
+        {selected && <CertModal cert={selected} onClose={() => setSelected(null)} />}
+    </div>
+    );
+};
+
+const COMPETITIONS = [
+    { name: 'National Cyber League (NCL)', tag: 'CTF', detail: 'Top 15% overall (Rank 1189 / 7875) · Top 9% High School bracket (Rank 91 / 1046)', icon: 'Trophy', accent: '#7c3aed', period: 'Fall 2025' },
+    { name: 'CyberPatriot', tag: 'Team', detail: 'Top 30% — Windows hardening, vulnerability auditing, malware hunting', icon: 'Shield', accent: '#00e5a0', period: '2025' },
+];
+
+const DIFFICULTY_COLOR = { Easy: '#00e5a0', Medium: '#ffb800', Hard: '#ff4545', 'Very Hard': '#ff4545' };
+
+const ProjectsPage = () => {
+    const [tab, setTab] = useState('labs');
+    return (
+    <div className="space-y-8 animate-fade-up">
+        <div>
+            <h2 className="font-syne text-3xl font-bold mt-2" style={{color:'var(--text)'}}>Labs & Projects</h2>
+        </div>
+
+        {/* Toggle */}
+        <div className="flex gap-1 p-1 rounded-xl w-fit" style={{background:'rgba(0,200,255,0.05)',border:'1px solid rgba(0,200,255,0.12)'}}>
+            {[{id:'labs',label:'CyberDefenders Labs',icon:'FlaskConical'},{id:'projects',label:'Projects',icon:'Code2'}].map(t => (
+                <button key={t.id} onClick={() => setTab(t.id)}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all"
+                    style={tab === t.id
+                        ? {background:'linear-gradient(135deg,rgba(0,200,255,0.2),rgba(0,102,255,0.15))',color:'var(--accent)',border:'1px solid rgba(0,200,255,0.3)'}
+                        : {color:'var(--muted)',border:'1px solid transparent'}}>
+                    <Icon name={t.icon} className="w-3.5 h-3.5" />
+                    {t.label}
+                </button>
+            ))}
+        </div>
+
+        {tab === 'labs' && (
+        <div className="space-y-6">
+            <div className="flex items-center mb-2">
+                <a href="https://cyberdefenders.org/p/Afterguard/" target="_blank" rel="noopener noreferrer"
+                   className="flex items-center gap-1 font-mono-custom text-xs ml-auto transition-all"
+                   style={{color:'var(--accent)'}}>
+                    View Full Profile <Icon name="ExternalLink" className="w-3 h-3" />
+                </a>
+            </div>
+
+            {/* Stats row */}
+            {(() => {
+                const total = CD_LABS.length;
+                const counts = CD_LABS.reduce((acc, l) => { acc[l.difficulty] = (acc[l.difficulty]||0)+1; return acc; }, {});
+                const bars = [
+                    { label: 'Easy',    count: counts['Easy']||0,    color: '#00e5a0' },
+                    { label: 'Medium',  count: counts['Medium']||0,  color: '#ffb800' },
+                    { label: 'Hard',    count: counts['Hard']||0,    color: '#ff6b35' },
+                    { label: 'Extreme', count: counts['Extreme']||0, color: '#ff4545' },
+                ];
+                const cats = CD_LABS.reduce((acc, l) => { acc[l.category] = (acc[l.category]||0)+1; return acc; }, {});
+                const maxCat = Math.max(...Object.values(cats));
+                return (
+                <div className="rounded-xl p-6 space-y-6" style={{background:'rgba(0,200,255,0.03)',border:'1px solid rgba(0,200,255,0.12)'}}>
+                    {/* Summary numbers */}
+                    <div className="grid grid-cols-4 gap-3">
+                        {[
+                            { label: 'Total', val: total, color: 'var(--accent)' },
+                            { label: 'Easy', val: counts['Easy']||0, color: '#00e5a0' },
+                            { label: 'Medium', val: counts['Medium']||0, color: '#ffb800' },
+                            { label: 'Hard', val: counts['Hard']||0, color: '#ff6b35' },
+                        ].map((s,i) => (
+                            <div key={i} className="text-center rounded-lg p-3" style={{background:'rgba(0,0,0,0.2)',border:`1px solid ${s.color}20`}}>
+                                <div className="font-syne text-2xl font-black" style={{color:s.color}}>{s.val}</div>
+                                <div className="font-mono-custom text-xs mt-1" style={{color:'var(--muted)'}}>{s.label}</div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Difficulty bar chart */}
+                    <div>
+                        <p className="font-mono-custom text-xs mb-3" style={{color:'var(--muted)'}}>// difficulty breakdown</p>
+                        <div className="space-y-3">
+                            {bars.map((b,i) => (
+                                <div key={i} className="flex items-center gap-3">
+                                    <span className="font-mono-custom text-xs w-14 text-right flex-shrink-0" style={{color:b.color}}>{b.label}</span>
+                                    <div className="flex-1 rounded-full overflow-hidden" style={{height:'8px',background:'rgba(255,255,255,0.05)'}}>
+                                        <div className="h-full rounded-full transition-all" style={{
+                                            width: total ? `${(b.count/total)*100}%` : '0%',
+                                            background:`linear-gradient(90deg,${b.color},${b.color}99)`,
+                                            boxShadow:`0 0 8px ${b.color}60`
+                                        }} />
+                                    </div>
+                                    <span className="font-mono-custom text-xs w-8 flex-shrink-0" style={{color:'var(--muted)'}}>{b.count}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Category breakdown */}
+                    <div>
+                        <p className="font-mono-custom text-xs mb-3" style={{color:'var(--muted)'}}>// by category</p>
+                        <div className="space-y-2">
+                            {Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([cat, count],i) => (
+                                <div key={i} className="flex items-center gap-3">
+                                    <span className="font-mono-custom text-xs w-36 flex-shrink-0 truncate" style={{color:'var(--text)'}}>{cat}</span>
+                                    <div className="flex-1 rounded-full overflow-hidden" style={{height:'6px',background:'rgba(255,255,255,0.05)'}}>
+                                        <div className="h-full rounded-full" style={{
+                                            width:`${(count/maxCat)*100}%`,
+                                            background:'linear-gradient(90deg,var(--accent),var(--accent2))',
+                                            boxShadow:'0 0 6px rgba(0,200,255,0.4)'
+                                        }} />
+                                    </div>
+                                    <span className="font-mono-custom text-xs w-6 flex-shrink-0 text-right" style={{color:'var(--muted)'}}>{count}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+                );
+            })()}
+
+            {/* Lab cards grid */}
+            {CD_LABS.length === 0 ? (
+                <div className="rounded-xl p-10 text-center" style={{background:'rgba(0,200,255,0.03)',border:'1px dashed rgba(0,200,255,0.2)'}}>
+                    <Icon name="FlaskConical" className="w-8 h-8 mx-auto mb-3" style={{color:'rgba(0,200,255,0.3)'}} />
+                    <p className="font-mono-custom text-xs" style={{color:'var(--muted)'}}>// Add completed labs to CD_LABS in the source to display them here</p>
+                </div>
+            ) : (
+                <div className="grid md:grid-cols-2 gap-3">
+                    {CD_LABS.map((lab, i) => (
+                        <a key={i} href={lab.url} target="_blank" rel="noopener noreferrer">
+                            <Card className="p-5 block">
+                                <div className="flex items-center justify-between mb-2">
+                                    <h3 className="font-syne font-bold text-sm" style={{color:'var(--text)'}}>{lab.name}</h3>
+                                    <Icon name="ExternalLink" className="w-3.5 h-3.5 flex-shrink-0" style={{color:'var(--muted)'}} />
+                                </div>
+                                <div className="flex items-center gap-2 mt-2">
+                                    <span className="font-mono-custom text-xs px-2 py-0.5 rounded" style={{background:'rgba(0,200,255,0.07)',border:'1px solid rgba(0,200,255,0.15)',color:'var(--muted)'}}>{lab.category}</span>
+                                    {lab.difficulty && (
+                                        <span className="font-mono-custom text-xs px-2 py-0.5 rounded" style={{background:`${DIFFICULTY_COLOR[lab.difficulty]||'#888'}18`,border:`1px solid ${DIFFICULTY_COLOR[lab.difficulty]||'#888'}40`,color:DIFFICULTY_COLOR[lab.difficulty]||'#888'}}>{lab.difficulty}</span>
+                                    )}
+                                    {lab.completed && (
+                                        <span className="font-mono-custom text-xs ml-auto" style={{color:'var(--success)'}}>✓ {lab.completed}</span>
+                                    )}
+                                </div>
+                                <div className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-xl" style={{background:'linear-gradient(to bottom,var(--accent),transparent)'}} />
+                            </Card>
+                        </a>
+                    ))}
+                </div>
+            )}
+        </div>
+        )}
+
+        {tab === 'projects' && (
+        <div className="space-y-4">
+            {PROJECTS.map((p, i) => (
+                <Card key={i} className="p-6">
+                    <div className="flex items-start gap-5">
+                        <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                             style={{background:`rgba(${p.accent==='#00c8ff'?'0,200,255':p.accent==='#7c3aed'?'124,58,237':p.accent==='#00e5a0'?'0,229,160':p.accent==='#0066ff'?'0,102,255':'255,107,53'},0.12)`,border:`1px solid ${p.accent}30`}}>
+                            <Icon name={p.icon} className="w-5 h-5" style={{color:p.accent}} />
+                        </div>
+                        <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                                <h3 className="font-syne font-bold" style={{color:'var(--text)'}}>{p.name}</h3>
+                                <span className="font-mono-custom text-xs px-2 py-0.5 rounded" style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.08)',color:'var(--muted)'}}>{p.tag}</span>
+                            </div>
+                            <p className="text-sm leading-relaxed" style={{color:'rgba(226,234,246,0.75)',lineHeight:'1.7'}}>{p.detail}</p>
+                        </div>
+                    </div>
+                    <div className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-xl" style={{background:`linear-gradient(to bottom,${p.accent},transparent)`}} />
+                </Card>
+            ))}
+        </div>
+        )}
+    </div>
+    );
+};
+
+const CompetitionsPage = () => (
+    <div className="space-y-8 animate-fade-up">
+        <div>
+            <h2 className="font-syne text-3xl font-bold mt-2" style={{color:'var(--text)'}}>Competitions</h2>
+            <p className="text-sm mt-1" style={{color:'var(--muted)'}}>CTF events and team competitions</p>
+        </div>
+        <div className="space-y-4">
+            {COMPETITIONS.map((c, i) => (
+                <Card key={i} className="p-6">
+                    <div className="flex items-start gap-5">
+                        <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                             style={{background:`rgba(${c.accent==='#7c3aed'?'124,58,237':'0,229,160'},0.12)`,border:`1px solid ${c.accent}30`}}>
+                            <Icon name={c.icon} className="w-5 h-5" style={{color:c.accent}} />
+                        </div>
+                        <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                                <h3 className="font-syne font-bold" style={{color:'var(--text)'}}>{c.name}</h3>
+                                <span className="font-mono-custom text-xs px-2 py-0.5 rounded" style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.08)',color:'var(--muted)'}}>{c.tag}</span>
+                                <span className="font-mono-custom text-xs ml-auto" style={{color:'var(--muted)'}}>{c.period}</span>
+                            </div>
+                            <p className="text-sm leading-relaxed" style={{color:'rgba(226,234,246,0.75)',lineHeight:'1.7'}}>{c.detail}</p>
+                        </div>
+                    </div>
+                    <div className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-xl" style={{background:`linear-gradient(to bottom,${c.accent},transparent)`}} />
+                </Card>
+            ))}
+        </div>
+    </div>
+);
+
+const ExperiencePage = () => (
+    <div className="space-y-8 animate-fade-up">
+        <div>
+            <h2 className="font-syne text-3xl font-bold mt-2" style={{color:'var(--text)'}}>Experience</h2>
+        </div>
+
+        {EXPERIENCE.map((job, i) => (
+            <Card key={i} className="p-7">
+                <div className="flex items-start gap-4 mb-6">
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{background:'rgba(0,200,255,0.1)',border:'1px solid rgba(0,200,255,0.2)'}}>
+                        <Icon name="Briefcase" className="w-5 h-5" style={{color:'var(--accent)'}} />
+                    </div>
+                    <div>
+                        <h3 className="font-syne font-black text-lg" style={{color:'var(--text)'}}>{job.role}</h3>
+                        <p className="font-medium text-sm" style={{color:'var(--accent)'}}>{job.org}</p>
+                        <p className="font-mono-custom text-xs mt-1" style={{color:'var(--muted)'}}>{job.period}</p>
+                    </div>
+                </div>
+                <div className="space-y-3 ml-14">
+                    {job.bullets.map((b,j) => (
+                        <div key={j} className="flex items-start gap-3 text-sm" style={{color:'rgba(226,234,246,0.8)'}}>
+                            <span className="font-mono-custom mt-0.5 flex-shrink-0" style={{color:'var(--accent)'}}>›</span>
+                            {b}
+                        </div>
+                    ))}
+                </div>
+            </Card>
+        ))}
+
+        {/* Education */}
+        <div>
+            <h3 className="font-syne text-xl font-bold mb-4" style={{color:'var(--text)'}}>Education</h3>
+            <Card className="p-7 mt-4">
+                <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{background:'rgba(0,229,160,0.1)',border:'1px solid rgba(0,229,160,0.2)'}}>
+                        <Icon name="GraduationCap" className="w-5 h-5" style={{color:'var(--success)'}} />
+                    </div>
+                    <div>
+                        <h3 className="font-syne font-black text-lg" style={{color:'var(--text)'}}>Cisco Networking Academy</h3>
+                        <p className="font-medium text-sm" style={{color:'var(--success)'}}>Chesterfield Technical Center</p>
+                        <p className="text-xs mt-1" style={{color:'var(--muted)'}}>Dual-enrolled college-level IT coursework via Brightpoint Community College</p>
+                        <p className="font-mono-custom text-xs mt-2" style={{color:'var(--muted)'}}>Aug 2024 – Expected Dec 2026</p>
+                    </div>
+                </div>
+            </Card>
+        </div>
+    </div>
+);
+
+const SkillsPage = () => (
+    <div className="space-y-8 animate-fade-up">
+        <div>
+            <h2 className="font-syne text-3xl font-bold mt-2" style={{color:'var(--text)'}}>Skills & Tools</h2>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4">
+            {SKILLS.map((group, i) => (
+                <Card key={i} className="p-6">
+                    <h3 className="font-mono-custom text-xs mb-4" style={{color:'var(--accent)'}}>{group.category.toUpperCase()}</h3>
+                    <div className="flex flex-wrap gap-2">
+                        {group.items.map((item,j) => (
+                            <span key={j} className="skill-tag">{item}</span>
+                        ))}
+                    </div>
+                </Card>
+            ))}
+        </div>
+
+        {/* Contact block removed — add contact info to your LinkedIn */}
+    </div>
+);
+
+// ─── Main App ─────────────────────────────────────────────────
+const App = () => {
+    const [page, setPage] = useState('home');
+    const [mobileOpen, setMobileOpen] = useState(false);
+
+    const pages = { home: <HomePage />, certs: <CertsPage />, projects: <ProjectsPage />, competitions: <CompetitionsPage />, experience: <ExperiencePage />, skills: <SkillsPage /> };
+
+    return (
+        <div style={{minHeight:'100vh',background:'var(--bg)',backgroundColor:'#080c12'}}>
+            <Particles />
+            {/* Nav */}
+            <nav className="sticky top-0 z-50 scanlines nav-beam" style={{background:'rgba(8,12,18,0.92)',backdropFilter:'blur(16px)',borderBottom:'1px solid rgba(0,200,255,0.08)',position:'relative'}}>
+                <div className="max-w-5xl mx-auto px-4">
+                    <div className="flex items-center justify-between py-4">
+                        {/* Logo */}
+                        <button onClick={() => setPage('home')} className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{background:'linear-gradient(135deg,var(--accent),var(--accent2))'}}>
+                                <Icon name="Shield" className="w-4 h-4" style={{color:'#080c12'}} />
+                            </div>
+                            <div>
+                                <span className="font-syne font-black text-lg tracking-tight" style={{color:'var(--text)'}}>Afterguard</span>
+                            </div>
+                        </button>
+
+                        {/* Desktop Nav */}
+                        <div className="hidden md:flex items-center gap-1">
+                            {NAV_ITEMS.map(item => (
+                                <button key={item.id} onClick={() => setPage(item.id)}
+                                    className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${page === item.id ? 'nav-active' : ''}`}
+                                    style={page !== item.id ? {color:'var(--muted)'} : {}}>
+                                    <Icon name={item.icon} className="w-3.5 h-3.5" />
+                                    {item.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Mobile hamburger */}
+                        <button className="md:hidden flex flex-col gap-1.5 p-2" onClick={() => setMobileOpen(!mobileOpen)}>
+                            <span className="hamburger-line" style={mobileOpen ? {transform:'rotate(45deg) translate(4px,5px)'} : {}} />
+                            <span className="hamburger-line" style={mobileOpen ? {opacity:0} : {}} />
+                            <span className="hamburger-line" style={mobileOpen ? {transform:'rotate(-45deg) translate(4px,-5px)'} : {}} />
+                        </button>
+                    </div>
+
+                    {/* Mobile dropdown */}
+                    {mobileOpen && (
+                        <div className="md:hidden pb-4 animate-slide-down" style={{borderTop:'1px solid rgba(0,200,255,0.08)'}}>
+                            {NAV_ITEMS.map(item => (
+                                <button key={item.id} onClick={() => { setPage(item.id); setMobileOpen(false); }}
+                                    className="flex items-center gap-3 w-full px-3 py-3 text-sm font-medium transition-all"
+                                    style={page === item.id ? {color:'var(--accent)'} : {color:'var(--muted)'}}>
+                                    <Icon name={item.icon} className="w-4 h-4" />
+                                    {item.label}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </nav>
+
+            {/* Main content */}
+            <main className="max-w-5xl mx-auto px-4 py-12">
+                {pages[page]}
+            </main>
+
+            {/* Footer */}
+            <footer className="text-center py-8 mt-8" style={{borderTop:'1px solid rgba(0,200,255,0.06)'}}>
+                <p className="font-mono-custom text-xs" style={{color:'rgba(107,127,160,0.5)'}}>
+                    © 2026 Afterguard · Johann Weingertner · johannweingertner.github.io
+                </p>
+            </footer>
+        </div>
+    );
+};
+
+ReactDOM.render(<App />, document.getElementById('root'));
+</script>
 </body>
 </html>
