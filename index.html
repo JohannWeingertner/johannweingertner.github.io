@@ -12,7 +12,7 @@
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- ── Data files — edit these to update content ── -->
+    <!-- Data files — edit these to update content -->
     <script src="/data/certifications.js"></script>
     <script src="/data/labs.js"></script>
     <style>
@@ -56,7 +56,6 @@
             background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,200,255,0.015) 2px, rgba(0,200,255,0.015) 4px);
         }
 
-        /* Syne for headings */
         .font-syne { font-family: 'Inter', sans-serif; }
         .font-mono-custom { font-family: 'Space Mono', monospace; }
 
@@ -65,27 +64,40 @@
         .glow-text { text-shadow: 0 0 30px rgba(0,200,255,0.4); }
         .glow-dot { box-shadow: 0 0 6px rgba(0,229,160,0.8); }
 
-        /* Animated gradient border */
+        /* Animated gradient border — enhanced hover effect */
         .grad-border {
             border: 1px solid transparent;
             background: linear-gradient(var(--surface), var(--surface)) padding-box,
                         linear-gradient(135deg, rgba(0,200,255,0.4), rgba(0,102,255,0.2), rgba(124,58,237,0.3)) border-box;
-            transition: background 0.25s ease;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         }
 
         .grad-border:hover {
             background: linear-gradient(var(--surface2), var(--surface2)) padding-box,
-                        linear-gradient(135deg, rgba(0,200,255,0.7), rgba(0,102,255,0.4), rgba(124,58,237,0.5)) border-box;
+                        linear-gradient(135deg, rgba(0,200,255,0.8), rgba(0,102,255,0.5), rgba(124,58,237,0.7)) border-box;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px -8px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,200,255,0.2);
         }
 
-        /* Nav active pill */
+        /* Nav active pill + hover effect */
         .nav-active {
-            background: linear-gradient(135deg, rgba(0,200,255,0.15), rgba(0,102,255,0.1));
-            border: 1px solid rgba(0,200,255,0.3);
+            background: linear-gradient(135deg, rgba(0,200,255,0.2), rgba(0,102,255,0.12));
+            border: 1px solid rgba(0,200,255,0.4);
             color: var(--accent);
         }
+        
+        /* Nav button hover animation */
+        .nav-btn {
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        .nav-btn:hover:not(.nav-active) {
+            background: rgba(0,200,255,0.08);
+            border-color: rgba(0,200,255,0.2);
+            transform: translateY(-1px);
+        }
 
-        /* Skill tag */
+        /* Skill tag with enhanced hover */
         .skill-tag {
             background: rgba(0,200,255,0.06);
             border: 1px solid rgba(0,200,255,0.2);
@@ -94,11 +106,14 @@
             font-size: 0.7rem;
             padding: 3px 10px;
             border-radius: 4px;
-            transition: all 0.2s;
+            transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         }
         .skill-tag:hover {
-            background: rgba(0,200,255,0.12);
-            border-color: rgba(0,200,255,0.4);
+            background: rgba(0,200,255,0.18);
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: scale(1.02) translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,200,255,0.2);
         }
 
         /* Timeline line */
@@ -124,6 +139,12 @@
         .cert-ring {
             background: linear-gradient(135deg, rgba(0,200,255,0.2), rgba(124,58,237,0.2));
             border: 1px solid rgba(0,200,255,0.3);
+            transition: all 0.3s ease;
+        }
+        .cert-ring:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 12px rgba(0,200,255,0.3);
+            transform: scale(1.02);
         }
 
         /* Scrollbar */
@@ -195,7 +216,7 @@
             0%   { transform: translateX(-100%) skewX(-15deg); }
             100% { transform: translateX(300%) skewX(-15deg); }
         }
-        .shimmer-card { overflow: hidden; }
+        .shimmer-card { overflow: hidden; position: relative; }
         .shimmer-card::after {
             content: '';
             position: absolute;
@@ -247,8 +268,6 @@
             100% { transform: scale(1); opacity: 1; }
         }
         .pop-in { animation: pop-in 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
-        .pop-in-1 { animation: pop-in 0.5s 0.1s cubic-bezier(0.34,1.56,0.64,1) both; }
-        .pop-in-2 { animation: pop-in 0.5s 0.2s cubic-bezier(0.34,1.56,0.64,1) both; }
 
         /* Border rotate glow on hero */
         @keyframes border-spin {
@@ -274,38 +293,15 @@
         }
 
         .animate-fade-up { animation: fadeUp 0.5s ease-out both; }
-        .animate-fade-up-1 { animation: fadeUp 0.5s 0.1s ease-out both; }
-        .animate-fade-up-2 { animation: fadeUp 0.5s 0.2s ease-out both; }
-        .animate-fade-up-3 { animation: fadeUp 0.5s 0.3s ease-out both; }
         .animate-glow-dot { animation: pulse-glow 2s ease-in-out infinite; }
-        .cursor-blink { animation: blink 1s step-end infinite; }
 
-        /* Progress bar for skills */
-        .progress-bar {
-            height: 2px;
-            background: linear-gradient(to right, var(--accent), var(--accent2));
-            border-radius: 2px;
-            position: relative;
-        }
-        .progress-bar::after {
-            content: '';
-            position: absolute;
-            right: 0;
-            top: -3px;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--accent);
-            box-shadow: 0 0 8px rgba(0,200,255,0.8);
-        }
-
-        /* Card hover lift */
+        /* Card hover lift - enhanced */
         .card-hover {
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1), box-shadow 0.3s ease;
         }
         .card-hover:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 20px rgba(0,200,255,0.08);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,200,255,0.2);
         }
 
         /* Mobile menu */
@@ -378,13 +374,33 @@
             animation: modal-in 0.25s cubic-bezier(0.34,1.3,0.64,1) both;
             box-shadow: 0 0 60px rgba(0,200,255,0.1), 0 30px 80px rgba(0,0,0,0.6);
         }
-        .modal-box::-webkit-scrollbar { width: 4px; }
-        .modal-box::-webkit-scrollbar-thumb { background: rgba(0,200,255,0.2); border-radius: 2px; }
-
-        @keyframes pop-in {
-            0%   { transform: scale(0.5); opacity: 0; }
-            70%  { transform: scale(1.08); }
-            100% { transform: scale(1); opacity: 1; }
+        
+        /* Enhanced button hover for social links */
+        .social-btn {
+            transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+        }
+        .social-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+            box-shadow: 0 6px 18px rgba(0,200,255,0.25);
+        }
+        
+        /* Tab button hover */
+        .tab-btn {
+            transition: all 0.2s ease;
+        }
+        .tab-btn:hover:not(.active-tab) {
+            background: rgba(0,200,255,0.1);
+            border-color: rgba(0,200,255,0.3);
+            transform: translateY(-1px);
+        }
+        
+        /* Lab card link hover */
+        .lab-card-link {
+            transition: all 0.25s ease;
+        }
+        .lab-card-link:hover .lab-title {
+            color: var(--accent);
         }
     </style>
 </head>
@@ -394,7 +410,7 @@
 <script type="text/babel">
 const { useState, useEffect, useRef } = React;
 
-// ─── Particles ───────────────────────────────────────────────
+// Particles background
 const Particles = () => {
     useEffect(() => {
         const container = document.getElementById('particles');
@@ -423,7 +439,7 @@ const Particles = () => {
     return <div id="particles" style={{position:'fixed',inset:0,pointerEvents:'none',zIndex:1,overflow:'hidden',clipPath:'inset(0)'}} />;
 };
 
-// ─── Typing effect hook ──────────────────────────────────────
+// Typing effect
 const useTyping = (text, speed = 40, delay = 500) => {
     const [displayed, setDisplayed] = useState('');
     const [done, setDone] = useState(false);
@@ -444,19 +460,7 @@ const useTyping = (text, speed = 40, delay = 500) => {
     return { displayed, done };
 };
 
-// ─── Scroll reveal hook ──────────────────────────────────────
-const useScrollReveal = () => {
-    useEffect(() => {
-        const els = document.querySelectorAll('.reveal');
-        const obs = new IntersectionObserver(entries => {
-            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
-        }, { threshold: 0.1 });
-        els.forEach(el => obs.observe(el));
-        return () => obs.disconnect();
-    });
-};
-
-// ─── Icon helper ─────────────────────────────────────────────
+// Icon helper
 const Icon = ({ name, className = "w-5 h-5", ...props }) => {
     const ref = useRef(null);
     useEffect(() => {
@@ -469,8 +473,7 @@ const Icon = ({ name, className = "w-5 h-5", ...props }) => {
     return <i ref={ref} className={`flex-shrink-0 ${className}`} {...props} />;
 };
 
-// ─── Data loaded from /data/certifications.js and /data/labs.js ───
-
+// Skills, Projects, Experience (unchanged)
 const SKILLS = [
     { category: 'SIEM & Threat Hunting', items: ['Splunk SPL', 'Microsoft Sentinel KQL', 'Log Analysis', 'Threat Hunting', 'AWS CloudTrail', 'Azure Sentinel'] },
     { category: 'Digital Forensics', items: ['Memory Forensics', 'Disk Forensics', 'Windows Event Log Analysis', 'FTK Imager', 'Autopsy', 'Volatility', 'Eric Zimmerman Tools'] },
@@ -498,7 +501,12 @@ const EXPERIENCE = [
     }
 ];
 
-// ─── Nav ─────────────────────────────────────────────────────
+const COMPETITIONS = [
+    { name: 'National Cyber League (NCL)', tag: 'CTF', detail: 'Top 15% overall (Rank 1189 / 7875) · Top 9% High School bracket (Rank 91 / 1046)', icon: 'Trophy', accent: '#7c3aed', period: 'Fall 2025' },
+    { name: 'CyberPatriot', tag: 'Team', detail: 'Top 30% — Windows hardening, vulnerability auditing, malware hunting', icon: 'Shield', accent: '#00e5a0', period: '2025' },
+];
+
+const DIFFICULTY_COLOR = { Easy: '#00e5a0', Medium: '#ffb800', Hard: '#ff4545', 'Very Hard': '#ff4545' };
 const NAV_ITEMS = [
     { id: 'home', label: 'Home', icon: 'User' },
     { id: 'certs', label: 'Certifications', icon: 'Award' },
@@ -508,89 +516,14 @@ const NAV_ITEMS = [
     { id: 'skills', label: 'Skills', icon: 'Cpu' },
 ];
 
-// ─── Components ──────────────────────────────────────────────
-const SectionLabel = ({ children }) => (
-    <span className="section-label">{children}</span>
-);
-
+const SectionLabel = ({ children }) => <span className="section-label">{children}</span>;
 const Card = ({ children, className = '', ...props }) => (
     <div className={`grad-border rounded-xl card-hover relative overflow-hidden ${className}`} {...props}>
         {children}
     </div>
 );
 
-// ─── Pages ───────────────────────────────────────────────────
-const HomePage = () => {
-    const tagline = '// Networking & Cybersecurity';
-    const { displayed, done } = useTyping(tagline, 45, 600);
-    return (
-    <div className="space-y-12 animate-fade-up">
-        {/* Hero */}
-        <div className="relative rounded-2xl overflow-hidden corner-tl corner-br p-px hero-border">
-            <div className="rounded-2xl p-10 md:p-16 relative" style={{background:'linear-gradient(135deg,#090f1a,#0a1525)'}}>
-                <div className="absolute top-0 right-0 w-96 h-96 rounded-full opacity-10" style={{background:'radial-gradient(circle,#00c8ff,transparent 70%)',filter:'blur(60px)'}} />
-                <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full opacity-8" style={{background:'radial-gradient(circle,#7c3aed,transparent 70%)',filter:'blur(50px)'}} />
-
-                <div className="flex items-center gap-2 mb-8">
-                    <span className="w-2 h-2 rounded-full animate-glow-dot" style={{background:'var(--success)'}} />
-                    <span className="font-mono-custom text-xs" style={{color:'var(--success)'}}>AVAILABLE FOR HIRE</span>
-                </div>
-
-                <div className="relative z-10">
-                    <SectionLabel>portfolio / networking & cybersecurity</SectionLabel>
-                    <h1 className="font-syne font-black mt-3 mb-4 leading-tight tracking-tight" style={{fontSize:'clamp(2.5rem,6vw,4.5rem)'}}>
-                        <span className="glitch-wrap" data-text="Afterguard" style={{background:'linear-gradient(90deg,var(--accent),var(--accent2))',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',display:'inline-block'}}>
-                            Afterguard
-                        </span>
-                    </h1>
-                    <p className="font-mono-custom text-sm mb-6" style={{color:'var(--muted)',minHeight:'1.5em'}}>
-                        {displayed}{!done && <span className="type-cursor" />}
-                    </p>
-                    <p className="text-base leading-relaxed max-w-2xl" style={{color:'rgba(226,234,246,0.75)',lineHeight:'1.8'}}>
-                        Aspiring networking and cybersecurity professional with hands-on experience across both disciplines.
-                        On the networking side, I've worked with Cisco devices, built homelabs to practice real-world concepts,
-                        and actively studying for my CCNA. On the security side, I've job shadowed at Chesterfield County,
-                        accumulated 250+ hours in the CyberDefenders CyberRange (Top 100), and hold 6 active industry certifications.
-                    </p>
-                    <div className="flex flex-wrap gap-4 mt-8">
-                        <a href="https://www.linkedin.com/in/johann-weingertner-61b884358/" target="_blank" rel="noopener noreferrer"
-                           className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all"
-                           style={{background:'linear-gradient(135deg,var(--accent),var(--accent2))',color:'#080c12'}}>
-                            <Icon name="Linkedin" className="w-4 h-4" />LinkedIn
-                        </a>
-                        <a href="https://github.com/JohannWeingertner" target="_blank" rel="noopener noreferrer"
-                           className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all"
-                           style={{border:'1px solid rgba(255,255,255,0.1)',color:'var(--muted)',background:'rgba(255,255,255,0.03)'}}>
-                            <Icon name="Github" className="w-4 h-4" />GitHub
-                        </a>
-                        <a href="https://cyberdefenders.org/p/Afterguard/" target="_blank" rel="noopener noreferrer"
-                           className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all"
-                           style={{border:'1px solid rgba(0,200,255,0.25)',color:'var(--accent)',background:'rgba(0,200,255,0.05)'}}>
-                            <Icon name="Shield" className="w-4 h-4" />CyberDefenders
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {/* Stats row */}
-        <div className="grid grid-cols-3 gap-4">
-            {[
-                { val: '6', label: 'Certifications', icon: 'Award', color: 'var(--accent)', delay: '0s' },
-                { val: '250+', label: 'Lab Hours', icon: 'Clock', color: 'var(--success)', delay: '0.1s' },
-                { val: 'Top 100', label: 'CyberDefenders', icon: 'Trophy', color: '#7c3aed', delay: '0.2s' },
-            ].map((s, i) => (
-                <Card key={i} className="p-5 text-center shimmer-card" style={{animation:`pop-in 0.5s ${s.delay} cubic-bezier(0.34,1.56,0.64,1) both`}}>
-                    <Icon name={s.icon} className="w-6 h-6 mx-auto mb-2" style={{color:s.color}} />
-                    <div className="font-syne text-2xl font-bold" style={{color:s.color}}>{s.val}</div>
-                    <div className="text-xs mt-1" style={{color:'var(--muted)'}}>{s.label}</div>
-                </Card>
-            ))}
-        </div>
-    </div>
-    );
-};
-
+// Dynamic Certification Modal
 const CertModal = ({ cert, onClose }) => {
     useEffect(() => {
         const handler = e => { if (e.key === 'Escape') onClose(); };
@@ -600,7 +533,6 @@ const CertModal = ({ cert, onClose }) => {
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-box" onClick={e => e.stopPropagation()}>
-                {/* Header */}
                 <div className="p-6 pb-4" style={{borderBottom:'1px solid rgba(0,200,255,0.1)'}}>
                     <div className="flex items-start gap-4">
                         <div className="w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0 cert-ring overflow-hidden">
@@ -611,488 +543,98 @@ const CertModal = ({ cert, onClose }) => {
                         <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between gap-2">
                                 <h2 className="font-syne font-bold text-lg leading-snug" style={{color:'var(--text)'}}>{cert.name}</h2>
-                                <button onClick={onClose} className="flex-shrink-0 p-1 rounded-lg transition-all" style={{color:'var(--muted)'}}>
-                                    <Icon name="X" className="w-5 h-5" />
-                                </button>
+                                <button onClick={onClose} className="flex-shrink-0 p-1 rounded-lg transition-all hover:bg-white/10"><Icon name="X" className="w-5 h-5" /></button>
                             </div>
                             <p className="text-sm font-medium mt-1" style={{color:cert.color}}>{cert.issuer}</p>
-                            <div className="flex items-center gap-2 mt-2">
-                                <span className="badge-active text-xs px-2 py-0.5 rounded-full">{cert.status}</span>
-                                <span className="font-mono-custom text-xs" style={{color:'var(--muted)'}}>Issued {cert.year}</span>
-                            </div>
+                            <div className="flex items-center gap-2 mt-2"><span className="badge-active text-xs px-2 py-0.5 rounded-full">{cert.status}</span><span className="font-mono-custom text-xs" style={{color:'var(--muted)'}}>Issued {cert.year}</span></div>
                         </div>
                     </div>
-                    {cert.description && (
-                        <p className="text-sm mt-4 leading-relaxed" style={{color:'rgba(226,234,246,0.7)'}}>{cert.description}</p>
-                    )}
+                    {cert.description && <p className="text-sm mt-4 leading-relaxed" style={{color:'rgba(226,234,246,0.7)'}}>{cert.description}</p>}
                 </div>
-                {/* What I learned */}
                 {cert.learned && (
                 <div className="p-6" style={{borderBottom: cert.practical ? '1px solid rgba(0,200,255,0.08)' : 'none'}}>
                     <p className="font-mono-custom text-xs mb-4" style={{color:'var(--accent)'}}>// WHAT I LEARNED</p>
-                    <div className="space-y-2.5">
-                        {cert.learned.map((item, i) => (
-                            <div key={i} className="flex items-start gap-3 text-sm" style={{color:'rgba(226,234,246,0.85)'}}>
-                                <span className="font-mono-custom flex-shrink-0 mt-0.5" style={{color:cert.color}}>›</span>
-                                {item}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-                )}
-                {/* Practical hands-on experience */}
-                {cert.practical && (
-                <div className="p-6">
-                    <div className="space-y-3">
-                        {cert.practical.map((item, i) => (
-                            <div key={i} className="rounded-lg p-3" style={{background:'rgba(0,229,160,0.04)',border:'1px solid rgba(0,229,160,0.12)'}}>
-                                <span className="font-mono-custom text-xs font-bold" style={{color:'var(--success)'}}>{item.tool}</span>
-                                <p className="text-sm mt-1" style={{color:'rgba(226,234,246,0.75)'}}>{item.task}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-                )}
-                {/* Accent strip */}
-                <div className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-2xl" style={{background:`linear-gradient(to bottom,${cert.color},transparent)`}} />
+                    <div className="space-y-2.5">{cert.learned.map((item, i) => (<div key={i} className="flex items-start gap-3 text-sm" style={{color:'rgba(226,234,246,0.85)'}}><span className="font-mono-custom flex-shrink-0 mt-0.5" style={{color:cert.color}}>›</span>{item}</div>))}</div>
+                </div>)}
+                {cert.practical && (<div className="p-6"><div className="space-y-3">{cert.practical.map((item, i) => (<div key={i} className="rounded-lg p-3" style={{background:'rgba(0,229,160,0.04)',border:'1px solid rgba(0,229,160,0.12)'}}><span className="font-mono-custom text-xs font-bold" style={{color:'var(--success)'}}>{item.tool}</span><p className="text-sm mt-1" style={{color:'rgba(226,234,246,0.75)'}}>{item.task}</p></div>))}</div></div>)}
             </div>
         </div>
     );
 };
 
-const CertsPage = () => {
-    const [selected, setSelected] = useState(null);
-    const featured = CERTIFICATIONS.find(c => c.featured);
-    const rest = CERTIFICATIONS.filter(c => !c.featured);
+// HomePage with dynamic cert count
+const HomePage = () => {
+    const tagline = '// Networking & Cybersecurity';
+    const { displayed, done } = useTyping(tagline, 45, 600);
+    const certCount = CERTIFICATIONS ? CERTIFICATIONS.length : 0;
+    
     return (
-    <div className="space-y-8 animate-fade-up">
-        <div>
-            <h2 className="font-syne text-3xl font-bold mt-2" style={{color:'var(--text)'}}>Certifications</h2>
-            <p className="text-sm mt-1" style={{color:'var(--muted)'}}>Click any certification to see what I learned</p>
-        </div>
-
-        {/* ── Featured CCDL1 card ── */}
-        {featured && (
-        <button onClick={() => setSelected(featured)} className="w-full text-left">
-            <div className="relative rounded-2xl overflow-hidden cursor-pointer group"
-                 style={{background:'linear-gradient(135deg,rgba(0,200,255,0.08),rgba(0,102,255,0.05))',border:'1px solid rgba(0,200,255,0.3)',transition:'all 0.3s'}}
-                 onMouseEnter={e => { e.currentTarget.style.border='1px solid rgba(0,200,255,0.6)'; e.currentTarget.style.boxShadow='0 0 40px rgba(0,200,255,0.12)'; }}
-                 onMouseLeave={e => { e.currentTarget.style.border='1px solid rgba(0,200,255,0.3)'; e.currentTarget.style.boxShadow='none'; }}>
-                {/* Glow blob */}
-                <div className="absolute top-0 right-0 w-64 h-64 rounded-full pointer-events-none" style={{background:'radial-gradient(circle,rgba(0,200,255,0.12),transparent 70%)',filter:'blur(40px)'}} />
-                {/* Featured badge */}
-                <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1 rounded-full" style={{background:'rgba(0,200,255,0.12)',border:'1px solid rgba(0,200,255,0.3)'}}>
-                    <span className="w-1.5 h-1.5 rounded-full animate-glow-dot" style={{background:'var(--accent)'}} />
-                    <span className="font-mono-custom text-xs" style={{color:'var(--accent)'}}>FEATURED</span>
-                </div>
-                <div className="p-8 flex flex-col md:flex-row items-center md:items-start gap-6">
-                    {/* Large badge */}
-                    <div className="flex-shrink-0 w-24 h-24 rounded-2xl flex items-center justify-center overflow-hidden"
-                         style={{background:'linear-gradient(135deg,rgba(0,200,255,0.15),rgba(0,102,255,0.1))',border:'2px solid rgba(0,200,255,0.35)',boxShadow:'0 0 24px rgba(0,200,255,0.2)'}}>
-                        <img src={featured.badge} alt={featured.short} className="w-full h-full object-contain p-2"
-                             onError={e => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }} />
-                        <span className="font-mono-custom text-sm font-bold text-center leading-tight w-full h-full items-center justify-center" style={{color:featured.color,display:'none'}}>{featured.short}</span>
-                    </div>
-                    <div className="flex-1 text-center md:text-left">
-                        <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-2">
-                            <span className="badge-active text-xs px-2 py-0.5 rounded-full">{featured.status}</span>
-                            <span className="font-mono-custom text-xs" style={{color:'var(--muted)'}}>Issued {featured.year}</span>
-                        </div>
-                        <h3 className="font-syne font-black text-xl mb-1" style={{color:'var(--text)'}}>{featured.name}</h3>
-                        <p className="text-sm font-semibold mb-3" style={{color:featured.color}}>{featured.issuer}</p>
-                        <p className="text-sm leading-relaxed mb-4" style={{color:'rgba(226,234,246,0.7)'}}>{featured.description}</p>
-                        <div className="mt-4 flex items-center gap-1.5 justify-center md:justify-start text-sm font-medium" style={{color:'var(--accent)'}}>
-                                    View full details <Icon name="ChevronRight" className="w-4 h-4" />
-                                </div>
+    <div className="space-y-12 animate-fade-up">
+        <div className="relative rounded-2xl overflow-hidden corner-tl corner-br p-px hero-border">
+            <div className="rounded-2xl p-10 md:p-16 relative" style={{background:'linear-gradient(135deg,#090f1a,#0a1525)'}}>
+                <div className="absolute top-0 right-0 w-96 h-96 rounded-full opacity-10" style={{background:'radial-gradient(circle,#00c8ff,transparent 70%)',filter:'blur(60px)'}} />
+                <div className="flex items-center gap-2 mb-8"><span className="w-2 h-2 rounded-full animate-glow-dot" style={{background:'var(--success)'}} /><span className="font-mono-custom text-xs" style={{color:'var(--success)'}}>AVAILABLE FOR HIRE</span></div>
+                <div className="relative z-10">
+                    <SectionLabel>portfolio / networking & cybersecurity</SectionLabel>
+                    <h1 className="font-syne font-black mt-3 mb-4 leading-tight tracking-tight" style={{fontSize:'clamp(2.5rem,6vw,4.5rem)'}}><span className="glitch-wrap" data-text="Afterguard" style={{background:'linear-gradient(90deg,var(--accent),var(--accent2))',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',display:'inline-block'}}>Afterguard</span></h1>
+                    <p className="font-mono-custom text-sm mb-6" style={{color:'var(--muted)',minHeight:'1.5em'}}>{displayed}{!done && <span className="type-cursor" />}</p>
+                    <p className="text-base leading-relaxed max-w-2xl" style={{color:'rgba(226,234,246,0.75)',lineHeight:'1.8'}}>Aspiring networking and cybersecurity professional with hands-on experience across both disciplines. On the networking side, I've worked with Cisco devices, built homelabs to practice real-world concepts, and actively studying for my CCNA. On the security side, I've job shadowed at Chesterfield County, accumulated 250+ hours in the CyberDefenders CyberRange (Top 100), and hold {certCount} active industry certifications.</p>
+                    <div className="flex flex-wrap gap-4 mt-8">
+                        <a href="https://www.linkedin.com/in/johann-weingertner-61b884358/" target="_blank" rel="noopener noreferrer" className="social-btn flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all" style={{background:'linear-gradient(135deg,var(--accent),var(--accent2))',color:'#080c12'}}><Icon name="Linkedin" className="w-4 h-4" />LinkedIn</a>
+                        <a href="https://github.com/JohannWeingertner" target="_blank" rel="noopener noreferrer" className="social-btn flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all" style={{border:'1px solid rgba(255,255,255,0.1)',color:'var(--muted)',background:'rgba(255,255,255,0.03)'}}><Icon name="Github" className="w-4 h-4" />GitHub</a>
+                        <a href="https://cyberdefenders.org/p/Afterguard/" target="_blank" rel="noopener noreferrer" className="social-btn flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all" style={{border:'1px solid rgba(0,200,255,0.25)',color:'var(--accent)',background:'rgba(0,200,255,0.05)'}}><Icon name="Shield" className="w-4 h-4" />CyberDefenders</a>
                     </div>
                 </div>
-                {/* Bottom accent line */}
-                <div className="absolute bottom-0 left-0 right-0 h-0.5" style={{background:'linear-gradient(90deg,transparent,rgba(0,200,255,0.5),transparent)'}} />
             </div>
-        </button>
-        )}
-
-        {/* ── Rest of certs ── */}
-        <div className="grid md:grid-cols-2 gap-4">
-            {rest.map((c, i) => (
-                <button key={i} onClick={() => setSelected(c)} className="text-left w-full">
-                    <Card className="p-6 cursor-pointer">
-                        <div className="flex items-start gap-4">
-                            <div className="flex-shrink-0 w-16 h-16 rounded-xl flex items-center justify-center cert-ring overflow-hidden">
-                                <img src={c.badge} alt={c.short} className="w-full h-full object-contain p-1"
-                                    onError={e => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }} />
-                                <span className="font-mono-custom text-xs font-bold text-center leading-tight w-full h-full items-center justify-center" style={{color:c.color,display:'none'}}>{c.short}</span>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <div className="flex items-center justify-between mb-1">
-                                    <h3 className="font-syne font-bold text-sm leading-snug pr-2" style={{color:'var(--text)'}}>{c.name}</h3>
-                                    <span className="badge-active text-xs px-2 py-0.5 rounded-full flex-shrink-0">{c.status}</span>
-                                </div>
-                                <p className="text-xs font-medium" style={{color:c.color}}>{c.issuer}</p>
-                                <div className="flex items-center justify-between mt-1">
-                                    <p className="font-mono-custom text-xs" style={{color:'var(--muted)'}}>Issued {c.year}</p>
-                                    <span className="font-mono-custom text-xs flex items-center gap-1" style={{color:'var(--accent)'}}>
-                                        View details <Icon name="ChevronRight" className="w-3 h-3" />
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-xl" style={{background:`linear-gradient(to bottom,${c.color},transparent)`}} />
-                    </Card>
-                </button>
+        </div>
+        <div className="grid grid-cols-3 gap-4">
+            {[
+                { val: certCount.toString(), label: 'Certifications', icon: 'Award', color: 'var(--accent)', delay: '0s' },
+                { val: '250+', label: 'Lab Hours', icon: 'Clock', color: 'var(--success)', delay: '0.1s' },
+                { val: 'Top 100', label: 'CyberDefenders', icon: 'Trophy', color: '#7c3aed', delay: '0.2s' },
+            ].map((s, i) => (
+                <Card key={i} className="p-5 text-center shimmer-card" style={{animation:`pop-in 0.5s ${s.delay} cubic-bezier(0.34,1.56,0.64,1) both`}}><Icon name={s.icon} className="w-6 h-6 mx-auto mb-2" style={{color:s.color}} /><div className="font-syne text-2xl font-bold" style={{color:s.color}}>{s.val}</div><div className="text-xs mt-1" style={{color:'var(--muted)'}}>{s.label}</div></Card>
             ))}
         </div>
+    </div>
+    );
+};
 
+// CertsPage with automatic count from CERTIFICATIONS
+const CertsPage = () => {
+    const [selected, setSelected] = useState(null);
+    const featured = CERTIFICATIONS?.find(c => c.featured);
+    const rest = CERTIFICATIONS?.filter(c => !c.featured) || [];
+    return (
+    <div className="space-y-8 animate-fade-up">
+        <div><h2 className="font-syne text-3xl font-bold mt-2" style={{color:'var(--text)'}}>Certifications</h2><p className="text-sm mt-1" style={{color:'var(--muted)'}}>Click any certification to see what I learned · {CERTIFICATIONS?.length || 0} total</p></div>
+        {featured && (<button onClick={() => setSelected(featured)} className="w-full text-left group"><div className="relative rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:border-opacity-80 hover:shadow-[0_0_30px_rgba(0,200,255,0.2)]" style={{background:'linear-gradient(135deg,rgba(0,200,255,0.08),rgba(0,102,255,0.05))',border:'1px solid rgba(0,200,255,0.3)'}}><div className="absolute top-0 right-0 w-64 h-64 rounded-full pointer-events-none" style={{background:'radial-gradient(circle,rgba(0,200,255,0.12),transparent 70%)',filter:'blur(40px)'}} /><div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1 rounded-full" style={{background:'rgba(0,200,255,0.12)',border:'1px solid rgba(0,200,255,0.3)'}}><span className="w-1.5 h-1.5 rounded-full animate-glow-dot" style={{background:'var(--accent)'}} /><span className="font-mono-custom text-xs" style={{color:'var(--accent)'}}>FEATURED</span></div><div className="p-8 flex flex-col md:flex-row items-center md:items-start gap-6"><div className="flex-shrink-0 w-24 h-24 rounded-2xl flex items-center justify-center overflow-hidden transition-all group-hover:shadow-[0_0_20px_rgba(0,200,255,0.3)]" style={{background:'linear-gradient(135deg,rgba(0,200,255,0.15),rgba(0,102,255,0.1))',border:'2px solid rgba(0,200,255,0.35)'}}><img src={featured.badge} alt={featured.short} className="w-full h-full object-contain p-2" onError={e => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }} /><span className="font-mono-custom text-sm font-bold text-center leading-tight w-full h-full items-center justify-center" style={{color:featured.color,display:'none'}}>{featured.short}</span></div><div className="flex-1 text-center md:text-left"><div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-2"><span className="badge-active text-xs px-2 py-0.5 rounded-full">{featured.status}</span><span className="font-mono-custom text-xs" style={{color:'var(--muted)'}}>Issued {featured.year}</span></div><h3 className="font-syne font-black text-xl mb-1 group-hover:text-[var(--accent)] transition-colors">{featured.name}</h3><p className="text-sm font-semibold mb-3" style={{color:featured.color}}>{featured.issuer}</p><p className="text-sm leading-relaxed mb-4" style={{color:'rgba(226,234,246,0.7)'}}>{featured.description}</p><div className="mt-4 flex items-center gap-1.5 justify-center md:justify-start text-sm font-medium group-hover:gap-2 transition-all" style={{color:'var(--accent)'}}>View full details <Icon name="ChevronRight" className="w-4 h-4 group-hover:translate-x-1 transition-transform" /></div></div></div><div className="absolute bottom-0 left-0 right-0 h-0.5" style={{background:'linear-gradient(90deg,transparent,rgba(0,200,255,0.5),transparent)'}} /></div></button>)}
+        <div className="grid md:grid-cols-2 gap-4">{rest.map((c, i) => (<button key={i} onClick={() => setSelected(c)} className="text-left w-full group"><Card className="p-6 cursor-pointer transition-all"><div className="flex items-start gap-4"><div className="flex-shrink-0 w-16 h-16 rounded-xl flex items-center justify-center cert-ring overflow-hidden group-hover:scale-105 transition-transform"><img src={c.badge} alt={c.short} className="w-full h-full object-contain p-1" onError={e => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }} /><span className="font-mono-custom text-xs font-bold text-center leading-tight w-full h-full items-center justify-center" style={{color:c.color,display:'none'}}>{c.short}</span></div><div className="flex-1 min-w-0"><div className="flex items-center justify-between mb-1"><h3 className="font-syne font-bold text-sm leading-snug pr-2 group-hover:text-[var(--accent)] transition-colors">{c.name}</h3><span className="badge-active text-xs px-2 py-0.5 rounded-full flex-shrink-0">{c.status}</span></div><p className="text-xs font-medium" style={{color:c.color}}>{c.issuer}</p><div className="flex items-center justify-between mt-1"><p className="font-mono-custom text-xs" style={{color:'var(--muted)'}}>Issued {c.year}</p><span className="font-mono-custom text-xs flex items-center gap-1 group-hover:gap-2 transition-all" style={{color:'var(--accent)'}}>View details <Icon name="ChevronRight" className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" /></span></div></div></div><div className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-xl transition-all group-hover:w-1" style={{background:`linear-gradient(to bottom,${c.color},transparent)`}} /></Card></button>))}
         {selected && <CertModal cert={selected} onClose={() => setSelected(null)} />}
     </div>
     );
 };
 
-const COMPETITIONS = [
-    { name: 'National Cyber League (NCL)', tag: 'CTF', detail: 'Top 15% overall (Rank 1189 / 7875) · Top 9% High School bracket (Rank 91 / 1046)', icon: 'Trophy', accent: '#7c3aed', period: 'Fall 2025' },
-    { name: 'CyberPatriot', tag: 'Team', detail: 'Top 30% — Windows hardening, vulnerability auditing, malware hunting', icon: 'Shield', accent: '#00e5a0', period: '2025' },
-];
-
-const DIFFICULTY_COLOR = { Easy: '#00e5a0', Medium: '#ffb800', Hard: '#ff4545', 'Very Hard': '#ff4545' };
-
+// ProjectsPage, CompetitionsPage, ExperiencePage, SkillsPage (same as before but with enhanced hover)
 const ProjectsPage = () => {
     const [tab, setTab] = useState('labs');
-    return (
-    <div className="space-y-8 animate-fade-up">
-        <div>
-            <h2 className="font-syne text-3xl font-bold mt-2" style={{color:'var(--text)'}}>Labs & Projects</h2>
-        </div>
-
-        {/* Toggle */}
-        <div className="flex gap-1 p-1 rounded-xl w-fit" style={{background:'rgba(0,200,255,0.05)',border:'1px solid rgba(0,200,255,0.12)'}}>
-            {[{id:'labs',label:'CyberDefenders Labs',icon:'FlaskConical'},{id:'projects',label:'Projects',icon:'Code2'}].map(t => (
-                <button key={t.id} onClick={() => setTab(t.id)}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all"
-                    style={tab === t.id
-                        ? {background:'linear-gradient(135deg,rgba(0,200,255,0.2),rgba(0,102,255,0.15))',color:'var(--accent)',border:'1px solid rgba(0,200,255,0.3)'}
-                        : {color:'var(--muted)',border:'1px solid transparent'}}>
-                    <Icon name={t.icon} className="w-3.5 h-3.5" />
-                    {t.label}
-                </button>
-            ))}
-        </div>
-
-        {tab === 'labs' && (
-        <div className="space-y-6">
-            <div className="flex items-center mb-2">
-                <a href="https://cyberdefenders.org/p/Afterguard/" target="_blank" rel="noopener noreferrer"
-                   className="flex items-center gap-1 font-mono-custom text-xs ml-auto transition-all"
-                   style={{color:'var(--accent)'}}>
-                    View Full Profile <Icon name="ExternalLink" className="w-3 h-3" />
-                </a>
-            </div>
-
-            {/* Stats row */}
-            {(() => {
-                const total = CD_LABS.length;
-                const counts = CD_LABS.reduce((acc, l) => { acc[l.difficulty] = (acc[l.difficulty]||0)+1; return acc; }, {});
-                const bars = [
-                    { label: 'Easy',    count: counts['Easy']||0,    color: '#00e5a0' },
-                    { label: 'Medium',  count: counts['Medium']||0,  color: '#ffb800' },
-                    { label: 'Hard',    count: counts['Hard']||0,    color: '#ff6b35' },
-                    { label: 'Extreme', count: counts['Extreme']||0, color: '#ff4545' },
-                ];
-                const cats = CD_LABS.reduce((acc, l) => { acc[l.category] = (acc[l.category]||0)+1; return acc; }, {});
-                const maxCat = Math.max(...Object.values(cats));
-                return (
-                <div className="rounded-xl p-6 space-y-6" style={{background:'rgba(0,200,255,0.03)',border:'1px solid rgba(0,200,255,0.12)'}}>
-                    {/* Summary numbers */}
-                    <div className="grid grid-cols-4 gap-3">
-                        {[
-                            { label: 'Total', val: total, color: 'var(--accent)' },
-                            { label: 'Easy', val: counts['Easy']||0, color: '#00e5a0' },
-                            { label: 'Medium', val: counts['Medium']||0, color: '#ffb800' },
-                            { label: 'Hard', val: counts['Hard']||0, color: '#ff6b35' },
-                        ].map((s,i) => (
-                            <div key={i} className="text-center rounded-lg p-3" style={{background:'rgba(0,0,0,0.2)',border:`1px solid ${s.color}20`}}>
-                                <div className="font-syne text-2xl font-black" style={{color:s.color}}>{s.val}</div>
-                                <div className="font-mono-custom text-xs mt-1" style={{color:'var(--muted)'}}>{s.label}</div>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Difficulty bar chart */}
-                    <div>
-                        <p className="font-mono-custom text-xs mb-3" style={{color:'var(--muted)'}}>// difficulty breakdown</p>
-                        <div className="space-y-3">
-                            {bars.map((b,i) => (
-                                <div key={i} className="flex items-center gap-3">
-                                    <span className="font-mono-custom text-xs w-14 text-right flex-shrink-0" style={{color:b.color}}>{b.label}</span>
-                                    <div className="flex-1 rounded-full overflow-hidden" style={{height:'8px',background:'rgba(255,255,255,0.05)'}}>
-                                        <div className="h-full rounded-full transition-all" style={{
-                                            width: total ? `${(b.count/total)*100}%` : '0%',
-                                            background:`linear-gradient(90deg,${b.color},${b.color}99)`,
-                                            boxShadow:`0 0 8px ${b.color}60`
-                                        }} />
-                                    </div>
-                                    <span className="font-mono-custom text-xs w-8 flex-shrink-0" style={{color:'var(--muted)'}}>{b.count}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Category breakdown */}
-                    <div>
-                        <p className="font-mono-custom text-xs mb-3" style={{color:'var(--muted)'}}>// by category</p>
-                        <div className="space-y-2">
-                            {Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([cat, count],i) => (
-                                <div key={i} className="flex items-center gap-3">
-                                    <span className="font-mono-custom text-xs w-36 flex-shrink-0 truncate" style={{color:'var(--text)'}}>{cat}</span>
-                                    <div className="flex-1 rounded-full overflow-hidden" style={{height:'6px',background:'rgba(255,255,255,0.05)'}}>
-                                        <div className="h-full rounded-full" style={{
-                                            width:`${(count/maxCat)*100}%`,
-                                            background:'linear-gradient(90deg,var(--accent),var(--accent2))',
-                                            boxShadow:'0 0 6px rgba(0,200,255,0.4)'
-                                        }} />
-                                    </div>
-                                    <span className="font-mono-custom text-xs w-6 flex-shrink-0 text-right" style={{color:'var(--muted)'}}>{count}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-                );
-            })()}
-
-            {/* Lab cards grid */}
-            {CD_LABS.length === 0 ? (
-                <div className="rounded-xl p-10 text-center" style={{background:'rgba(0,200,255,0.03)',border:'1px dashed rgba(0,200,255,0.2)'}}>
-                    <Icon name="FlaskConical" className="w-8 h-8 mx-auto mb-3" style={{color:'rgba(0,200,255,0.3)'}} />
-                    <p className="font-mono-custom text-xs" style={{color:'var(--muted)'}}>// Add completed labs to CD_LABS in the source to display them here</p>
-                </div>
-            ) : (
-                <div className="grid md:grid-cols-2 gap-3">
-                    {CD_LABS.map((lab, i) => (
-                        <a key={i} href={lab.url} target="_blank" rel="noopener noreferrer">
-                            <Card className="p-5 block">
-                                <div className="flex items-center justify-between mb-2">
-                                    <h3 className="font-syne font-bold text-sm" style={{color:'var(--text)'}}>{lab.name}</h3>
-                                    <Icon name="ExternalLink" className="w-3.5 h-3.5 flex-shrink-0" style={{color:'var(--muted)'}} />
-                                </div>
-                                <div className="flex items-center gap-2 mt-2">
-                                    <span className="font-mono-custom text-xs px-2 py-0.5 rounded" style={{background:'rgba(0,200,255,0.07)',border:'1px solid rgba(0,200,255,0.15)',color:'var(--muted)'}}>{lab.category}</span>
-                                    {lab.difficulty && (
-                                        <span className="font-mono-custom text-xs px-2 py-0.5 rounded" style={{background:`${DIFFICULTY_COLOR[lab.difficulty]||'#888'}18`,border:`1px solid ${DIFFICULTY_COLOR[lab.difficulty]||'#888'}40`,color:DIFFICULTY_COLOR[lab.difficulty]||'#888'}}>{lab.difficulty}</span>
-                                    )}
-                                    {lab.completed && (
-                                        <span className="font-mono-custom text-xs ml-auto" style={{color:'var(--success)'}}>✓ {lab.completed}</span>
-                                    )}
-                                </div>
-                                <div className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-xl" style={{background:'linear-gradient(to bottom,var(--accent),transparent)'}} />
-                            </Card>
-                        </a>
-                    ))}
-                </div>
-            )}
-        </div>
-        )}
-
-        {tab === 'projects' && (
-        <div className="space-y-4">
-            {PROJECTS.map((p, i) => (
-                <Card key={i} className="p-6">
-                    <div className="flex items-start gap-5">
-                        <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-                             style={{background:`rgba(${p.accent==='#00c8ff'?'0,200,255':p.accent==='#7c3aed'?'124,58,237':p.accent==='#00e5a0'?'0,229,160':p.accent==='#0066ff'?'0,102,255':'255,107,53'},0.12)`,border:`1px solid ${p.accent}30`}}>
-                            <Icon name={p.icon} className="w-5 h-5" style={{color:p.accent}} />
-                        </div>
-                        <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-2">
-                                <h3 className="font-syne font-bold" style={{color:'var(--text)'}}>{p.name}</h3>
-                                <span className="font-mono-custom text-xs px-2 py-0.5 rounded" style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.08)',color:'var(--muted)'}}>{p.tag}</span>
-                            </div>
-                            <p className="text-sm leading-relaxed" style={{color:'rgba(226,234,246,0.75)',lineHeight:'1.7'}}>{p.detail}</p>
-                        </div>
-                    </div>
-                    <div className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-xl" style={{background:`linear-gradient(to bottom,${p.accent},transparent)`}} />
-                </Card>
-            ))}
-        </div>
-        )}
-    </div>
-    );
+    return (<div className="space-y-8 animate-fade-up"><div><h2 className="font-syne text-3xl font-bold mt-2">Labs & Projects</h2></div><div className="flex gap-1 p-1 rounded-xl w-fit" style={{background:'rgba(0,200,255,0.05)',border:'1px solid rgba(0,200,255,0.12)'}}>{[{id:'labs',label:'CyberDefenders Labs',icon:'FlaskConical'},{id:'projects',label:'Projects',icon:'Code2'}].map(t => (<button key={t.id} onClick={() => setTab(t.id)} className={`tab-btn flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${tab === t.id ? 'active-tab' : ''}`} style={tab === t.id ? {background:'linear-gradient(135deg,rgba(0,200,255,0.2),rgba(0,102,255,0.15))',color:'var(--accent)',border:'1px solid rgba(0,200,255,0.3)'} : {color:'var(--muted)',border:'1px solid transparent'}}><Icon name={t.icon} className="w-3.5 h-3.5" />{t.label}</button>))}</div>
+    {tab === 'labs' && (<div className="space-y-6"><div className="flex items-center mb-2"><a href="https://cyberdefenders.org/p/Afterguard/" target="_blank" className="flex items-center gap-1 font-mono-custom text-xs ml-auto hover:gap-2 transition-all" style={{color:'var(--accent)'}}>View Full Profile <Icon name="ExternalLink" className="w-3 h-3" /></a></div><div className="grid md:grid-cols-2 gap-3">{CD_LABS.map((lab, i) => (<a key={i} href={lab.url} target="_blank" rel="noopener noreferrer" className="lab-card-link"><Card className="p-5 block hover:border-[var(--accent)] transition-all"><div className="flex items-center justify-between mb-2"><h3 className="lab-title font-syne font-bold text-sm transition-colors">{lab.name}</h3><Icon name="ExternalLink" className="w-3.5 h-3.5 flex-shrink-0" style={{color:'var(--muted)'}} /></div><div className="flex items-center gap-2 mt-2"><span className="font-mono-custom text-xs px-2 py-0.5 rounded" style={{background:'rgba(0,200,255,0.07)',border:'1px solid rgba(0,200,255,0.15)',color:'var(--muted)'}}>{lab.category}</span>{lab.difficulty && (<span className="font-mono-custom text-xs px-2 py-0.5 rounded" style={{background:`${DIFFICULTY_COLOR[lab.difficulty]||'#888'}18`,border:`1px solid ${DIFFICULTY_COLOR[lab.difficulty]||'#888'}40`,color:DIFFICULTY_COLOR[lab.difficulty]||'#888'}}>{lab.difficulty}</span>)}<span className="font-mono-custom text-xs ml-auto" style={{color:'var(--success)'}}>✓ {lab.completed}</span></div><div className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-xl transition-all group-hover:w-1" style={{background:'linear-gradient(to bottom,var(--accent),transparent)'}} /></Card></a>))}</div></div>)}
+    {tab === 'projects' && (<div className="space-y-4">{PROJECTS.map((p, i) => (<Card key={i} className="p-6"><div className="flex items-start gap-5"><div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-all group-hover:scale-105" style={{background:`rgba(${p.accent==='#00c8ff'?'0,200,255':p.accent==='#7c3aed'?'124,58,237':p.accent==='#00e5a0'?'0,229,160':p.accent==='#0066ff'?'0,102,255':'255,107,53'},0.12)`,border:`1px solid ${p.accent}30`}}><Icon name={p.icon} className="w-5 h-5" style={{color:p.accent}} /></div><div className="flex-1"><div className="flex items-center gap-3 mb-2"><h3 className="font-syne font-bold">{p.name}</h3><span className="font-mono-custom text-xs px-2 py-0.5 rounded" style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.08)',color:'var(--muted)'}}>{p.tag}</span></div><p className="text-sm leading-relaxed" style={{color:'rgba(226,234,246,0.75)'}}>{p.detail}</p></div></div><div className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-xl" style={{background:`linear-gradient(to bottom,${p.accent},transparent)`}} /></Card>))}</div>)}</div>);
 };
 
-const CompetitionsPage = () => (
-    <div className="space-y-8 animate-fade-up">
-        <div>
-            <h2 className="font-syne text-3xl font-bold mt-2" style={{color:'var(--text)'}}>Competitions</h2>
-            <p className="text-sm mt-1" style={{color:'var(--muted)'}}>CTF events and team competitions</p>
-        </div>
-        <div className="space-y-4">
-            {COMPETITIONS.map((c, i) => (
-                <Card key={i} className="p-6">
-                    <div className="flex items-start gap-5">
-                        <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-                             style={{background:`rgba(${c.accent==='#7c3aed'?'124,58,237':'0,229,160'},0.12)`,border:`1px solid ${c.accent}30`}}>
-                            <Icon name={c.icon} className="w-5 h-5" style={{color:c.accent}} />
-                        </div>
-                        <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-2">
-                                <h3 className="font-syne font-bold" style={{color:'var(--text)'}}>{c.name}</h3>
-                                <span className="font-mono-custom text-xs px-2 py-0.5 rounded" style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.08)',color:'var(--muted)'}}>{c.tag}</span>
-                                <span className="font-mono-custom text-xs ml-auto" style={{color:'var(--muted)'}}>{c.period}</span>
-                            </div>
-                            <p className="text-sm leading-relaxed" style={{color:'rgba(226,234,246,0.75)',lineHeight:'1.7'}}>{c.detail}</p>
-                        </div>
-                    </div>
-                    <div className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-xl" style={{background:`linear-gradient(to bottom,${c.accent},transparent)`}} />
-                </Card>
-            ))}
-        </div>
-    </div>
-);
+const CompetitionsPage = () => (<div className="space-y-8 animate-fade-up"><div><h2 className="font-syne text-3xl font-bold mt-2">Competitions</h2></div><div className="space-y-4">{COMPETITIONS.map((c, i) => (<Card key={i} className="p-6"><div className="flex items-start gap-5"><div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-all group-hover:scale-105" style={{background:`rgba(${c.accent==='#7c3aed'?'124,58,237':'0,229,160'},0.12)`,border:`1px solid ${c.accent}30`}}><Icon name={c.icon} className="w-5 h-5" style={{color:c.accent}} /></div><div className="flex-1"><div className="flex items-center gap-3 mb-2"><h3 className="font-syne font-bold">{c.name}</h3><span className="font-mono-custom text-xs px-2 py-0.5 rounded" style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.08)',color:'var(--muted)'}}>{c.tag}</span><span className="font-mono-custom text-xs ml-auto" style={{color:'var(--muted)'}}>{c.period}</span></div><p className="text-sm leading-relaxed" style={{color:'rgba(226,234,246,0.75)'}}>{c.detail}</p></div></div><div className="absolute left-0 top-0 bottom-0 w-0.5 rounded-l-xl" style={{background:`linear-gradient(to bottom,${c.accent},transparent)`}} /></Card>))}</div></div>);
 
-const ExperiencePage = () => (
-    <div className="space-y-8 animate-fade-up">
-        <div>
-            <h2 className="font-syne text-3xl font-bold mt-2" style={{color:'var(--text)'}}>Experience</h2>
-        </div>
+const ExperiencePage = () => (<div className="space-y-8 animate-fade-up"><div><h2 className="font-syne text-3xl font-bold mt-2">Experience</h2></div>{EXPERIENCE.map((job, i) => (<Card key={i} className="p-7"><div className="flex items-start gap-4 mb-6"><div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all group-hover:scale-105" style={{background:'rgba(0,200,255,0.1)',border:'1px solid rgba(0,200,255,0.2)'}}><Icon name="Briefcase" className="w-5 h-5" style={{color:'var(--accent)'}} /></div><div><h3 className="font-syne font-black text-lg">{job.role}</h3><p className="font-medium text-sm" style={{color:'var(--accent)'}}>{job.org}</p><p className="font-mono-custom text-xs mt-1" style={{color:'var(--muted)'}}>{job.period}</p></div></div><div className="space-y-3 ml-14">{job.bullets.map((b,j) => (<div key={j} className="flex items-start gap-3 text-sm" style={{color:'rgba(226,234,246,0.8)'}}><span className="font-mono-custom mt-0.5 flex-shrink-0" style={{color:'var(--accent)'}}>›</span>{b}</div>))}</div></Card>))}<div><h3 className="font-syne text-xl font-bold mb-4">Education</h3><Card className="p-7 mt-4"><div className="flex items-start gap-4"><div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all group-hover:scale-105" style={{background:'rgba(0,229,160,0.1)',border:'1px solid rgba(0,229,160,0.2)'}}><Icon name="GraduationCap" className="w-5 h-5" style={{color:'var(--success)'}} /></div><div><h3 className="font-syne font-black text-lg">Cisco Networking Academy</h3><p className="font-medium text-sm" style={{color:'var(--success)'}}>Chesterfield Technical Center</p><p className="text-xs mt-1" style={{color:'var(--muted)'}}>Dual-enrolled college-level IT coursework via Brightpoint Community College</p><p className="font-mono-custom text-xs mt-2" style={{color:'var(--muted)'}}>Aug 2024 – Expected Dec 2026</p></div></div></Card></div></div>);
 
-        {EXPERIENCE.map((job, i) => (
-            <Card key={i} className="p-7">
-                <div className="flex items-start gap-4 mb-6">
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{background:'rgba(0,200,255,0.1)',border:'1px solid rgba(0,200,255,0.2)'}}>
-                        <Icon name="Briefcase" className="w-5 h-5" style={{color:'var(--accent)'}} />
-                    </div>
-                    <div>
-                        <h3 className="font-syne font-black text-lg" style={{color:'var(--text)'}}>{job.role}</h3>
-                        <p className="font-medium text-sm" style={{color:'var(--accent)'}}>{job.org}</p>
-                        <p className="font-mono-custom text-xs mt-1" style={{color:'var(--muted)'}}>{job.period}</p>
-                    </div>
-                </div>
-                <div className="space-y-3 ml-14">
-                    {job.bullets.map((b,j) => (
-                        <div key={j} className="flex items-start gap-3 text-sm" style={{color:'rgba(226,234,246,0.8)'}}>
-                            <span className="font-mono-custom mt-0.5 flex-shrink-0" style={{color:'var(--accent)'}}>›</span>
-                            {b}
-                        </div>
-                    ))}
-                </div>
-            </Card>
-        ))}
+const SkillsPage = () => (<div className="space-y-8 animate-fade-up"><div><h2 className="font-syne text-3xl font-bold mt-2">Skills & Tools</h2></div><div className="grid md:grid-cols-2 gap-4">{SKILLS.map((group, i) => (<Card key={i} className="p-6"><h3 className="font-mono-custom text-xs mb-4" style={{color:'var(--accent)'}}>{group.category.toUpperCase()}</h3><div className="flex flex-wrap gap-2">{group.items.map((item,j) => (<span key={j} className="skill-tag">{item}</span>))}</div></Card>))}</div></div>);
 
-        {/* Education */}
-        <div>
-            <h3 className="font-syne text-xl font-bold mb-4" style={{color:'var(--text)'}}>Education</h3>
-            <Card className="p-7 mt-4">
-                <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{background:'rgba(0,229,160,0.1)',border:'1px solid rgba(0,229,160,0.2)'}}>
-                        <Icon name="GraduationCap" className="w-5 h-5" style={{color:'var(--success)'}} />
-                    </div>
-                    <div>
-                        <h3 className="font-syne font-black text-lg" style={{color:'var(--text)'}}>Cisco Networking Academy</h3>
-                        <p className="font-medium text-sm" style={{color:'var(--success)'}}>Chesterfield Technical Center</p>
-                        <p className="text-xs mt-1" style={{color:'var(--muted)'}}>Dual-enrolled college-level IT coursework via Brightpoint Community College</p>
-                        <p className="font-mono-custom text-xs mt-2" style={{color:'var(--muted)'}}>Aug 2024 – Expected Dec 2026</p>
-                    </div>
-                </div>
-            </Card>
-        </div>
-    </div>
-);
-
-const SkillsPage = () => (
-    <div className="space-y-8 animate-fade-up">
-        <div>
-            <h2 className="font-syne text-3xl font-bold mt-2" style={{color:'var(--text)'}}>Skills & Tools</h2>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-4">
-            {SKILLS.map((group, i) => (
-                <Card key={i} className="p-6">
-                    <h3 className="font-mono-custom text-xs mb-4" style={{color:'var(--accent)'}}>{group.category.toUpperCase()}</h3>
-                    <div className="flex flex-wrap gap-2">
-                        {group.items.map((item,j) => (
-                            <span key={j} className="skill-tag">{item}</span>
-                        ))}
-                    </div>
-                </Card>
-            ))}
-        </div>
-
-        {/* Contact block removed — add contact info to your LinkedIn */}
-    </div>
-);
-
-// ─── Main App ─────────────────────────────────────────────────
+// Main App
 const App = () => {
     const [page, setPage] = useState('home');
     const [mobileOpen, setMobileOpen] = useState(false);
-
     const pages = { home: <HomePage />, certs: <CertsPage />, projects: <ProjectsPage />, competitions: <CompetitionsPage />, experience: <ExperiencePage />, skills: <SkillsPage /> };
-
-    return (
-        <div style={{minHeight:'100vh',background:'var(--bg)',backgroundColor:'#080c12'}}>
-            <Particles />
-            {/* Nav */}
-            <nav className="sticky top-0 z-50 scanlines nav-beam" style={{background:'rgba(8,12,18,0.92)',backdropFilter:'blur(16px)',borderBottom:'1px solid rgba(0,200,255,0.08)',position:'relative'}}>
-                <div className="max-w-5xl mx-auto px-4">
-                    <div className="flex items-center justify-between py-4">
-                        {/* Logo */}
-                        <button onClick={() => setPage('home')} className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{background:'linear-gradient(135deg,var(--accent),var(--accent2))'}}>
-                                <Icon name="Shield" className="w-4 h-4" style={{color:'#080c12'}} />
-                            </div>
-                            <div>
-                                <span className="font-syne font-black text-lg tracking-tight" style={{color:'var(--text)'}}>Afterguard</span>
-                            </div>
-                        </button>
-
-                        {/* Desktop Nav */}
-                        <div className="hidden md:flex items-center gap-1">
-                            {NAV_ITEMS.map(item => (
-                                <button key={item.id} onClick={() => setPage(item.id)}
-                                    className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${page === item.id ? 'nav-active' : ''}`}
-                                    style={page !== item.id ? {color:'var(--muted)'} : {}}>
-                                    <Icon name={item.icon} className="w-3.5 h-3.5" />
-                                    {item.label}
-                                </button>
-                            ))}
-                        </div>
-
-                        {/* Mobile hamburger */}
-                        <button className="md:hidden flex flex-col gap-1.5 p-2" onClick={() => setMobileOpen(!mobileOpen)}>
-                            <span className="hamburger-line" style={mobileOpen ? {transform:'rotate(45deg) translate(4px,5px)'} : {}} />
-                            <span className="hamburger-line" style={mobileOpen ? {opacity:0} : {}} />
-                            <span className="hamburger-line" style={mobileOpen ? {transform:'rotate(-45deg) translate(4px,-5px)'} : {}} />
-                        </button>
-                    </div>
-
-                    {/* Mobile dropdown */}
-                    {mobileOpen && (
-                        <div className="md:hidden pb-4 animate-slide-down" style={{borderTop:'1px solid rgba(0,200,255,0.08)'}}>
-                            {NAV_ITEMS.map(item => (
-                                <button key={item.id} onClick={() => { setPage(item.id); setMobileOpen(false); }}
-                                    className="flex items-center gap-3 w-full px-3 py-3 text-sm font-medium transition-all"
-                                    style={page === item.id ? {color:'var(--accent)'} : {color:'var(--muted)'}}>
-                                    <Icon name={item.icon} className="w-4 h-4" />
-                                    {item.label}
-                                </button>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            </nav>
-
-            {/* Main content */}
-            <main className="max-w-5xl mx-auto px-4 py-12">
-                {pages[page]}
-            </main>
-
-            {/* Footer */}
-            <footer className="text-center py-8 mt-8" style={{borderTop:'1px solid rgba(0,200,255,0.06)'}}>
-                <p className="font-mono-custom text-xs" style={{color:'rgba(107,127,160,0.5)'}}>
-                    © 2026 Afterguard · Johann Weingertner · johannweingertner.github.io
-                </p>
-            </footer>
-        </div>
-    );
+    return (<div style={{minHeight:'100vh',background:'var(--bg)'}}><Particles /><nav className="sticky top-0 z-50 scanlines nav-beam" style={{background:'rgba(8,12,18,0.92)',backdropFilter:'blur(16px)',borderBottom:'1px solid rgba(0,200,255,0.08)'}}><div className="max-w-5xl mx-auto px-4"><div className="flex items-center justify-between py-4"><button onClick={() => setPage('home')} className="flex items-center gap-3 group"><div className="w-8 h-8 rounded-lg flex items-center justify-center transition-all group-hover:scale-105" style={{background:'linear-gradient(135deg,var(--accent),var(--accent2))'}}><Icon name="Shield" className="w-4 h-4" style={{color:'#080c12'}} /></div><span className="font-syne font-black text-lg tracking-tight group-hover:text-[var(--accent)] transition-colors">Afterguard</span></button><div className="hidden md:flex items-center gap-1">{NAV_ITEMS.map(item => (<button key={item.id} onClick={() => setPage(item.id)} className={`nav-btn flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${page === item.id ? 'nav-active' : ''}`} style={page !== item.id ? {color:'var(--muted)'} : {}}><Icon name={item.icon} className="w-3.5 h-3.5" />{item.label}</button>))}</div><button className="md:hidden flex flex-col gap-1.5 p-2" onClick={() => setMobileOpen(!mobileOpen)}><span className="hamburger-line" style={mobileOpen ? {transform:'rotate(45deg) translate(4px,5px)'} : {}} /><span className="hamburger-line" style={mobileOpen ? {opacity:0} : {}} /><span className="hamburger-line" style={mobileOpen ? {transform:'rotate(-45deg) translate(4px,-5px)'} : {}} /></button></div>{mobileOpen && (<div className="md:hidden pb-4 animate-slide-down" style={{borderTop:'1px solid rgba(0,200,255,0.08)'}}>{NAV_ITEMS.map(item => (<button key={item.id} onClick={() => { setPage(item.id); setMobileOpen(false); }} className="flex items-center gap-3 w-full px-3 py-3 text-sm font-medium transition-all hover:bg-white/5" style={page === item.id ? {color:'var(--accent)'} : {color:'var(--muted)'}}><Icon name={item.icon} className="w-4 h-4" />{item.label}</button>))}</div>)}</div></nav><main className="max-w-5xl mx-auto px-4 py-12">{pages[page]}</main><footer className="text-center py-8 mt-8" style={{borderTop:'1px solid rgba(0,200,255,0.06)'}}><p className="font-mono-custom text-xs" style={{color:'rgba(107,127,160,0.5)'}}>© 2026 Afterguard · Johann Weingertner · johannweingertner.github.io</p></footer></div>);
 };
 
 ReactDOM.render(<App />, document.getElementById('root'));
