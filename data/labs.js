@@ -7,6 +7,11 @@
 // ─────────────────────────────────────────────────────────────
 
 const CD_LABS = [
+    { name: 'T1595',                       url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/t1595/',                       category: 'Network Forensics',    difficulty: 'Easy',   completed: '3/27/2026' },
+    { name: 'Tomcat Takeover',             url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/tomcat-takeover/',             category: 'Network Forensics',    difficulty: 'Easy',   completed: '3/24/2026' },
+    { name: 'Web Investigation',           url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/web-investigation/',           category: 'Network Forensics',    difficulty: 'Easy',   completed: '3/23/2026' },
+    { name: 'RetailBreach',                url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/retailbreach/',                category: 'Network Forensics',    difficulty: 'Easy',   completed: '3/22/2026' },
+    { name: 'JetBrains',                   url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/jetbrains/',                   category: 'Network Forensics',    difficulty: 'Easy',   completed: '3/21/2026' },
     { name: 'Poisoned PyTorch',            url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/poisoned-pytorch/',           category: 'Threat Hunting',       difficulty: 'Medium', completed: '3/18/2026' },
     { name: 'ConsentStorm',                url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/consentstorm/',                category: 'Cloud Forensics',      difficulty: 'Medium', completed: '3/16/2026' },
     { name: 'XXE Infiltration',            url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/xxe-infiltration/',            category: 'Network Forensics',    difficulty: 'Easy',   completed: '3/15/2026' },
