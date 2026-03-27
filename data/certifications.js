@@ -116,4 +116,21 @@ const CERTIFICATIONS = [
             'Cloud security tools and best practices',
         ],
     },
+    {
+    name: 'CompTIA Network+',
+    short: 'N10-009',
+    issuer: 'CompTIA',
+    year: 2026,
+    status: 'Active',
+    color: '#c8302a',
+    badge: '/badges/networkplus.png',
+    description: 'Vendor-neutral certification validating networking fundamentals, implementation, operations, security, and troubleshooting.',
+    learned: [
+        'Networking concepts including OSI model, TCP/IP, subnetting',
+        'Infrastructure: cabling, devices (routers/switches), virtualization',
+        'Network operations: monitoring, documentation, high availability',
+        'Network security: threats, access control, hardening',
+        'Troubleshooting: methodology, tools (Wireshark, ping, nmap), performance issues',
+    ],
+},
 ];
