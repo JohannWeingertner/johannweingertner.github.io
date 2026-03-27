@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Afterguard — Johann Weingertner</title>
+    <title>Afterguard Profile</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -550,7 +550,7 @@ const HomePage = () => {
                         Aspiring networking and cybersecurity professional with hands-on experience across both disciplines.
                         On the networking side, I've worked with Cisco devices, built homelabs to practice real-world concepts,
                         and actively studying for my CCNA. On the security side, I've job shadowed at Chesterfield County,
-                        accumulated 250+ hours in the CyberDefenders CyberRange (Top 100), and hold 6 active industry certifications.
+                        accumulated 250+ hours in the CyberDefenders CyberRange (Top 100), and hold {CERTIFICATIONS.length} active industry certifications.
                     </p>
                     <div className="flex flex-wrap gap-4 mt-8">
                         <a href="https://www.linkedin.com/in/johann-weingertner-61b884358/" target="_blank" rel="noopener noreferrer"
@@ -576,7 +576,7 @@ const HomePage = () => {
         {/* Stats row */}
         <div className="grid grid-cols-3 gap-4">
             {[
-                { val: '6', label: 'Certifications', icon: 'Award', color: 'var(--accent)', delay: '0s' },
+                { val: CERTIFICATIONS.length, label: 'Certifications', icon: 'Award', color: 'var(--accent)', delay: '0s' },
                 { val: '250+', label: 'Lab Hours', icon: 'Clock', color: 'var(--success)', delay: '0.1s' },
                 { val: 'Top 100', label: 'CyberDefenders', icon: 'Trophy', color: '#7c3aed', delay: '0.2s' },
             ].map((s, i) => (
