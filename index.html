@@ -12,6 +12,9 @@
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- ── Data files — edit these to update content ── -->
+    <script src="/data/certifications.js"></script>
+    <script src="/data/labs.js"></script>
     <style>
         :root {
             --bg:        #080c12;
@@ -466,116 +469,7 @@ const Icon = ({ name, className = "w-5 h-5", ...props }) => {
     return <i ref={ref} className={`flex-shrink-0 ${className}`} {...props} />;
 };
 
-// ─── Data ────────────────────────────────────────────────────
-const CERTIFICATIONS = [
-    {
-        name: 'Certified CyberDefenders Level 1', short: 'CCDL1', issuer: 'CyberDefenders', year: 2026, status: 'Active', color: '#00c8ff', badge: '/badges/ccdl1.png',
-        featured: true,
-        description: 'Hands-on blue team certification covering real-world attack investigations across multiple artifact types.',
-        learned: [
-            'Monitored and investigated endpoints using Windows & Linux logs',
-            'Detected AD privilege escalation and suspicious activity',
-            'Analyzed network traffic using Wireshark for port scans and beaconing',
-            'Threat hunted in Splunk (SPL) and Microsoft Sentinel (KQL)',
-            'Analyzed phishing emails and malicious documents for VBA macros and template injection',
-            'Performed Windows & Linux forensic investigations (logs, registry, memory, OS artifacts)',
-            'Investigated AWS CloudTrail and GuardDuty for cloud-based threats',
-            'Identified IOCs through log and user behavior analysis',
-        ],
-    },
-    {
-        name: 'Core Certified Power User', short: 'SPLK-1002', issuer: 'Splunk', year: 2026, status: 'Active', color: '#ff6b35', badge: '/badges/splunk.png',
-        description: 'Advanced Splunk certification validating expertise in search processing language and data analysis.',
-        learned: [
-            'Advanced SPL for complex search queries and data correlation',
-            'Built dashboards, reports, and alerts for security monitoring',
-            'Used statistical and eval commands for threat analysis',
-            'Created knowledge objects including field extractions and lookups',
-            'Investigated security incidents using Splunk SIEM workflows',
-        ]
-    },
-    {
-        name: 'CompTIA A+', short: 'A+', issuer: 'CompTIA', year: 2025, status: 'Active', color: '#c8302a', badge: '/badges/aplus.png',
-        description: 'Industry-standard certification validating foundational IT skills across hardware, OS, networking, and troubleshooting.',
-        learned: [
-            'Hardware installation, configuration, and troubleshooting',
-            'Windows, macOS, and Linux operating system support',
-            'Networking fundamentals including TCP/IP, DNS, DHCP',
-            'Mobile device management and support',
-            'Security best practices and endpoint hardening',
-            'Virtualization and cloud computing basics',
-        ]
-    },
-    {
-        name: 'CompTIA Security+', short: 'SY0-701', issuer: 'CompTIA', year: 2025, status: 'Active', color: '#c8302a', badge: '/badges/secplus.png',
-        description: 'Globally recognized certification validating core cybersecurity skills required for security analyst roles.',
-        learned: [
-            'Threats, attacks, and vulnerability identification',
-            'Security architecture and network design principles',
-            'Implementation of security controls and protocols',
-            'Identity and access management (IAM)',
-            'Risk management and incident response procedures',
-            'Cryptography and PKI fundamentals',
-            'Cloud and virtualization security',
-        ]
-    },
-    {
-        name: 'Certified in Cybersecurity', short: 'CC', issuer: 'ISC2', year: 2025, status: 'Active', color: '#00a3e0', badge: '/badges/isc2cc.png',
-        description: 'Entry-level ISC2 certification covering foundational cybersecurity principles and practices.',
-        learned: [
-            'Security principles and the CIA triad',
-            'Business continuity, disaster recovery, and incident response',
-            'Access controls and identity management',
-            'Network security fundamentals',
-            'Security operations and monitoring basics',
-        ]
-    },
-    {
-        name: 'Azure Fundamentals', short: 'AZ-900', issuer: 'Microsoft', year: 2025, status: 'Active', color: '#0078d4', badge: '/badges/az900.png',
-        description: 'Microsoft certification validating foundational knowledge of cloud concepts and Azure services.',
-        learned: [
-            'Core cloud computing concepts and deployment models',
-            'Azure core services: compute, networking, storage',
-            'Azure security, privacy, compliance, and trust',
-            'Azure pricing, SLAs, and service lifecycle',
-            'Identity services including Azure Active Directory',
-            'Cloud security tools and best practices',
-        ]
-    },
-];
-
-// ── CyberDefenders completed labs ────────────────────────────
-const CD_LABS = [
-    { name: 'Poisoned PyTorch', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/poisoned-pytorch/', category: 'Threat Hunting', difficulty: 'Medium', completed: '3/18/2026' },
-    { name: 'ConsentStorm', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/consentstorm/', category: 'Cloud Forensics', difficulty: 'Medium', completed: '3/16/2026' },
-    { name: 'XXE Infiltration', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/xxe-infiltration/', category: 'Network Forensics', difficulty: 'Easy', completed: '3/15/2026' },
-    { name: 'DanaBot', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/danabot/', category: 'Network Forensics', difficulty: 'Easy', completed: '3/14/2026' },
-    { name: 'CallMeOnTheChain - EtherRAT', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/callmeonthechain-etherrat/', category: 'Network Forensics', difficulty: 'Medium', completed: '3/13/2026' },
-    { name: 'Volatility Traces', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/volatility-traces/', category: 'Endpoint Forensics', difficulty: 'Easy', completed: '3/12/2026' },
-    { name: 'Perfect Survey', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/perfect-survey/', category: 'Threat Hunting', difficulty: 'Medium', completed: '3/11/2026' },
-    { name: 'Stolen Time - HiddenTear', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/stolen-time-hiddentear/', category: 'Threat Hunting', difficulty: 'Medium', completed: '3/6/2026' },
-    { name: 'SigmaPredator', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/sigmapredator/', category: 'Detection Engineering', difficulty: 'Easy', completed: '3/5/2026' },
-    { name: 'RevengeHotels APT', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/revengehotels/', category: 'Endpoint Forensics', difficulty: 'Easy', completed: '3/4/2026' },
-    { name: 'Rogue Azure', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/rogue-azure/', category: 'Cloud Forensics', difficulty: 'Easy', completed: '3/4/2026' },
-    { name: 'DynamicEscalate', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/dynamicescalate/', category: 'Cloud Forensics', difficulty: 'Easy', completed: '3/4/2026' },
-    { name: 'AbuSESer - Trufflenet', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/abuser-trufflenet/', category: 'Cloud Forensics', difficulty: 'Easy', completed: '3/4/2026' },
-    { name: 'ContainerBreak - Rootkit Trail', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/containerbreak-rootkit-trail/', category: 'Endpoint Forensics', difficulty: 'Easy', completed: '3/3/2026' },
-    { name: 'AWSWatcher', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/awswatcher/', category: 'Cloud Forensics', difficulty: 'Easy', completed: '3/7/2026' },
-    { name: 'RediShell - Kinsing', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/redishell-kinsing/', category: 'Network Forensics', difficulty: 'Easy', completed: '3/2/2026' },
-    { name: 'Maranhao', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/maranhao/', category: 'Endpoint Forensics', difficulty: 'Easy', completed: '3/2/2026' },
-    { name: 'Openfire', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/openfire/', category: 'Network Forensics', difficulty: 'Easy', completed: '3/2/2026' },
-    { name: 'Lockdown', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/lockdown/', category: 'Network Forensics', difficulty: 'Easy', completed: '3/1/2026' },
-    { name: 'Tusk Infostealer', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/tusk-infostealer/', category: 'Threat Intel', difficulty: 'Easy', completed: '3/9/2026' },
-    { name: 'XLMRat', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/xlmrat/', category: 'Network Forensics', difficulty: 'Easy', completed: '1/15/2026' },
-    { name: 'PsExec Hunt', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/psexec-hunt/', category: 'Network Forensics', difficulty: 'Easy', completed: '1/15/2026' },
-    { name: 'The Crime', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/the-crime/', category: 'Endpoint Forensics', difficulty: 'Easy', completed: '1/15/2026' },
-    { name: 'Lespion', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/lespion/', category: 'Threat Intel', difficulty: 'Easy', completed: '1/13/2026' },
-    { name: 'Amadey - APT-C-36', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/amadey-apt-c-36/', category: 'Endpoint Forensics', difficulty: 'Easy', completed: '1/12/2026' },
-    { name: 'Yellow RAT', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/yellow-rat/', category: 'Threat Intel', difficulty: 'Easy', completed: '1/12/2026' },
-    { name: 'PoisonedCredentials', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/poisonedcredentials/', category: 'Network Forensics', difficulty: 'Easy', completed: '1/11/2026' },
-    { name: 'Oski', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/oski/', category: 'Threat Intel', difficulty: 'Easy', completed: '1/10/2026' },
-    { name: 'WebStrike', url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/webstrike/', category: 'Network Forensics', difficulty: 'Easy', completed: '1/10/2026' },
-];
+// ─── Data loaded from /data/certifications.js and /data/labs.js ───
 
 const SKILLS = [
     { category: 'SIEM & Threat Hunting', items: ['Splunk SPL', 'Microsoft Sentinel KQL', 'Log Analysis', 'Threat Hunting', 'AWS CloudTrail', 'Azure Sentinel'] },
