@@ -757,6 +757,7 @@ const DIFFICULTY_COLOR = { Easy: '#00e5a0', Medium: '#ffb800', Hard: '#ff4545', 
 
 const ProjectsPage = () => {
     const [tab, setTab] = useState('labs');
+    const [difficultyFilter, setDifficultyFilter] = useState('All');
     return (
     <div className="space-y-8 animate-fade-up">
         <div>
@@ -859,15 +860,30 @@ const ProjectsPage = () => {
                 );
             })()}
 
+            {/* Difficulty Filter */}
+            <div className="flex gap-1 p-1 rounded-xl w-fit" style={{background:'rgba(0,200,255,0.05)',border:'1px solid rgba(0,200,255,0.12)'}}>
+                {['All', 'Easy', 'Medium', 'Hard', 'Extreme'].map(diff => (
+                    <button key={diff} onClick={() => setDifficultyFilter(diff)}
+                        className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all hover:scale-105"
+                        style={difficultyFilter === diff
+                            ? {background:'linear-gradient(135deg,rgba(0,200,255,0.2),rgba(0,102,255,0.15))',color:'var(--accent)',border:'1px solid rgba(0,200,255,0.3)'}
+                            : {color:'var(--muted)',border:'1px solid transparent'}}>
+                        {diff}
+                    </button>
+                ))}
+            </div>
+
             {/* Lab cards grid */}
-            {CD_LABS.length === 0 ? (
+            {(() => {
+                const filteredLabs = difficultyFilter === 'All' ? CD_LABS : CD_LABS.filter(lab => lab.difficulty === difficultyFilter);
+                return filteredLabs.length === 0 ? (
                 <div className="rounded-xl p-10 text-center" style={{background:'rgba(0,200,255,0.03)',border:'1px dashed rgba(0,200,255,0.2)'}}>
                     <Icon name="FlaskConical" className="w-8 h-8 mx-auto mb-3" style={{color:'rgba(0,200,255,0.3)'}} />
-                    <p className="font-mono-custom text-xs" style={{color:'var(--muted)'}}>// Add completed labs to CD_LABS in the source to display them here</p>
+                    <p className="font-mono-custom text-xs" style={{color:'var(--muted)'}}>// No labs match the selected difficulty filter</p>
                 </div>
             ) : (
                 <div className="grid md:grid-cols-2 gap-3">
-                    {CD_LABS.map((lab, i) => (
+                    {filteredLabs.map((lab, i) => (
                         <a key={i} href={lab.url} target="_blank" rel="noopener noreferrer">
                             <Card className="p-5 block">
                                 <div className="flex items-center justify-between mb-2">
