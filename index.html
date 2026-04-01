@@ -78,6 +78,7 @@
         @keyframes popIn { 0%{transform:scale(0.65);opacity:0;} 65%{transform:scale(1.06);} 100%{transform:scale(1);opacity:1;} }
         @keyframes shimmer { from{transform:translateX(-100%) skewX(-12deg);} to{transform:translateX(260%) skewX(-12deg);} }
         @keyframes slideDown { from{opacity:0;transform:translateY(-6px);} to{opacity:1;transform:translateY(0);} }
+        @keyframes modalIn { from{opacity:0;transform:scale(0.93) translateY(10px);} to{opacity:1;transform:scale(1) translateY(0);} }
 
         .fade-up   { animation: fadeUp 0.42s ease both; }
         .fade-up-1 { animation: fadeUp 0.42s 0.07s ease both; }
@@ -106,6 +107,12 @@
         .toggle-wrap { display: inline-flex; background: var(--surface2); border: 1px solid var(--border); border-radius: 11px; padding: 3px; gap: 2px; flex-wrap: nowrap; white-space: nowrap; }
         .toggle-btn { padding: 6px 15px; border-radius: 8px; font-size: 0.84rem; font-weight: 500; color: var(--muted); transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px; background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; white-space: nowrap; }
         .toggle-btn.on { background: var(--surface3); color: var(--primary-light); border: 1px solid rgba(59,130,246,0.3); }
+
+        /* Modal */
+        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(12px); z-index:10000; display:flex; align-items:center; justify-content:center; padding:1rem; animation:fadeIn 0.18s ease both; }
+        .modal-box { background:var(--surface); border:1px solid var(--border2); border-radius:20px; max-width:520px; width:100%; max-height:85vh; overflow-y:auto; animation:modalIn 0.25s cubic-bezier(0.34,1.2,0.64,1) both; box-shadow:0 40px 80px rgba(0,0,0,0.55); }
+        .modal-box::-webkit-scrollbar { width:3px; }
+        .modal-box::-webkit-scrollbar-thumb { background:var(--surface3); border-radius:2px; }
 
         /* Nav spacing */
         .nav-spacer { flex: 1; }
@@ -200,8 +207,55 @@ const CertBadgeImg = ({ src, alt, fallback, size=60 }) => (
     </div>
 );
 
-const handleCertClick = (cert) => {
-    if (cert.url) window.open(cert.url, '_blank');
+// ── Cert Modal Component ─────────────────────────────────────
+const CertModal = ({ cert, onClose }) => {
+    useEffect(() => {
+        const handleEsc = (e) => { if (e.key === 'Escape') onClose(); };
+        document.addEventListener('keydown', handleEsc);
+        return () => document.removeEventListener('keydown', handleEsc);
+    }, [onClose]);
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-box" onClick={e => e.stopPropagation()}>
+                <div style={{padding:'24px 24px 20px', borderBottom:'1px solid var(--border)'}}>
+                    <div style={{display:'flex', alignItems:'flex-start', gap:16}}>
+                        <CertBadgeImg src={cert.badge} alt={cert.short} fallback={cert.short} size={58} />
+                        <div style={{flex:1, minWidth:0}}>
+                            <div style={{display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:8}}>
+                                <p style={{fontSize:'1rem', fontWeight:700, color:'var(--text)', lineHeight:1.3}}>{cert.name}</p>
+                                <button onClick={onClose} style={{color:'var(--muted)', background:'none', border:'none', cursor:'pointer', flexShrink:0}}>
+                                    <Icon name="X" className="w-5 h-5"/>
+                                </button>
+                            </div>
+                            <p className="mono mt-1" style={{fontSize:'0.68rem', color:'var(--muted)'}}>{cert.issuer} · {cert.year}</p>
+                            <div style={{marginTop:8}}><Badge color="emerald">Active</Badge></div>
+                        </div>
+                    </div>
+                    {cert.description && <p style={{marginTop:16, fontSize:'0.85rem', lineHeight:1.65, color:'var(--text2)'}}>{cert.description}</p>}
+                </div>
+                {cert.learned && cert.learned.length > 0 && (
+                    <div style={{padding:'20px 24px'}}>
+                        <p className="mono mb-4" style={{fontSize:'0.65rem', color:'var(--primary)', letterSpacing:'0.1em'}}>WHAT I LEARNED</p>
+                        <div style={{display:'flex', flexDirection:'column', gap:9}}>
+                            {cert.learned.map((item, i) => (
+                                <div key={i} style={{display:'flex', alignItems:'flex-start', gap:10, fontSize:'0.85rem', color:'var(--text2)'}}>
+                                    <span style={{color:'var(--primary)', flexShrink:0, marginTop:2, fontWeight:600}}>·</span>{item}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+                {cert.url && (
+                    <div style={{padding:'16px 24px 24px', borderTop:'1px solid var(--border)'}}>
+                        <a href={cert.url} target="_blank" rel="noopener noreferrer" style={{display:'inline-flex', alignItems:'center', gap:8, color:'var(--primary)', textDecoration:'none', fontSize:'0.85rem', fontWeight:500}}>
+                            View official credential <Icon name="ExternalLink" className="w-4 h-4"/>
+                        </a>
+                    </div>
+                )}
+                <div style={{position:'absolute', left:0, top:0, bottom:0, width:3, borderRadius:'20px 0 0 20px', background:'linear-gradient(to bottom, var(--primary), transparent)'}}/>
+            </div>
+        </div>
+    );
 };
 
 // ── Pages ─────────────────────────────────────────────────────
@@ -259,13 +313,19 @@ const HomePage = () => {
 };
 
 const CertsPage = () => {
+    const [selectedCert, setSelectedCert] = useState(null);
     const featured = CERTIFICATIONS?.find(c=>c.featured);
     const rest = CERTIFICATIONS?.filter(c=>!c.featured) || [];
+    
+    const openModal = (cert) => {
+        setSelectedCert(cert);
+    };
+    
     return (
     <div className="fade-up" style={{display:'flex',flexDirection:'column',gap:16}}>
         <PageHeader title="Certifications" sub="Click any certification to view details"/>
         {featured && (
-        <div onClick={() => handleCertClick(featured)} className="featured-card w-full text-left fade-up-1" style={{background:'none',border:'none',cursor:'pointer',padding:0}}>
+        <div onClick={() => openModal(featured)} className="featured-card w-full text-left fade-up-1" style={{background:'none',border:'none',cursor:'pointer',padding:0}}>
             <div style={{position:'absolute',top:14,right:14}}><Badge color="primary">★ Featured</Badge></div>
             <div style={{padding:'28px 24px',display:'flex',gap:22,alignItems:'flex-start',flexWrap:'wrap',background:'linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%)'}}>
                 <CertBadgeImg src={featured.badge} alt={featured.short} fallback={featured.short} size={82}/>
@@ -286,7 +346,7 @@ const CertsPage = () => {
         )}
         <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(240px,1fr))',gap:10}}>
             {rest.map((c,i)=>(
-                <div key={i} onClick={() => handleCertClick(c)} className="text-left w-full fade-up-2" style={{cursor:'pointer',padding:0}}>
+                <div key={i} onClick={() => openModal(c)} className="text-left w-full fade-up-2" style={{cursor:'pointer',padding:0}}>
                     <Card style={{padding:18,cursor:'pointer',height:'100%'}}>
                         <div style={{display:'flex',alignItems:'flex-start',gap:12}}>
                             <CertBadgeImg src={c.badge} alt={c.short} fallback={c.short} size={48}/>
@@ -295,8 +355,8 @@ const CertsPage = () => {
                                 <p className="mono" style={{fontSize:'0.67rem',color:'var(--muted)',marginBottom:8}}>{c.issuer} · {c.year}</p>
                                 <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
                                     <Badge color="emerald">Active</Badge>
-                                    <span className="mono" style={{display:'flex',alignItems:'center',gap:3,fontSize:'0.63rem',color:'var(--primary)'}}>
-                                        view <Icon name="ExternalLink" className="w-3 h-3"/>
+                                    <span className="mono" style={{display:'flex',alignItems:'center',gap:3,fontSize:'0.7rem',color:'var(--primary)',fontWeight:500}}>
+                                        View credential <Icon name="ExternalLink" className="w-3 h-3"/>
                                     </span>
                                 </div>
                             </div>
@@ -305,6 +365,7 @@ const CertsPage = () => {
                 </div>
             ))}
         </div>
+        {selectedCert && <CertModal cert={selectedCert} onClose={() => setSelectedCert(null)} />}
     </div>
     );
 };
