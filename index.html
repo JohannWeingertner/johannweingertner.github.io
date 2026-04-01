@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>johannweingertner.github.io</title>
+    <!-- Favicon - Custom shield SVG matching cybersecurity theme (steel blue) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'%3E%3Cpath d='M12 2L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3z'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -17,51 +19,51 @@
     <script src="/data/labs.js"></script>
     <style>
         :root {
-            --bg:        #0e0e11;
-            --surface:   #16161a;
-            --surface2:  #1c1c22;
-            --surface3:  #242429;
-            --p-lavender: #c4b5fd;
-            --p-sky:      #bae6fd;
-            --p-mint:     #a7f3d0;
-            --p-peach:    #fcd5b0;
-            --p-rose:     #fda4af;
-            --p-lemon:    #fef08a;
-            --text:      #f0eff4;
-            --text2:     #c4c2cc;
-            --muted:     #6b6878;
-            --border:    rgba(255,255,255,0.07);
-            --border2:   rgba(255,255,255,0.13);
+            --bg:        #0a0c10;
+            --surface:   #111317;
+            --surface2:  #181c22;
+            --surface3:  #1f252e;
+            --primary:   #3b82f6;
+            --primary-light: #60a5fa;
+            --primary-dim: #1e3a8a;
+            --accent-cyan: #22d3ee;
+            --accent-emerald: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-slate: #64748b;
+            --text:      #f1f5f9;
+            --text2:     #cbd5e6;
+            --muted:     #6c7a91;
+            --border:    rgba(255,255,255,0.06);
+            --border2:   rgba(255,255,255,0.12);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; }
         body::before {
             content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
         }
         .mono { font-family: 'DM Mono', monospace; }
 
         /* Cards */
         .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; position: relative; overflow: hidden; transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s; }
-        .card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.35); }
+        .card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
 
         /* Nav */
         .nav-pill { border-radius: 9px; padding: 6px 13px; font-size: 0.84rem; font-weight: 500; transition: all 0.15s; color: var(--muted); background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; font-family: 'DM Sans', sans-serif; }
         .nav-pill:hover { color: var(--text2); background: var(--surface2); }
-        .nav-pill.active { background: var(--surface2); color: var(--text); border: 1px solid var(--border2); }
+        .nav-pill.active { background: var(--surface2); color: var(--primary-light); border: 1px solid rgba(59,130,246,0.3); }
 
-        /* Pastel tags */
+        /* Tags - modern professional colors */
         .ptag { font-family: 'DM Mono', monospace; font-size: 0.67rem; padding: 2px 8px; border-radius: 5px; font-weight: 500; }
-        .ptag-lavender { background: rgba(196,181,253,0.12); color: var(--p-lavender); border: 1px solid rgba(196,181,253,0.2); }
-        .ptag-sky      { background: rgba(186,230,253,0.10); color: var(--p-sky);      border: 1px solid rgba(186,230,253,0.18); }
-        .ptag-mint     { background: rgba(167,243,208,0.10); color: var(--p-mint);     border: 1px solid rgba(167,243,208,0.18); }
-        .ptag-peach    { background: rgba(252,213,176,0.10); color: var(--p-peach);    border: 1px solid rgba(252,213,176,0.18); }
-        .ptag-rose     { background: rgba(253,164,175,0.10); color: var(--p-rose);     border: 1px solid rgba(253,164,175,0.18); }
-        .ptag-lemon    { background: rgba(254,240,138,0.10); color: var(--p-lemon);    border: 1px solid rgba(254,240,138,0.18); }
+        .ptag-primary { background: rgba(59,130,246,0.12); color: var(--primary-light); border: 1px solid rgba(59,130,246,0.25); }
+        .ptag-cyan   { background: rgba(34,211,238,0.08); color: var(--accent-cyan); border: 1px solid rgba(34,211,238,0.2); }
+        .ptag-emerald{ background: rgba(16,185,129,0.08); color: var(--accent-emerald); border: 1px solid rgba(16,185,129,0.2); }
+        .ptag-amber  { background: rgba(245,158,11,0.08); color: var(--accent-amber); border: 1px solid rgba(245,158,11,0.2); }
+        .ptag-slate  { background: rgba(100,116,139,0.12); color: var(--accent-slate); border: 1px solid rgba(100,116,139,0.2); }
 
         /* Skill pills */
         .skill-pill { background: var(--surface2); border: 1px solid var(--border); color: var(--text2); font-size: 0.78rem; padding: 4px 12px; border-radius: 999px; transition: all 0.15s; }
-        .skill-pill:hover { border-color: var(--border2); color: var(--text); }
+        .skill-pill:hover { border-color: var(--border2); color: var(--text); background: var(--surface3); }
 
         /* Scrollbar */
         ::-webkit-scrollbar { width: 4px; }
@@ -73,7 +75,6 @@
         @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
         @keyframes pulseDot { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
         @keyframes typeBlink { 0%,100%{opacity:1;} 50%{opacity:0;} }
-        @keyframes modalIn { from{opacity:0;transform:scale(0.93) translateY(10px);} to{opacity:1;transform:scale(1) translateY(0);} }
         @keyframes popIn { 0%{transform:scale(0.65);opacity:0;} 65%{transform:scale(1.06);} 100%{transform:scale(1);opacity:1;} }
         @keyframes shimmer { from{transform:translateX(-100%) skewX(-12deg);} to{transform:translateX(260%) skewX(-12deg);} }
         @keyframes slideDown { from{opacity:0;transform:translateY(-6px);} to{opacity:1;transform:translateY(0);} }
@@ -83,48 +84,37 @@
         .fade-up-2 { animation: fadeUp 0.42s 0.14s ease both; }
         .fade-up-3 { animation: fadeUp 0.42s 0.21s ease both; }
         .pulse-dot { animation: pulseDot 2.2s ease-in-out infinite; }
-        .type-cursor { display:inline-block; width:2px; height:1em; background:var(--p-lavender); margin-left:2px; vertical-align:text-bottom; animation:typeBlink 0.75s step-end infinite; }
-        .shimmer-card::after { content:''; position:absolute; top:0; left:0; width:35%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.025),transparent); animation:shimmer 4.5s ease-in-out infinite; pointer-events:none; }
+        .type-cursor { display:inline-block; width:2px; height:1em; background:var(--primary); margin-left:2px; vertical-align:text-bottom; animation:typeBlink 0.75s step-end infinite; }
+        .shimmer-card::after { content:''; position:absolute; top:0; left:0; width:35%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.02),transparent); animation:shimmer 4.5s ease-in-out infinite; pointer-events:none; }
         .stat-pop   { animation: popIn 0.48s cubic-bezier(0.34,1.4,0.64,1) both; }
         .stat-pop-1 { animation: popIn 0.48s 0.09s cubic-bezier(0.34,1.4,0.64,1) both; }
         .stat-pop-2 { animation: popIn 0.48s 0.18s cubic-bezier(0.34,1.4,0.64,1) both; }
         .slide-down { animation: slideDown 0.15s ease both; }
 
-        /* Modal */
-        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.72); backdrop-filter:blur(10px); z-index:10000; display:flex; align-items:center; justify-content:center; padding:1rem; animation:fadeIn 0.18s ease both; }
-        .modal-box { background:var(--surface); border:1px solid var(--border2); border-radius:20px; max-width:500px; width:100%; max-height:85vh; overflow-y:auto; animation:modalIn 0.25s cubic-bezier(0.34,1.2,0.64,1) both; box-shadow:0 40px 80px rgba(0,0,0,0.55); }
-        .modal-box::-webkit-scrollbar { width:3px; }
-        .modal-box::-webkit-scrollbar-thumb { background:var(--surface3); border-radius:2px; }
-
         /* Featured cert */
-        .featured-card { background:var(--surface); border:1px solid rgba(196,181,253,0.22); border-radius:18px; position:relative; overflow:hidden; transition:border-color 0.2s, box-shadow 0.2s; cursor:pointer; }
-        .featured-card:hover { border-color:rgba(196,181,253,0.45); box-shadow:0 0 40px rgba(196,181,253,0.07); }
+        .featured-card { background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%); border: 1px solid rgba(59,130,246,0.35); border-radius: 18px; position: relative; overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s; cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .featured-card:hover { border-color: rgba(59,130,246,0.65); box-shadow: 0 0 32px rgba(59,130,246,0.1); }
 
         /* Cert ring */
-        .cert-ring { background:var(--surface2); border:1px solid var(--border2); }
+        .cert-ring { background: var(--surface3); border: 1px solid rgba(59,130,246,0.4); border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
 
         /* Diff bar */
-        .diff-bar-track { height:5px; background:var(--surface3); border-radius:99px; overflow:hidden; }
-        .diff-bar-fill { height:100%; border-radius:99px; }
+        .diff-bar-track { height:5px; background: var(--surface3); border-radius: 99px; overflow: hidden; }
+        .diff-bar-fill { height:100%; border-radius: 99px; }
 
         /* Toggle */
-        .toggle-wrap { display:inline-flex; background:var(--surface2); border:1px solid var(--border); border-radius:11px; padding:3px; gap:2px; }
-        .toggle-btn { padding:6px 15px; border-radius:8px; font-size:0.84rem; font-weight:500; color:var(--muted); transition:all 0.15s; display:flex; align-items:center; gap:6px; background:none; border:none; cursor:pointer; font-family:'DM Sans',sans-serif; }
-        .toggle-btn.on { background:var(--surface3); color:var(--text); border:1px solid var(--border2); }
+        .toggle-wrap { display: inline-flex; background: var(--surface2); border: 1px solid var(--border); border-radius: 11px; padding: 3px; gap: 2px; flex-wrap: nowrap; white-space: nowrap; }
+        .toggle-btn { padding: 6px 15px; border-radius: 8px; font-size: 0.84rem; font-weight: 500; color: var(--muted); transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px; background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; white-space: nowrap; }
+        .toggle-btn.on { background: var(--surface3); color: var(--primary-light); border: 1px solid rgba(59,130,246,0.3); }
 
-        /* Hamburger */
-        .hline { display:block; width:17px; height:1.5px; background:var(--muted); border-radius:2px; transition:all 0.22s; }
+        /* Nav spacing */
+        .nav-spacer { flex: 1; }
+        @media (max-width: 768px) { .nav-spacer { display: none; } }
+        .md\:hidden { display: none !important; }
+        button.md\:hidden { display: none !important; }
         
-        /* Custom spacing for nav */
-        .nav-spacer {
-            flex: 1;
-        }
-        
-        @media (max-width: 768px) {
-            .nav-spacer {
-                display: none;
-            }
-        }
+        .page-header h1 { white-space: nowrap; }
+        @media (max-width: 640px) { .page-header h1 { white-space: normal; font-size: 1.5rem; } }
     </style>
 </head>
 <body>
@@ -159,23 +149,23 @@ const useTyping = (text, speed = 42, delay = 800) => {
 
 // ── Static data ───────────────────────────────────────────────
 const SKILLS = [
-    { category:'SIEM & Threat Hunting', color:'lavender', items:['Splunk SPL','Sentinel KQL','Log Analysis','Threat Hunting','AWS CloudTrail','Azure Sentinel'] },
-    { category:'Digital Forensics',     color:'sky',      items:['Memory Forensics','Disk Forensics','Windows Event Logs','FTK Imager','Autopsy','Volatility','EZ Tools'] },
-    { category:'Network & Traffic',     color:'mint',     items:['Traffic Analysis','Wireshark','Port Scan Detection','Beaconing Analysis'] },
-    { category:'Cloud & Infrastructure',color:'peach',    items:['Cloud Security (Azure & AWS)','Active Directory','DHCP/DNS','GuardDuty'] },
-    { category:'Intel & OSINT',         color:'rose',     items:['OSINT','OleTools','Phishing Analysis','VBA Macro Analysis','IOC Identification'] },
+    { category:'SIEM & Threat Hunting', color:'primary', items:['Splunk SPL','Sentinel KQL','Log Analysis','Threat Hunting','AWS CloudTrail','Azure Sentinel'] },
+    { category:'Digital Forensics',     color:'cyan',    items:['Memory Forensics','Disk Forensics','Windows Event Logs','FTK Imager','Autopsy','Volatility','EZ Tools'] },
+    { category:'Network & Traffic',     color:'emerald', items:['Traffic Analysis','Wireshark','Port Scan Detection','Beaconing Analysis'] },
+    { category:'Cloud & Infrastructure',color:'amber',   items:['Cloud Security (Azure & AWS)','Active Directory','DHCP/DNS','GuardDuty'] },
+    { category:'Intel & OSINT',         color:'slate',   items:['OSINT','OleTools','Phishing Analysis','VBA Macro Analysis','IOC Identification'] },
 ];
 const PROJECTS = [
-    { name:'Active Directory Lab',       detail:'Deployed Windows Server DC, configured domain, joined client, managed users',                                         icon:'Server',  color:'sky'   },
-    { name:'School Gaming Tournament',   detail:'Deployed LAN for 50+ concurrent players, configured DHCP/DNS, resolved misconfiguration under pressure',              icon:'Network', color:'peach' },
+    { name:'Active Directory Lab',       detail:'Deployed Windows Server DC, configured domain, joined client, managed users',                                         icon:'Server',  color:'primary' },
+    { name:'School Gaming Tournament',   detail:'Deployed LAN for 50+ concurrent players, configured DHCP/DNS, resolved misconfiguration under pressure',              icon:'Network', color:'cyan' },
 ];
 const EXPERIENCE = [{
     role:'Cybersecurity Intern', org:'Chesterfield County IST Department', period:'June 2025 – February 2026',
     bullets:['Participated in tabletop exercise simulating cybersecurity incident response','Gained exposure to enterprise ticketing, security workflows, and professional mindset','Developed understanding of compliance auditing and cybersecurity insurance requirements','Observed security team communication and documentation practices'],
 }];
 const COMPETITIONS = [
-    { name:'National Cyber League (NCL)', detail:'Top 15% overall (Rank 1189 / 7875) · Top 9% High School bracket (Rank 91 / 1046)', icon:'Trophy', color:'lavender', period:'Fall 2025' },
-    { name:'CyberPatriot',                detail:'Top 30% — Windows hardening, vulnerability auditing, malware hunting',                icon:'Shield', color:'mint',     period:'2025'      },
+    { name:'National Cyber League (NCL)', detail:'Top 15% overall (Rank 1189 / 7875) · Top 9% High School bracket (Rank 91 / 1046)', icon:'Trophy', color:'primary', period:'Fall 2025' },
+    { name:'CyberPatriot',                detail:'Top 30% — Windows hardening, vulnerability auditing, malware hunting',                icon:'Shield', color:'emerald', period:'2025' },
 ];
 const NAV = [
     { id:'home',         label:'Home',           icon:'House'        },
@@ -185,72 +175,33 @@ const NAV = [
     { id:'experience',   label:'Experience',      icon:'Briefcase'    },
     { id:'skills',       label:'Skills',          icon:'Cpu'          },
 ];
-const DIFF_COLOR = { Easy:'mint', Medium:'lemon', Hard:'peach', Extreme:'rose' };
-const DIFF_HEX   = { Easy:'#a7f3d0', Medium:'#fef08a', Hard:'#fcd5b0', Extreme:'#fda4af' };
+const DIFF_COLOR = { Easy:'emerald', Medium:'amber', Hard:'amber', Extreme:'slate' };
+const DIFF_HEX   = { Easy:'#10b981', Medium:'#f59e0b', Hard:'#f59e0b', Extreme:'#64748b' };
 
 // ── Components ────────────────────────────────────────────────
-const Badge = ({ color='lavender', children }) => <span className={`ptag ptag-${color}`}>{children}</span>;
+const Badge = ({ color='primary', children }) => <span className={`ptag ptag-${color}`}>{children}</span>;
 
 const Card = ({ children, className='', style={}, ...p }) => (
     <div className={`card ${className}`} style={style} {...p}>{children}</div>
 );
 
 const PageHeader = ({ title, sub }) => (
-    <div className="mb-8 fade-up">
-        <h1 style={{fontSize:'1.7rem',fontWeight:800,color:'var(--text)',letterSpacing:'-0.025em'}}>{title}</h1>
+    <div className="mb-8 fade-up page-header">
+        <h1 style={{fontSize:'1.7rem',fontWeight:800,color:'var(--text)',letterSpacing:'-0.025em',whiteSpace:'nowrap'}}>{title}</h1>
         {sub && <p className="mt-1" style={{fontSize:'0.85rem',color:'var(--muted)'}}>{sub}</p>}
     </div>
 );
 
 const CertBadgeImg = ({ src, alt, fallback, size=60 }) => (
-    <div className="cert-ring" style={{width:size,height:size,borderRadius:14,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,overflow:'hidden'}}>
+    <div className="cert-ring" style={{width:size,height:size,borderRadius:14,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,overflow:'hidden',background:'var(--surface2)'}}>
         <img src={src} alt={alt} style={{width:'100%',height:'100%',objectFit:'contain',padding:7}}
             onError={e=>{e.target.style.display='none';e.target.nextSibling.style.display='flex';}} />
-        <span className="mono" style={{color:'var(--p-lavender)',display:'none',width:'100%',height:'100%',alignItems:'center',justifyContent:'center',textAlign:'center',fontSize:'0.65rem',fontWeight:700}}>{fallback}</span>
+        <span className="mono" style={{color:'var(--primary)',display:'none',width:'100%',height:'100%',alignItems:'center',justifyContent:'center',textAlign:'center',fontSize:'0.65rem',fontWeight:700}}>{fallback}</span>
     </div>
 );
 
-// ── Cert Modal ────────────────────────────────────────────────
-const CertModal = ({ cert, onClose }) => {
-    useEffect(()=>{
-        const h=e=>{if(e.key==='Escape')onClose();};
-        document.addEventListener('keydown',h); return ()=>document.removeEventListener('keydown',h);
-    },[]);
-    return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-box" onClick={e=>e.stopPropagation()}>
-                <div style={{padding:'24px 24px 20px',borderBottom:'1px solid var(--border)'}}>
-                    <div style={{display:'flex',alignItems:'flex-start',gap:16}}>
-                        <CertBadgeImg src={cert.badge} alt={cert.short} fallback={cert.short} size={58} />
-                        <div style={{flex:1,minWidth:0}}>
-                            <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:8}}>
-                                <p style={{fontSize:'1rem',fontWeight:700,color:'var(--text)',lineHeight:1.3}}>{cert.name}</p>
-                                <button onClick={onClose} style={{color:'var(--muted)',background:'none',border:'none',cursor:'pointer',flexShrink:0}}>
-                                    <Icon name="X" className="w-5 h-5"/>
-                                </button>
-                            </div>
-                            <p className="mono mt-1" style={{fontSize:'0.68rem',color:'var(--muted)'}}>{cert.issuer} · {cert.year}</p>
-                            <div style={{marginTop:8}}><Badge color="mint">Active</Badge></div>
-                        </div>
-                    </div>
-                    {cert.description && <p style={{marginTop:16,fontSize:'0.85rem',lineHeight:1.65,color:'var(--text2)'}}>{cert.description}</p>}
-                </div>
-                {cert.learned && (
-                    <div style={{padding:'20px 24px'}}>
-                        <p className="mono mb-4" style={{fontSize:'0.65rem',color:'var(--p-lavender)',letterSpacing:'0.1em'}}>WHAT I LEARNED</p>
-                        <div style={{display:'flex',flexDirection:'column',gap:9}}>
-                            {cert.learned.map((item,i)=>(
-                                <div key={i} style={{display:'flex',alignItems:'flex-start',gap:10,fontSize:'0.85rem',color:'var(--text2)'}}>
-                                    <span style={{color:'var(--p-lavender)',flexShrink:0,marginTop:2,fontWeight:600}}>·</span>{item}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
-                <div style={{position:'absolute',left:0,top:0,bottom:0,width:3,borderRadius:'20px 0 0 20px',background:'linear-gradient(to bottom,var(--p-lavender),transparent)'}}/>
-            </div>
-        </div>
-    );
+const handleCertClick = (cert) => {
+    if (cert.url) window.open(cert.url, '_blank');
 };
 
 // ── Pages ─────────────────────────────────────────────────────
@@ -258,22 +209,17 @@ const HomePage = () => {
     const { displayed, done } = useTyping('Networking & Cybersecurity', 43, 800);
     return (
     <div style={{display:'flex',flexDirection:'column',gap:16}}>
-        {/* Hero */}
         <div className="card shimmer-card fade-up" style={{padding:'44px 36px'}}>
-            <div style={{position:'absolute',top:-40,right:-40,width:300,height:300,borderRadius:'50%',background:'radial-gradient(circle,rgba(196,181,253,0.07),transparent 70%)',filter:'blur(50px)',pointerEvents:'none'}}/>
-            <div style={{position:'absolute',bottom:-40,left:-40,width:220,height:220,borderRadius:'50%',background:'radial-gradient(circle,rgba(167,243,208,0.05),transparent 70%)',filter:'blur(40px)',pointerEvents:'none'}}/>
-
+            <div style={{position:'absolute',top:-40,right:-40,width:300,height:300,borderRadius:'50%',background:'radial-gradient(circle,rgba(59,130,246,0.06),transparent 70%)',filter:'blur(50px)',pointerEvents:'none'}}/>
+            <div style={{position:'absolute',bottom:-40,left:-40,width:220,height:220,borderRadius:'50%',background:'radial-gradient(circle,rgba(16,185,129,0.04),transparent 70%)',filter:'blur(40px)',pointerEvents:'none'}}/>
             <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:22}}>
-                <span className="pulse-dot" style={{width:7,height:7,borderRadius:'50%',background:'var(--p-mint)',display:'inline-block'}}/>
-                <span className="mono" style={{fontSize:'0.67rem',color:'var(--p-mint)',letterSpacing:'0.1em'}}>AVAILABLE FOR HIRE</span>
+                <span className="pulse-dot" style={{width:7,height:7,borderRadius:'50%',background:'var(--accent-emerald)',display:'inline-block'}}/>
+                <span className="mono" style={{fontSize:'0.67rem',color:'var(--accent-emerald)',letterSpacing:'0.1em'}}>AVAILABLE FOR HIRE</span>
             </div>
-
             <div style={{position:'relative',zIndex:1}}>
                 <p className="mono" style={{fontSize:'0.7rem',color:'var(--muted)',letterSpacing:'0.06em',marginBottom:10}}>portfolio</p>
-                <h1 style={{fontSize:'clamp(2.2rem,5vw,3.8rem)',fontWeight:800,color:'var(--text)',letterSpacing:'-0.035em',lineHeight:1.05,marginBottom:12}}>
-                    Afterguard
-                </h1>
-                <p className="mono" style={{fontSize:'0.85rem',color:'var(--p-lavender)',marginBottom:18,minHeight:'1.3em'}}>
+                <h1 style={{fontSize:'clamp(2.2rem,5vw,3.8rem)',fontWeight:800,color:'var(--text)',letterSpacing:'-0.035em',lineHeight:1.05,marginBottom:12}}>Afterguard</h1>
+                <p className="mono" style={{fontSize:'0.85rem',color:'var(--primary)',marginBottom:18,minHeight:'1.3em'}}>
                     {displayed}{!done && <span className="type-cursor"/>}
                 </p>
                 <p style={{fontSize:'0.92rem',lineHeight:1.8,color:'var(--text2)',maxWidth:540,marginBottom:26}}>
@@ -283,11 +229,11 @@ const HomePage = () => {
                 </p>
                 <div style={{display:'flex',flexWrap:'wrap',gap:9}}>
                     {[
-                        {label:'LinkedIn',      icon:'Linkedin', href:'https://www.linkedin.com/in/johann-weingertner-61b884358/', primary:true},
-                        {label:'GitHub',        icon:'Github',   href:'https://github.com/JohannWeingertner'},
-                        {label:'CyberDefenders',icon:'Shield',   href:'https://cyberdefenders.org/p/Afterguard/'},
+                        {label:'LinkedIn', icon:'Linkedin', href:'https://www.linkedin.com/in/johann-weingertner-61b884358/', primary:true},
+                        {label:'GitHub',   icon:'Github',   href:'https://github.com/JohannWeingertner'},
+                        {label:'CyberDefenders', icon:'Shield', href:'https://cyberdefenders.org/p/Afterguard/'},
                     ].map((b,i)=>(
-                        <a key={i} href={b.href} target="_blank" rel="noopener noreferrer" style={{display:'flex',alignItems:'center',gap:7,padding:'8px 17px',borderRadius:10,fontSize:'0.85rem',fontWeight:500,textDecoration:'none',transition:'all 0.16s',...(b.primary?{background:'var(--p-lavender)',color:'#0e0e11'}:{background:'var(--surface2)',color:'var(--text2)',border:'1px solid var(--border)'})}}
+                        <a key={i} href={b.href} target="_blank" rel="noopener noreferrer" style={{display:'flex',alignItems:'center',gap:7,padding:'8px 17px',borderRadius:10,fontSize:'0.85rem',fontWeight:500,textDecoration:'none',transition:'all 0.16s',...(b.primary?{background:'var(--primary)',color:'#0a0c10'}:{background:'var(--surface2)',color:'var(--text2)',border:'1px solid var(--border)'})}}
                            onMouseEnter={e=>{if(!b.primary){e.currentTarget.style.borderColor='var(--border2)';e.currentTarget.style.color='var(--text)';}}}
                            onMouseLeave={e=>{if(!b.primary){e.currentTarget.style.borderColor='var(--border)';e.currentTarget.style.color='var(--text2)';}}}
                         ><Icon name={b.icon} className="w-4 h-4"/>{b.label}</a>
@@ -295,13 +241,11 @@ const HomePage = () => {
                 </div>
             </div>
         </div>
-
-        {/* Stats */}
         <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10}}>
             {[
-                {val:'7',       label:'Certifications',  icon:'Award', color:'var(--p-lavender)', cls:'stat-pop'},
-                {val:'250+',    label:'Lab Hours',        icon:'Clock', color:'var(--p-mint)',     cls:'stat-pop-1'},
-                {val:'Top 100', label:'CyberDefenders',  icon:'Trophy',color:'var(--p-sky)',      cls:'stat-pop-2'},
+                {val:'7', label:'Certifications', icon:'Award', color:'var(--primary)', cls:'stat-pop'},
+                {val:'250+', label:'Lab Hours', icon:'Clock', color:'var(--accent-emerald)', cls:'stat-pop-1'},
+                {val:'Top 100', label:'CyberDefenders', icon:'Trophy', color:'var(--accent-cyan)', cls:'stat-pop-2'},
             ].map((s,i)=>(
                 <Card key={i} className={s.cls} style={{padding:'18px 12px',textAlign:'center'}}>
                     <Icon name={s.icon} className="w-5 h-5 mx-auto mb-2" style={{color:s.color}}/>
@@ -315,128 +259,121 @@ const HomePage = () => {
 };
 
 const CertsPage = () => {
-    const [selected, setSelected] = useState(null);
-    const featured = CERTIFICATIONS.find(c=>c.featured);
-    const rest = CERTIFICATIONS.filter(c=>!c.featured);
+    const featured = CERTIFICATIONS?.find(c=>c.featured);
+    const rest = CERTIFICATIONS?.filter(c=>!c.featured) || [];
     return (
     <div className="fade-up" style={{display:'flex',flexDirection:'column',gap:16}}>
-        <PageHeader title="Certifications" sub="Click any certification to see what I learned"/>
-
+        <PageHeader title="Certifications" sub="Click any certification to view details"/>
         {featured && (
-        <button onClick={()=>setSelected(featured)} className="featured-card w-full text-left fade-up-1" style={{background:'none',border:'none',cursor:'pointer',padding:0}}>
-            <div style={{position:'absolute',top:-30,right:-30,width:250,height:250,borderRadius:'50%',background:'radial-gradient(circle,rgba(196,181,253,0.08),transparent 70%)',filter:'blur(40px)',pointerEvents:'none'}}/>
-            <div style={{position:'absolute',top:14,right:14}}><Badge color="lavender">★ Featured</Badge></div>
-            <div style={{padding:'28px 24px',display:'flex',gap:22,alignItems:'flex-start',flexWrap:'wrap'}}>
+        <div onClick={() => handleCertClick(featured)} className="featured-card w-full text-left fade-up-1" style={{background:'none',border:'none',cursor:'pointer',padding:0}}>
+            <div style={{position:'absolute',top:14,right:14}}><Badge color="primary">★ Featured</Badge></div>
+            <div style={{padding:'28px 24px',display:'flex',gap:22,alignItems:'flex-start',flexWrap:'wrap',background:'linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%)'}}>
                 <CertBadgeImg src={featured.badge} alt={featured.short} fallback={featured.short} size={82}/>
                 <div style={{flex:1,minWidth:200}}>
                     <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:8}}>
-                        <Badge color="mint">Active</Badge>
+                        <Badge color="emerald">Active</Badge>
                         <span className="mono" style={{fontSize:'0.67rem',color:'var(--muted)'}}>Issued {featured.year}</span>
                     </div>
-                    <p style={{fontSize:'1.08rem',fontWeight:700,color:'var(--text)',marginBottom:4,letterSpacing:'-0.01em'}}>{featured.name}</p>
-                    <p style={{fontSize:'0.8rem',color:'var(--p-lavender)',fontWeight:500,marginBottom:10}}>{featured.issuer}</p>
+                    <p style={{fontSize:'1.08rem',fontWeight:700,color:'var(--text)',marginBottom:4}}>{featured.name}</p>
+                    <p style={{fontSize:'0.8rem',color:'var(--primary)',fontWeight:500,marginBottom:10}}>{featured.issuer}</p>
                     <p style={{fontSize:'0.85rem',color:'var(--text2)',lineHeight:1.65,marginBottom:14}}>{featured.description}</p>
-                    <span style={{display:'flex',alignItems:'center',gap:5,color:'var(--p-lavender)',fontSize:'0.82rem',fontWeight:500}}>
-                        View details <Icon name="ChevronRight" className="w-3.5 h-3.5"/>
+                    <span style={{display:'flex',alignItems:'center',gap:5,color:'var(--primary)',fontSize:'0.82rem',fontWeight:500}}>
+                        View credential <Icon name="ExternalLink" className="w-3.5 h-3.5"/>
                     </span>
                 </div>
             </div>
-            <div style={{position:'absolute',bottom:0,left:0,right:0,height:1,background:'linear-gradient(90deg,transparent,rgba(196,181,253,0.28),transparent)'}}/>
-        </button>
+        </div>
         )}
-
         <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(240px,1fr))',gap:10}}>
             {rest.map((c,i)=>(
-                <button key={i} onClick={()=>setSelected(c)} className="text-left w-full fade-up-2" style={{background:'none',border:'none',cursor:'pointer',padding:0}}>
+                <div key={i} onClick={() => handleCertClick(c)} className="text-left w-full fade-up-2" style={{cursor:'pointer',padding:0}}>
                     <Card style={{padding:18,cursor:'pointer',height:'100%'}}>
                         <div style={{display:'flex',alignItems:'flex-start',gap:12}}>
                             <CertBadgeImg src={c.badge} alt={c.short} fallback={c.short} size={48}/>
                             <div style={{flex:1,minWidth:0}}>
-                                <p style={{fontSize:'0.86rem',fontWeight:600,color:'var(--text)',lineHeight:1.3,marginBottom:3}}>{c.name}</p>
+                                <p style={{fontSize:'0.86rem',fontWeight:600,color:'var(--text)',marginBottom:3}}>{c.name}</p>
                                 <p className="mono" style={{fontSize:'0.67rem',color:'var(--muted)',marginBottom:8}}>{c.issuer} · {c.year}</p>
                                 <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-                                    <Badge color="mint">Active</Badge>
-                                    <span className="mono" style={{display:'flex',alignItems:'center',gap:3,fontSize:'0.63rem',color:'var(--p-lavender)'}}>
-                                        details <Icon name="ChevronRight" className="w-3 h-3"/>
+                                    <Badge color="emerald">Active</Badge>
+                                    <span className="mono" style={{display:'flex',alignItems:'center',gap:3,fontSize:'0.63rem',color:'var(--primary)'}}>
+                                        view <Icon name="ExternalLink" className="w-3 h-3"/>
                                     </span>
                                 </div>
                             </div>
                         </div>
                     </Card>
-                </button>
+                </div>
             ))}
         </div>
-        {selected && <CertModal cert={selected} onClose={()=>setSelected(null)}/>}
     </div>
     );
 };
 
 const ProjectsPage = () => {
     const [tab, setTab] = useState('labs');
-    const total = CD_LABS.length;
-    const counts = CD_LABS.reduce((a,l)=>{a[l.difficulty]=(a[l.difficulty]||0)+1;return a;},{});
-    const cats   = CD_LABS.reduce((a,l)=>{a[l.category]=(a[l.category]||0)+1;return a;},{});
-    const maxCat = Math.max(...Object.values(cats));
+    const total = CD_LABS?.length || 0;
+    const counts = CD_LABS?.reduce((a,l)=>{a[l.difficulty]=(a[l.difficulty]||0)+1;return a;},{}) || {};
+    const cats = CD_LABS?.reduce((a,l)=>{a[l.category]=(a[l.category]||0)+1;return a;},{}) || {};
+    const maxCat = Math.max(...Object.values(cats), 1);
     return (
     <div className="fade-up" style={{display:'flex',flexDirection:'column',gap:16}}>
-        <PageHeader title="Labs & Projects"/>
-        <div className="toggle-wrap fade-up-1">
-            {[{id:'labs',label:'CyberDefenders Labs',icon:'FlaskConical'},{id:'projects',label:'Projects',icon:'Code2'}].map(t=>(
-                <button key={t.id} onClick={()=>setTab(t.id)} className={`toggle-btn ${tab===t.id?'on':''}`}>
-                    <Icon name={t.icon} className="w-3.5 h-3.5"/>{t.label}
-                </button>
-            ))}
+        <PageHeader title="Labs & Projects" />
+        <div style={{display:'flex',justifyContent:'flex-start',marginBottom:4}}>
+            <div className="toggle-wrap fade-up-1">
+                {[{id:'labs',label:'CyberDefenders Labs',icon:'FlaskConical'},{id:'projects',label:'Projects',icon:'Code2'}].map(t=>(
+                    <button key={t.id} onClick={()=>setTab(t.id)} className={`toggle-btn ${tab===t.id?'on':''}`}>
+                        <Icon name={t.icon} className="w-3.5 h-3.5"/>{t.label}
+                    </button>
+                ))}
+            </div>
         </div>
-
         {tab==='labs' && (
         <div style={{display:'flex',flexDirection:'column',gap:14}}>
             <div style={{display:'flex',justifyContent:'flex-end'}}>
-                <a href="https://cyberdefenders.org/p/Afterguard/" target="_blank" rel="noopener noreferrer" className="mono" style={{fontSize:'0.7rem',color:'var(--p-lavender)',textDecoration:'none',display:'flex',alignItems:'center',gap:4}}>
+                <a href="https://cyberdefenders.org/p/Afterguard/" target="_blank" rel="noopener noreferrer" className="mono" style={{fontSize:'0.7rem',color:'var(--primary)',textDecoration:'none',display:'flex',alignItems:'center',gap:4}}>
                     View Profile <Icon name="ExternalLink" className="w-3 h-3"/>
                 </a>
             </div>
-            {/* Stats */}
             <Card style={{padding:22}}>
                 <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8,marginBottom:18}}>
-                    {[{label:'Total',val:total,color:'var(--p-lavender)'},{label:'Easy',val:counts.Easy||0,color:'var(--p-mint)'},{label:'Medium',val:counts.Medium||0,color:'var(--p-lemon)'},{label:'Hard',val:counts.Hard||0,color:'var(--p-peach)'}].map((s,i)=>(
+                    {[{label:'Total',val:total,color:'var(--primary)'},{label:'Easy',val:counts.Easy||0,color:'#10b981'},{label:'Medium',val:counts.Medium||0,color:'#f59e0b'},{label:'Hard',val:counts.Hard||0,color:'#f97316'}].map((s,i)=>(
                         <div key={i} style={{textAlign:'center',background:'var(--surface2)',borderRadius:10,padding:'10px 6px',border:'1px solid var(--border)'}}>
-                            <div style={{fontSize:'1.3rem',fontWeight:800,color:s.color,letterSpacing:'-0.02em'}}>{s.val}</div>
-                            <div className="mono" style={{fontSize:'0.6rem',color:'var(--muted)',marginTop:2,letterSpacing:'0.05em'}}>{s.label.toUpperCase()}</div>
+                            <div style={{fontSize:'1.3rem',fontWeight:800,color:s.color}}>{s.val}</div>
+                            <div className="mono" style={{fontSize:'0.6rem',color:'var(--muted)',marginTop:2}}>{s.label.toUpperCase()}</div>
                         </div>
                     ))}
                 </div>
                 <div style={{display:'flex',flexDirection:'column',gap:8,marginBottom:18}}>
                     {Object.entries(DIFF_HEX).map(([diff,hex])=>(
                         <div key={diff} style={{display:'flex',alignItems:'center',gap:10}}>
-                            <span className="mono" style={{fontSize:'0.67rem',color:hex,width:52,textAlign:'right',flexShrink:0}}>{diff}</span>
+                            <span className="mono" style={{fontSize:'0.67rem',color:hex,width:52,textAlign:'right'}}>{diff}</span>
                             <div className="diff-bar-track" style={{flex:1}}><div className="diff-bar-fill" style={{width:total?`${((counts[diff]||0)/total)*100}%`:'0%',background:hex,opacity:0.75}}/></div>
                             <span className="mono" style={{fontSize:'0.67rem',color:'var(--muted)',width:14,textAlign:'right'}}>{counts[diff]||0}</span>
                         </div>
                     ))}
                 </div>
                 <div style={{display:'flex',flexDirection:'column',gap:7}}>
-                    {Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([cat,count],i)=>(
-                        <div key={i} style={{display:'flex',alignItems:'center',gap:10}}>
+                    {Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([cat,count])=>(
+                        <div key={cat} style={{display:'flex',alignItems:'center',gap:10}}>
                             <span style={{fontSize:'0.78rem',color:'var(--text2)',width:140,flexShrink:0,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{cat}</span>
-                            <div className="diff-bar-track" style={{flex:1}}><div className="diff-bar-fill" style={{width:`${(count/maxCat)*100}%`,background:'var(--p-lavender)',opacity:0.65}}/></div>
+                            <div className="diff-bar-track" style={{flex:1}}><div className="diff-bar-fill" style={{width:`${(count/maxCat)*100}%`,background:'var(--primary)',opacity:0.65}}/></div>
                             <span className="mono" style={{fontSize:'0.67rem',color:'var(--muted)',width:14,textAlign:'right'}}>{count}</span>
                         </div>
                     ))}
                 </div>
             </Card>
-            {/* Lab cards */}
             <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(240px,1fr))',gap:9}}>
-                {CD_LABS.map((lab,i)=>(
+                {CD_LABS?.map((lab,i)=>(
                     <a key={i} href={lab.url} target="_blank" rel="noopener noreferrer" style={{textDecoration:'none'}}>
                         <Card style={{padding:15}}>
                             <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:8}}>
                                 <p style={{fontSize:'0.84rem',fontWeight:600,color:'var(--text)'}}>{lab.name}</p>
-                                <Icon name="ExternalLink" className="w-3.5 h-3.5 flex-shrink-0" style={{color:'var(--muted)'}}/>
+                                <Icon name="ExternalLink" className="w-3.5 h-3.5" style={{color:'var(--muted)'}}/>
                             </div>
                             <div style={{display:'flex',alignItems:'center',gap:6,flexWrap:'wrap'}}>
-                                <Badge color="lavender">{lab.category}</Badge>
-                                {lab.difficulty && <Badge color={DIFF_COLOR[lab.difficulty]||'lavender'}>{lab.difficulty}</Badge>}
-                                {lab.completed && <span className="mono" style={{fontSize:'0.63rem',color:'var(--p-mint)',marginLeft:'auto'}}>✓ {lab.completed}</span>}
+                                <Badge color="primary">{lab.category}</Badge>
+                                {lab.difficulty && <Badge color={lab.difficulty === 'Easy' ? 'emerald' : 'amber'}>{lab.difficulty}</Badge>}
+                                {lab.completed && <span className="mono" style={{fontSize:'0.63rem',color:'var(--accent-emerald)',marginLeft:'auto'}}>✓ {lab.completed}</span>}
                             </div>
                         </Card>
                     </a>
@@ -444,14 +381,13 @@ const ProjectsPage = () => {
             </div>
         </div>
         )}
-
         {tab==='projects' && (
         <div style={{display:'flex',flexDirection:'column',gap:10}}>
             {PROJECTS.map((p,i)=>(
                 <Card key={i} style={{padding:22}}>
                     <div style={{display:'flex',alignItems:'flex-start',gap:14}}>
-                        <div style={{width:42,height:42,borderRadius:11,background:'var(--surface2)',border:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
-                            <Icon name={p.icon} className="w-4.5 h-4.5" style={{color:`var(--p-${p.color})`}}/>
+                        <div style={{width:42,height:42,borderRadius:11,background:'var(--surface2)',border:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                            <Icon name={p.icon} className="w-4.5 h-4.5" style={{color:`var(--${p.color === 'primary' ? 'primary' : 'accent-cyan'})`}}/>
                         </div>
                         <div>
                             <p style={{fontSize:'0.92rem',fontWeight:600,color:'var(--text)',marginBottom:4}}>{p.name}</p>
@@ -472,8 +408,8 @@ const CompetitionsPage = () => (
         {COMPETITIONS.map((c,i)=>(
             <Card key={i} style={{padding:22}}>
                 <div style={{display:'flex',alignItems:'flex-start',gap:14}}>
-                    <div style={{width:42,height:42,borderRadius:11,background:'var(--surface2)',border:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
-                        <Icon name={c.icon} className="w-4.5 h-4.5" style={{color:`var(--p-${c.color})`}}/>
+                    <div style={{width:42,height:42,borderRadius:11,background:'var(--surface2)',border:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                        <Icon name={c.icon} className="w-4.5 h-4.5" style={{color:`var(--${c.color === 'primary' ? 'primary' : 'accent-emerald'})`}}/>
                     </div>
                     <div style={{flex:1}}>
                         <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:4,flexWrap:'wrap'}}>
@@ -494,19 +430,19 @@ const ExperiencePage = () => (
         {EXPERIENCE.map((job,i)=>(
             <Card key={i} style={{padding:24}}>
                 <div style={{display:'flex',alignItems:'flex-start',gap:14,marginBottom:18}}>
-                    <div style={{width:42,height:42,borderRadius:11,background:'var(--surface2)',border:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
-                        <Icon name="Briefcase" className="w-4 h-4" style={{color:'var(--p-lavender)'}}/>
+                    <div style={{width:42,height:42,borderRadius:11,background:'var(--surface2)',border:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                        <Icon name="Briefcase" className="w-4 h-4" style={{color:'var(--primary)'}}/>
                     </div>
                     <div>
                         <p style={{fontSize:'0.96rem',fontWeight:700,color:'var(--text)'}}>{job.role}</p>
-                        <p style={{fontSize:'0.82rem',color:'var(--p-sky)',fontWeight:500}}>{job.org}</p>
+                        <p style={{fontSize:'0.82rem',color:'var(--accent-cyan)',fontWeight:500}}>{job.org}</p>
                         <p className="mono mt-1" style={{fontSize:'0.67rem',color:'var(--muted)'}}>{job.period}</p>
                     </div>
                 </div>
                 <div style={{marginLeft:56,display:'flex',flexDirection:'column',gap:8}}>
                     {job.bullets.map((b,j)=>(
                         <div key={j} style={{display:'flex',alignItems:'flex-start',gap:10,fontSize:'0.84rem',color:'var(--text2)'}}>
-                            <span style={{color:'var(--p-lavender)',flexShrink:0,marginTop:2,fontWeight:600}}>·</span>{b}
+                            <span style={{color:'var(--primary)',flexShrink:0,marginTop:2}}>·</span>{b}
                         </div>
                     ))}
                 </div>
@@ -516,12 +452,12 @@ const ExperiencePage = () => (
             <p style={{fontSize:'1.05rem',fontWeight:700,color:'var(--text)',marginBottom:10}}>Education</p>
             <Card style={{padding:22}}>
                 <div style={{display:'flex',alignItems:'flex-start',gap:14}}>
-                    <div style={{width:42,height:42,borderRadius:11,background:'var(--surface2)',border:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
-                        <Icon name="GraduationCap" className="w-4 h-4" style={{color:'var(--p-mint)'}}/>
+                    <div style={{width:42,height:42,borderRadius:11,background:'var(--surface2)',border:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                        <Icon name="GraduationCap" className="w-4 h-4" style={{color:'var(--accent-emerald)'}}/>
                     </div>
                     <div>
                         <p style={{fontSize:'0.93rem',fontWeight:700,color:'var(--text)'}}>Cisco Networking Academy</p>
-                        <p style={{fontSize:'0.82rem',color:'var(--p-mint)',fontWeight:500}}>Chesterfield Technical Center</p>
+                        <p style={{fontSize:'0.82rem',color:'var(--accent-emerald)',fontWeight:500}}>Chesterfield Technical Center</p>
                         <p style={{fontSize:'0.82rem',color:'var(--text2)',marginTop:4}}>Dual-enrolled college-level IT coursework via Brightpoint Community College</p>
                         <p className="mono" style={{fontSize:'0.67rem',color:'var(--muted)',marginTop:5}}>Aug 2024 – Expected Dec 2026</p>
                     </div>
@@ -538,8 +474,8 @@ const SkillsPage = () => (
             {SKILLS.map((group,i)=>(
                 <Card key={i} style={{padding:20}}>
                     <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:14}}>
-                        <div style={{width:8,height:8,borderRadius:'50%',background:`var(--p-${group.color})`,flexShrink:0}}/>
-                        <p style={{fontSize:'0.78rem',fontWeight:600,color:`var(--p-${group.color})`,letterSpacing:'0.03em'}}>{group.category}</p>
+                        <div style={{width:8,height:8,borderRadius:'50%',background:`var(--${group.color === 'primary' ? 'primary' : group.color === 'cyan' ? 'accent-cyan' : group.color === 'emerald' ? 'accent-emerald' : group.color === 'amber' ? 'accent-amber' : 'accent-slate'})`,flexShrink:0}}/>
+                        <p style={{fontSize:'0.78rem',fontWeight:600,color:`var(--${group.color === 'primary' ? 'primary' : group.color === 'cyan' ? 'accent-cyan' : group.color === 'emerald' ? 'accent-emerald' : group.color === 'amber' ? 'accent-amber' : 'accent-slate'})`,letterSpacing:'0.03em'}}>{group.category}</p>
                     </div>
                     <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
                         {group.items.map((item,j)=><span key={j} className="skill-pill">{item}</span>)}
@@ -553,54 +489,30 @@ const SkillsPage = () => (
 // ── App ───────────────────────────────────────────────────────
 const App = () => {
     const [page, setPage] = useState('home');
-    const [menuOpen, setMenuOpen] = useState(false);
     const pages = { home:<HomePage/>, certs:<CertsPage/>, projects:<ProjectsPage/>, competitions:<CompetitionsPage/>, experience:<ExperiencePage/>, skills:<SkillsPage/> };
-
     return (
-    <div style={{minHeight:'100vh',background:'var(--bg)',backgroundColor:'#0e0e11'}}>
-        {/* Nav */}
-        <nav style={{position:'sticky',top:0,zIndex:50,background:'rgba(14,14,17,0.85)',backdropFilter:'blur(18px)',borderBottom:'1px solid var(--border)'}}>
+    <div style={{minHeight:'100vh',background:'var(--bg)'}}>
+        <nav style={{position:'sticky',top:0,zIndex:50,background:'rgba(10,12,16,0.85)',backdropFilter:'blur(18px)',borderBottom:'1px solid var(--border)'}}>
             <div style={{maxWidth:860,margin:'0 auto',padding:'0 20px',display:'flex',alignItems:'center',justifyContent:'space-between',height:54}}>
                 <button onClick={()=>setPage('home')} style={{display:'flex',alignItems:'center',gap:10,background:'none',border:'none',cursor:'pointer'}}>
                     <div style={{width:28,height:28,borderRadius:8,background:'var(--surface2)',border:'1px solid var(--border2)',display:'flex',alignItems:'center',justifyContent:'center'}}>
-                        <Icon name="Shield" className="w-3.5 h-3.5" style={{color:'var(--p-lavender)'}}/>
+                        <Icon name="Shield" className="w-3.5 h-3.5" style={{color:'var(--primary)'}}/>
                     </div>
-                    <span style={{fontWeight:700,fontSize:'0.92rem',color:'var(--text)',letterSpacing:'-0.01em',fontFamily:'DM Sans,sans-serif'}}>Afterguard</span>
+                    <span style={{fontWeight:700,fontSize:'0.92rem',color:'var(--text)',letterSpacing:'-0.01em'}}>Afterguard</span>
                 </button>
-
-                {/* Spacer to push tabs to the right, creating more breathing room */}
-                <div className="nav-spacer" style={{flex:1, minWidth: '24px'}}></div>
-
-                <div className="hidden md:flex items-center" style={{gap:2}}>
+                <div className="nav-spacer" style={{flex:1, minWidth:'24px'}}></div>
+                <div style={{display:'flex',gap:2}}>
                     {NAV.map(item=>(
                         <button key={item.id} onClick={()=>setPage(item.id)} className={`nav-pill ${page===item.id?'active':''}`}>
                             <Icon name={item.icon} className="w-3.5 h-3.5"/>{item.label}
                         </button>
                     ))}
                 </div>
-
-                <button className="md:hidden" onClick={()=>setMenuOpen(!menuOpen)} style={{background:'none',border:'none',cursor:'pointer',display:'flex',flexDirection:'column',gap:5,padding:6}}>
-                    <span className="hline" style={menuOpen?{transform:'rotate(45deg) translate(4px,4.5px)'}:{}}/>
-                    <span className="hline" style={menuOpen?{opacity:0}:{}}/>
-                    <span className="hline" style={menuOpen?{transform:'rotate(-45deg) translate(4px,-4.5px)'}:{}}/>
-                </button>
             </div>
-            {menuOpen && (
-                <div className="slide-down md:hidden" style={{borderTop:'1px solid var(--border)',padding:'6px 12px 10px'}}>
-                    {NAV.map(item=>(
-                        <button key={item.id} onClick={()=>{setPage(item.id);setMenuOpen(false);}}
-                            style={{display:'flex',alignItems:'center',gap:10,width:'100%',padding:'9px 12px',borderRadius:9,background:'none',border:'none',cursor:'pointer',color:page===item.id?'var(--text)':'var(--muted)',fontFamily:'DM Sans,sans-serif',fontSize:'0.86rem',fontWeight:500}}>
-                            <Icon name={item.icon} className="w-4 h-4"/>{item.label}
-                        </button>
-                    ))}
-                </div>
-            )}
         </nav>
-
         <main style={{maxWidth:860,margin:'0 auto',padding:'32px 20px 64px'}}>
             {pages[page]}
         </main>
-
         <footer style={{textAlign:'center',padding:'20px',borderTop:'1px solid var(--border)'}}>
             <p className="mono" style={{fontSize:'0.65rem',color:'var(--muted)'}}>
                 © 2026 Afterguard · Johann Weingertner · johannweingertner.github.io
