@@ -226,52 +226,30 @@ const App = () => {
                 <div className="fade-up" style={{display:'flex',flexDirection:'column',gap:16}}>
                     <PageHeader title="SOC Investigation Reports" sub="Interactive viewer for cybersecurity incident analysis and threat intelligence" />
                     
-                    <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))',gap:14}}>
+                    <div style={{display:'flex',flexDirection:'column',gap:12}}>
                         {SOC_REPORTS.map((report,i)=>(
                             <Card key={i} style={{padding:22, cursor:'pointer'}} onClick={()=>setSelectedReport(report)}>
-                                <div style={{display:'flex',alignItems:'flex-start',gap:14}}>
-                                    <div style={{width:42,height:42,borderRadius:11,background:'var(--surface2)',border:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'center'}}>
-                                        <Icon name="FileText" className="w-4.5 h-4.5" style={{color:'var(--accent-emerald)'}}/>
+                                <div style={{display:'flex',alignItems:'center',gap:16}}>
+                                    <div style={{width:48,height:48,borderRadius:12,background:'var(--surface2)',border:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+                                        <Icon name="FileText" className="w-5 h-5" style={{color:'var(--accent-emerald)'}}/>
                                     </div>
-                                    <div style={{flex:1}}>
-                                        <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:6}}>
-                                            <p style={{fontSize:'0.92rem',fontWeight:600,color:'var(--text)'}}>{report.title}</p>
-                                            <Icon name="ExternalLink" className="w-3.5 h-3.5" style={{color:'var(--muted)'}}/>
-                                        </div>
-                                        <p className="mono" style={{fontSize:'0.67rem',color:'var(--muted)',marginBottom:8}}>{report.date}</p>
-                                        <p style={{fontSize:'0.84rem',color:'var(--text2)',lineHeight:1.65,marginBottom:12}}>{report.description}</p>
-                                        <div style={{display:'flex',flexWrap:'wrap',gap:6,marginBottom:8}}>
-                                            {report.tags.map((tag,j)=><Badge key={j} color="emerald">{tag}</Badge>)}
-                                        </div>
-                                        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                                    <div style={{flex:1,minWidth:0}}>
+                                        <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:4,flexWrap:'wrap'}}>
+                                            <p style={{fontSize:'0.96rem',fontWeight:600,color:'var(--text)'}}>{report.title}</p>
                                             <Badge color="emerald">{report.status}</Badge>
-                                            <span className="mono" style={{fontSize:'0.67rem',color:'var(--muted)'}}>Click to view</span>
                                         </div>
+                                        <p className="mono" style={{fontSize:'0.67rem',color:'var(--muted)',marginBottom:6}}>{report.date}</p>
+                                        <p style={{fontSize:'0.84rem',color:'var(--text2)',lineHeight:1.5}}>{report.description}</p>
+                                    </div>
+                                    <div style={{display:'flex',alignItems:'center',gap:10,flexShrink:0}}>
+                                        <div style={{display:'flex',flexWrap:'wrap',gap:4,justifyContent:'flex-end'}}>
+                                            {report.tags.map((tag,j)=><Badge key={j} color="primary">{tag}</Badge>)}
+                                        </div>
+                                        <Icon name="ChevronRight" className="w-5 h-5" style={{color:'var(--muted)'}}/>
                                     </div>
                                 </div>
                             </Card>
                         ))}
-                    </div>
-                    
-                    <div className="card fade-up-1" style={{padding:20, marginTop:16}}>
-                        <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:10}}>
-                            <div style={{width:8,height:8,borderRadius:'50%',background:'var(--accent-emerald)',flexShrink:0}}/>
-                            <p className="mono" style={{fontSize:'0.67rem',color:'var(--accent-emerald)',letterSpacing:'0.1em'}}>FEATURES</p>
-                        </div>
-                        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:12}}>
-                            <div>
-                                <p style={{fontSize:'0.85rem',fontWeight:600,color:'var(--text)',marginBottom:4}}>Interactive PDF Viewer</p>
-                                <p style={{fontSize:'0.78rem',color:'var(--text2)',lineHeight:1.6}}>View reports in an embedded viewer with navigation controls</p>
-                            </div>
-                            <div>
-                                <p style={{fontSize:'0.85rem',fontWeight:600,color:'var(--text)',marginBottom:4}}>Threat Analysis</p>
-                                <p style={{fontSize:'0.78rem',color:'var(--text2)',lineHeight:1.6}}>Detailed breakdown of attack vectors and mitigation strategies</p>
-                            </div>
-                            <div>
-                                <p style={{fontSize:'0.85rem',fontWeight:600,color:'var(--text)',marginBottom:4}}>Incident Response</p>
-                                <p style={{fontSize:'0.78rem',color:'var(--text2)',lineHeight:1.6}}>Step-by-step response procedures and lessons learned</p>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </main>
