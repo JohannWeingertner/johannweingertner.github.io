@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOC Investigation Reports - Afterguard</title>
+    <!-- Favicon - Custom shield SVG matching cybersecurity theme (steel blue) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'%3E%3Cpath d='M12 2L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3z'/%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg:        #0a0c10;
+            --surface:   #111317;
+            --surface2:  #181c22;
+            --surface3:  #1f252e;
+            --primary:   #3b82f6;
+            --primary-light: #60a5fa;
+            --primary-dim: #1e3a8a;
+            --accent-cyan: #22d3ee;
+            --accent-emerald: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-slate: #64748b;
+            --text:      #f1f5f9;
+            --text2:     #cbd5e6;
+            --muted:     #6c7a91;
+            --border:    rgba(255,255,255,0.06);
+            --border2:   rgba(255,255,255,0.12);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+        body::before {
+            content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
+        }
+        .mono { font-family: 'DM Mono', monospace; }
+
+        /* Cards */
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; position: relative; overflow: hidden; transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s; }
+        .card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+
+        /* Nav */
+        .nav-pill { border-radius: 9px; padding: 6px 13px; font-size: 0.84rem; font-weight: 500; transition: all 0.15s; color: var(--muted); background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; font-family: 'DM Sans', sans-serif; }
+        .nav-pill:hover { color: var(--text2); background: var(--surface2); }
+        .nav-pill.active { background: var(--surface2); color: var(--primary-light); border: 1px solid rgba(59,130,246,0.3); }
+
+        /* Tags - modern professional colors */
+        .ptag { font-family: 'DM Mono', monospace; font-size: 0.67rem; padding: 2px 8px; border-radius: 5px; font-weight: 500; }
+        .ptag-primary { background: rgba(59,130,246,0.12); color: var(--primary-light); border: 1px solid rgba(59,130,246,0.25); }
+        .ptag-cyan   { background: rgba(34,211,238,0.08); color: var(--accent-cyan); border: 1px solid rgba(34,211,238,0.2); }
+        .ptag-emerald{ background: rgba(16,185,129,0.08); color: var(--accent-emerald); border: 1px solid rgba(16,185,129,0.2); }
+        .ptag-amber  { background: rgba(245,158,11,0.08); color: var(--accent-amber); border: 1px solid rgba(245,158,11,0.2); }
+        .ptag-slate  { background: rgba(100,116,139,0.12); color: var(--accent-slate); border: 1px solid rgba(100,116,139,0.2); }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 4px; }
+
+        /* Animations */
+        @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+        @keyframes pulseDot { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
+        @keyframes typeBlink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+        @keyframes popIn { 0%{transform:scale(0.65);opacity:0;} 65%{transform:scale(1.06);} 100%{transform:scale(1);opacity:1;} }
+        @keyframes shimmer { from{transform:translateX(-100%) skewX(-12deg);} to{transform:translateX(260%) skewX(-12deg);} }
+        @keyframes slideDown { from{opacity:0;transform:translateY(-6px);} to{opacity:1;transform:translateY(0);} }
+        @keyframes modalIn { from{opacity:0;transform:scale(0.93) translateY(10px);} to{opacity:1;transform:scale(1) translateY(0);} }
+
+        .fade-up   { animation: fadeUp 0.42s ease both; }
+        .fade-up-1 { animation: fadeUp 0.42s 0.07s ease both; }
+        .fade-up-2 { animation: fadeUp 0.42s 0.14s ease both; }
+        .fade-up-3 { animation: fadeUp 0.42s 0.21s ease both; }
+        .pulse-dot { animation: pulseDot 2.2s ease-in-out infinite; }
+        .type-cursor { display:inline-block; width:2px; height:1em; background:var(--primary); margin-left:2px; vertical-align:text-bottom; animation:typeBlink 0.75s step-end infinite; }
+        .shimmer-card::after { content:''; position:absolute; top:0; left:0; width:35%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.02),transparent); animation:shimmer 4.5s ease-in-out infinite; pointer-events:none; }
+        .stat-pop   { animation: popIn 0.48s cubic-bezier(0.34,1.4,0.64,1) both; }
+        .stat-pop-1 { animation: popIn 0.48s 0.09s cubic-bezier(0.34,1.4,0.64,1) both; }
+        .stat-pop-2 { animation: popIn 0.48s 0.18s cubic-bezier(0.34,1.4,0.64,1) both; }
+        .slide-down { animation: slideDown 0.15s ease both; }
+
+        /* Featured cert */
+        .featured-card { background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%); border: 1px solid rgba(59,130,246,0.35); border-radius: 18px; position: relative; overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s; cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .featured-card:hover { border-color: rgba(59,130,246,0.65); box-shadow: 0 0 32px rgba(59,130,246,0.1); }
+
+        /* Cert ring */
+        .cert-ring { background: var(--surface3); border: 1px solid rgba(59,130,246,0.4); border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+
+        /* Diff bar */
+        .diff-bar-track { height:5px; background: var(--surface3); border-radius: 99px; overflow: hidden; }
+        .diff-bar-fill { height:100%; border-radius: 99px; }
+
+        /* Toggle */
+        .toggle-wrap { display: inline-flex; background: var(--surface2); border: 1px solid var(--border); border-radius: 11px; padding: 3px; gap: 2px; flex-wrap: nowrap; white-space: nowrap; }
+        .toggle-btn { padding: 6px 15px; border-radius: 8px; font-size: 0.84rem; font-weight: 500; color: var(--muted); transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px; background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; white-space: nowrap; }
+        .toggle-btn.on { background: var(--surface3); color: var(--primary-light); border: 1px solid rgba(59,130,246,0.3); }
+
+        /* Modal */
+        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(12px); z-index:10000; display:flex; align-items:center; justify-content:center; padding:1rem; animation:fadeIn 0.18s ease both; }
+        .modal-box { background:var(--surface); border:1px solid var(--border2); border-radius:20px; max-width:520px; width:100%; max-height:85vh; overflow-y:auto; animation:modalIn 0.25s cubic-bezier(0.34,1.2,0.64,1) both; box-shadow:0 40px 80px rgba(0,0,0,0.55); }
+        .modal-box::-webkit-scrollbar { width:3px; }
+        .modal-box::-webkit-scrollbar-thumb { background:var(--surface3); border-radius:2px; }
+
+        /* Nav spacing */
+        .nav-spacer { flex: 1; }
+        @media (max-width: 768px) { .nav-spacer { display: none; } }
+        .md\:hidden { display: none !important; }
+        button.md\:hidden { display: none !important; }
+        
+        .page-header h1 { white-space: nowrap; }
+        @media (max-width: 640px) { .page-header h1 { white-space: normal; font-size: 1.5rem; } }
+    </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+const Icon = ({ name, className = 'w-5 h-5', ...props }) => {
+    const ref = useRef(null);
+    useEffect(() => {
+        if (ref.current && lucide[name]) {
+            const el = lucide.createElement(lucide[name], { class: className });
+            ref.current.innerHTML = ''; ref.current.appendChild(el);
+        }
+    }, [name, className]);
+    return <i ref={ref} className={`flex-shrink-0 ${className}`} {...props} />;
+};
+
+// ── Static data ───────────────────────────────────────────────
+const SOC_REPORTS = [
+    { 
+        id: '2026-04-11',
+        title: 'Azure Environment Compromise Investigation',
+        date: 'July 2025',
+        description: 'Multi-stage APT attack analysis covering password spray, token abuse, privilege escalation, and Key Vault exfiltration',
+        file: 'assets/projects/2026-04-11-soc-investigation-report.pdf',
+        tags: ['Azure AD', 'Token Abuse', 'Privilege Escalation', 'Data Exfiltration'],
+        status: 'Completed'
+    }
+];
+
+// ── Components ────────────────────────────────────────────────
+const Badge = ({ color='primary', children }) => <span className={`ptag ptag-${color}`}>{children}</span>;
+
+const Card = ({ children, className='', style={}, ...p }) => (
+    <div className={`card ${className}`} style={style} {...p}>{children}</div>
+);
+
+const PageHeader = ({ title, sub }) => (
+    <div className="mb-8 fade-up page-header">
+        <h1 style={{fontSize:'1.7rem',fontWeight:800,color:'var(--text)',letterSpacing:'-0.025em',whiteSpace:'nowrap'}}>{title}</h1>
+        {sub && <p className="mt-1" style={{fontSize:'0.85rem',color:'var(--muted)'}}>{sub}</p>}
+    </div>
+);
+
+// ── PDF Viewer Component ───────────────────────────────────────
+const PDFViewer = ({ pdfUrl, onClose }) => {
+    useEffect(() => {
+        const handleEsc = (e) => { if (e.key === 'Escape') onClose(); };
+        document.addEventListener('keydown', handleEsc);
+        return () => document.removeEventListener('keydown', handleEsc);
+    }, [onClose]);
+
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-box" onClick={e => e.stopPropagation()} style={{maxWidth: '90vw', maxHeight: '85vh', padding: 0}}>
+                <div style={{padding:'16px 20px', borderBottom:'1px solid var(--border)', display:'flex', alignItems:'center', justifyContent:'space-between'}}>
+                    <div>
+                        <p style={{fontSize:'0.85rem',color:'var(--muted)',marginBottom:2}}>SOC Investigation Report</p>
+                        <p style={{fontSize:'1rem',fontWeight:700,color:'var(--text)'}}>Azure Environment Compromise</p>
+                    </div>
+                    <button onClick={onClose} style={{color:'var(--muted)', background:'none', border:'none', cursor:'pointer', flexShrink:0}}>
+                        <Icon name="X" className="w-5 h-5"/>
+                    </button>
+                </div>
+                <div style={{padding:0, height:'70vh', minHeight:'400px'}}>
+                    <iframe 
+                        src={pdfUrl} 
+                        style={{width:'100%', height:'100%', border:'none'}}
+                        title="SOC Investigation Report"
+                    />
+                </div>
+                <div style={{padding:'12px 20px', borderTop:'1px solid var(--border)', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                    <span className="mono" style={{fontSize:'0.67rem',color:'var(--muted)'}}>Interactive PDF Viewer</span>
+                    <a href={pdfUrl} target="_blank" rel="noopener noreferrer" style={{display:'inline-flex', alignItems:'center', gap:6, color:'var(--primary)', textDecoration:'none', fontSize:'0.8rem', fontWeight:500}}>
+                        Open in new tab <Icon name="ExternalLink" className="w-3.5 h-3.5"/>
+                    </a>
+                </div>
+                <div style={{position:'absolute', left:0, top:0, bottom:0, width:3, borderRadius:'20px 0 0 20px', background:'linear-gradient(to bottom, var(--primary), transparent)'}}/>
+            </div>
+        </div>
+    );
+};
+
+// ── Main App ───────────────────────────────────────────────────
+const App = () => {
+    const [selectedReport, setSelectedReport] = useState(null);
+    
+    return (
+        <div style={{minHeight:'100vh',background:'var(--bg)'}}>
+            <nav style={{position:'sticky',top:0,zIndex:50,background:'rgba(10,12,16,0.85)',backdropFilter:'blur(18px)',borderBottom:'1px solid var(--border)'}}>
+                <div style={{maxWidth:860,margin:'0 auto',padding:'0 20px',display:'flex',alignItems:'center',justifyContent:'space-between',height:54}}>
+                    <button onClick={()=>window.location.href='index.html'} style={{display:'flex',alignItems:'center',gap:10,background:'none',border:'none',cursor:'pointer'}}>
+                        <div style={{width:28,height:28,borderRadius:8,background:'var(--surface2)',border:'1px solid var(--border2)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                            <Icon name="Shield" className="w-3.5 h-3.5" style={{color:'var(--primary)'}}/>
+                        </div>
+                        <span style={{fontWeight:700,fontSize:'0.92rem',color:'var(--text)',letterSpacing:'-0.01em'}}>Afterguard</span>
+                    </button>
+                    <div className="nav-spacer" style={{flex:1, minWidth:'24px'}}></div>
+                    <div style={{display:'flex',gap:2}}>
+                        <button onClick={()=>window.location.href='index.html'} className="nav-pill">
+                            <Icon name="House" className="w-3.5 h-3.5"/>Home
+                        </button>
+                    </div>
+                </div>
+            </nav>
+            
+            <main style={{maxWidth:860,margin:'0 auto',padding:'32px 20px 64px'}}>
+                <div className="fade-up" style={{display:'flex',flexDirection:'column',gap:16}}>
+                    <PageHeader title="SOC Investigation Reports" sub="Interactive viewer for cybersecurity incident analysis and threat intelligence" />
+                    
+                    <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))',gap:14}}>
+                        {SOC_REPORTS.map((report,i)=>(
+                            <Card key={i} style={{padding:22, cursor:'pointer'}} onClick={()=>setSelectedReport(report)}>
+                                <div style={{display:'flex',alignItems:'flex-start',gap:14}}>
+                                    <div style={{width:42,height:42,borderRadius:11,background:'var(--surface2)',border:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                                        <Icon name="FileText" className="w-4.5 h-4.5" style={{color:'var(--accent-emerald)'}}/>
+                                    </div>
+                                    <div style={{flex:1}}>
+                                        <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:6}}>
+                                            <p style={{fontSize:'0.92rem',fontWeight:600,color:'var(--text)'}}>{report.title}</p>
+                                            <Icon name="ExternalLink" className="w-3.5 h-3.5" style={{color:'var(--muted)'}}/>
+                                        </div>
+                                        <p className="mono" style={{fontSize:'0.67rem',color:'var(--muted)',marginBottom:8}}>{report.date}</p>
+                                        <p style={{fontSize:'0.84rem',color:'var(--text2)',lineHeight:1.65,marginBottom:12}}>{report.description}</p>
+                                        <div style={{display:'flex',flexWrap:'wrap',gap:6,marginBottom:8}}>
+                                            {report.tags.map((tag,j)=><Badge key={j} color="emerald">{tag}</Badge>)}
+                                        </div>
+                                        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                                            <Badge color="emerald">{report.status}</Badge>
+                                            <span className="mono" style={{fontSize:'0.67rem',color:'var(--muted)'}}>Click to view</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Card>
+                        ))}
+                    </div>
+                    
+                    <div className="card fade-up-1" style={{padding:20, marginTop:16}}>
+                        <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:10}}>
+                            <div style={{width:8,height:8,borderRadius:'50%',background:'var(--accent-emerald)',flexShrink:0}}/>
+                            <p className="mono" style={{fontSize:'0.67rem',color:'var(--accent-emerald)',letterSpacing:'0.1em'}}>FEATURES</p>
+                        </div>
+                        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:12}}>
+                            <div>
+                                <p style={{fontSize:'0.85rem',fontWeight:600,color:'var(--text)',marginBottom:4}}>Interactive PDF Viewer</p>
+                                <p style={{fontSize:'0.78rem',color:'var(--text2)',lineHeight:1.6}}>View reports in an embedded viewer with navigation controls</p>
+                            </div>
+                            <div>
+                                <p style={{fontSize:'0.85rem',fontWeight:600,color:'var(--text)',marginBottom:4}}>Threat Analysis</p>
+                                <p style={{fontSize:'0.78rem',color:'var(--text2)',lineHeight:1.6}}>Detailed breakdown of attack vectors and mitigation strategies</p>
+                            </div>
+                            <div>
+                                <p style={{fontSize:'0.85rem',fontWeight:600,color:'var(--text)',marginBottom:4}}>Incident Response</p>
+                                <p style={{fontSize:'0.78rem',color:'var(--text2)',lineHeight:1.6}}>Step-by-step response procedures and lessons learned</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            
+            <footer style={{textAlign:'center',padding:'20px',borderTop:'1px solid var(--border)'}}>
+                <p className="mono" style={{fontSize:'0.65rem',color:'var(--muted)'}}>
+                    © 2026 Afterguard · Johann Weingertner · SOC Investigation Reports
+                </p>
+            </footer>
+            
+            {selectedReport && <PDFViewer pdfUrl={selectedReport.file} onClose={() => setSelectedReport(null)} />}
+        </div>
+    );
+};
+
+ReactDOM.render(<App />, document.getElementById('root'));
+</script>
+</body>
+</html>
