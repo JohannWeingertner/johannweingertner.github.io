@@ -165,6 +165,7 @@ const SKILLS = [
 const PROJECTS = [
     { name:'Active Directory Lab',       detail:'Deployed Windows Server DC, configured domain, joined client, managed users',                                         icon:'Server',  color:'primary' },
     { name:'School Gaming Tournament',   detail:'Deployed LAN for 50+ concurrent players, configured DHCP/DNS, resolved misconfiguration under pressure',              icon:'Network', color:'cyan' },
+    { name:'2026-04-11 SOC Investigation Report', detail:'SOC investigation report documenting threat analysis and incident response procedures',                       icon:'FileText', color:'emerald', url:'assets/projects/2026-04-11-soc-investigation-report.pdf' },
 ];
 const EXPERIENCE = [{
     role:'Cybersecurity Intern', org:'Chesterfield County IST Department', period:'June 2025 – February 2026',
@@ -444,19 +445,28 @@ const ProjectsPage = () => {
         )}
         {tab==='projects' && (
         <div style={{display:'flex',flexDirection:'column',gap:10}}>
-            {PROJECTS.map((p,i)=>(
-                <Card key={i} style={{padding:22}}>
-                    <div style={{display:'flex',alignItems:'flex-start',gap:14}}>
-                        <div style={{width:42,height:42,borderRadius:11,background:'var(--surface2)',border:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'center'}}>
-                            <Icon name={p.icon} className="w-4.5 h-4.5" style={{color:`var(--${p.color === 'primary' ? 'primary' : 'accent-cyan'})`}}/>
+            {PROJECTS.map((p,i)=>{
+                const cardContent = (
+                    <Card key={i} style={{padding:22, cursor: p.url ? 'pointer' : 'default'}}>
+                        <div style={{display:'flex',alignItems:'flex-start',gap:14}}>
+                            <div style={{width:42,height:42,borderRadius:11,background:'var(--surface2)',border:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                                <Icon name={p.icon} className="w-4.5 h-4.5" style={{color:`var(--${p.color === 'primary' ? 'primary' : p.color === 'emerald' ? 'accent-emerald' : 'accent-cyan'})`}}/>
+                            </div>
+                            <div style={{flex:1}}>
+                                <div style={{display:'flex',alignItems:'center',gap:8}}>
+                                    <p style={{fontSize:'0.92rem',fontWeight:600,color:'var(--text)',marginBottom:4}}>{p.name}</p>
+                                    {p.url && <Icon name="ExternalLink" className="w-3.5 h-3.5" style={{color:'var(--muted)'}}/>}
+                                </div>
+                                <p style={{fontSize:'0.84rem',color:'var(--text2)',lineHeight:1.65}}>{p.detail}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p style={{fontSize:'0.92rem',fontWeight:600,color:'var(--text)',marginBottom:4}}>{p.name}</p>
-                            <p style={{fontSize:'0.84rem',color:'var(--text2)',lineHeight:1.65}}>{p.detail}</p>
-                        </div>
-                    </div>
-                </Card>
-            ))}
+                    </Card>
+                );
+                if (p.url) {
+                    return <a key={i} href={p.url} target="_blank" rel="noopener noreferrer" style={{textDecoration:'none',color:'inherit'}}>{cardContent}</a>;
+                }
+                return cardContent;
+            })}
         </div>
         )}
     </div>
