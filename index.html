@@ -373,14 +373,42 @@ const CertsPage = () => {
 
 const ProjectsPage = () => {
     const [tab, setTab] = useState('labs');
+    const [sortBy, setSortBy] = useState('date'); // 'date' or 'difficulty'
     const total = CD_LABS?.length || 0;
     const counts = CD_LABS?.reduce((a,l)=>{a[l.difficulty]=(a[l.difficulty]||0)+1;return a;},{}) || {};
     const cats = CD_LABS?.reduce((a,l)=>{a[l.category]=(a[l.category]||0)+1;return a;},{}) || {};
     const maxCat = Math.max(...Object.values(cats), 1);
+
+    // Sort labs based on selected criteria
+    const sortedLabs = React.useMemo(() => {
+        if (!CD_LABS) return [];
+        const labsCopy = [...CD_LABS];
+        if (sortBy === 'date') {
+            // Sort by completion date (most recent first), labs without dates go to the end
+            return labsCopy.sort((a, b) => {
+                if (!a.completed) return 1;
+                if (!b.completed) return -1;
+                const dateA = new Date(a.completed);
+                const dateB = new Date(b.completed);
+                return dateB - dateA;
+            });
+        } else if (sortBy === 'difficulty') {
+            // Sort by difficulty: Easy -> Medium -> Hard -> Extreme, then by name
+            const diffOrder = { 'Easy': 0, 'Medium': 1, 'Hard': 2, 'Extreme': 3 };
+            return labsCopy.sort((a, b) => {
+                const orderA = diffOrder[a.difficulty] ?? 4;
+                const orderB = diffOrder[b.difficulty] ?? 4;
+                if (orderA !== orderB) return orderA - orderB;
+                return a.name.localeCompare(b.name);
+            });
+        }
+        return labsCopy;
+    }, [sortBy]);
+
     return (
     <div className="fade-up" style={{display:'flex',flexDirection:'column',gap:16}}>
         <PageHeader title="Labs & Projects" />
-        <div style={{display:'flex',justifyContent:'flex-start',marginBottom:4}}>
+        <div style={{display:'flex',justifyContent:'flex-start',marginBottom:4,flexWrap:'wrap',gap:8}}>
             <div className="toggle-wrap fade-up-1">
                 {[{id:'labs',label:'CyberDefenders Labs',icon:'FlaskConical'},{id:'projects',label:'Projects',icon:'Code2'}].map(t=>(
                     <button key={t.id} onClick={()=>setTab(t.id)} className={`toggle-btn ${tab===t.id?'on':''}`}>
@@ -388,6 +416,15 @@ const ProjectsPage = () => {
                     </button>
                 ))}
             </div>
+            {tab === 'labs' && (
+            <div className="toggle-wrap fade-up-1">
+                {[{id:'date',label:'By Date',icon:'Calendar'},{id:'difficulty',label:'By Difficulty',icon:'BarChart3'}].map(t=>(
+                    <button key={t.id} onClick={()=>setSortBy(t.id)} className={`toggle-btn ${sortBy===t.id?'on':''}`}>
+                        <Icon name={t.icon} className="w-3.5 h-3.5"/>{t.label}
+                    </button>
+                ))}
+            </div>
+            )}
         </div>
         {tab==='labs' && (
         <div style={{display:'flex',flexDirection:'column',gap:14}}>
@@ -425,7 +462,7 @@ const ProjectsPage = () => {
                 </div>
             </Card>
             <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(240px,1fr))',gap:9}}>
-                {CD_LABS?.map((lab,i)=>(
+                {sortedLabs?.map((lab,i)=>(
                     <a key={i} href={lab.url} target="_blank" rel="noopener noreferrer" style={{textDecoration:'none'}}>
                         <Card style={{padding:15}}>
                             <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:8}}>
