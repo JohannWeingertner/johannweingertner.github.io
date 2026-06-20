@@ -8,7 +8,7 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'%3E%3Cpath d='M12 2L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3z'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -19,25 +19,25 @@
     <script src="/data/labs.js"></script>
     <style>
         :root {
-            --bg:        #0a0c10;
-            --surface:   #111317;
-            --surface2:  #181c22;
-            --surface3:  #1f252e;
-            --primary:   #3b82f6;
-            --primary-light: #60a5fa;
-            --primary-dim: #1e3a8a;
-            --accent-cyan: #22d3ee;
-            --accent-emerald: #10b981;
-            --accent-amber: #f59e0b;
-            --accent-slate: #64748b;
-            --text:      #f1f5f9;
-            --text2:     #cbd5e6;
-            --muted:     #6c7a91;
-            --border:    rgba(255,255,255,0.06);
-            --border2:   rgba(255,255,255,0.12);
+            --bg:        #0a0a0a;
+            --surface:   #111111;
+            --surface2:  #161616;
+            --surface3:  #1c1c1c;
+            --primary:   #d4d4d4;
+            --primary-light: #e5e5e5;
+            --primary-dim: #404040;
+            --accent-cyan:    #a3a3a3;
+            --accent-emerald: #a3a3a3;
+            --accent-amber:   #a3a3a3;
+            --accent-slate:   #737373;
+            --text:      #e5e5e5;
+            --text2:     #a3a3a3;
+            --muted:     #525252;
+            --border:    rgba(255,255,255,0.05);
+            --border2:   rgba(255,255,255,0.09);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; font-feature-settings: 'cv11', 'ss01'; }
         body::before {
             content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
@@ -45,25 +45,25 @@
         .mono { font-family: 'DM Mono', monospace; }
 
         /* Cards */
-        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; position: relative; overflow: hidden; transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s; }
-        .card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; position: relative; overflow: hidden; transition: border-color 0.2s; }
+        .card:hover { border-color: var(--border2); transform: none; box-shadow: none; }
 
         /* Nav */
-        .nav-pill { border-radius: 9px; padding: 6px 13px; font-size: 0.84rem; font-weight: 500; transition: all 0.15s; color: var(--muted); background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; font-family: 'DM Sans', sans-serif; }
-        .nav-pill:hover { color: var(--text2); background: var(--surface2); }
-        .nav-pill.active { background: var(--surface2); color: var(--primary-light); border: 1px solid rgba(59,130,246,0.3); }
+        .nav-pill { border-radius: 0; padding: 5px 10px; font-size: 0.84rem; font-weight: 450; transition: color 0.15s; color: var(--muted); background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; font-family: 'Inter', sans-serif; }
+        .nav-pill:hover { color: var(--text2); background: none; }
+        .nav-pill.active { background: none; color: var(--text); border: none; }
 
         /* Tags - modern professional colors */
-        .ptag { font-family: 'DM Mono', monospace; font-size: 0.67rem; padding: 2px 8px; border-radius: 5px; font-weight: 500; }
-        .ptag-primary { background: rgba(59,130,246,0.12); color: var(--primary-light); border: 1px solid rgba(59,130,246,0.25); }
-        .ptag-cyan   { background: rgba(34,211,238,0.08); color: var(--accent-cyan); border: 1px solid rgba(34,211,238,0.2); }
-        .ptag-emerald{ background: rgba(16,185,129,0.08); color: var(--accent-emerald); border: 1px solid rgba(16,185,129,0.2); }
-        .ptag-amber  { background: rgba(245,158,11,0.08); color: var(--accent-amber); border: 1px solid rgba(245,158,11,0.2); }
-        .ptag-slate  { background: rgba(100,116,139,0.12); color: var(--accent-slate); border: 1px solid rgba(100,116,139,0.2); }
+        .ptag { font-family: 'Inter', sans-serif; font-size: 0.67rem; padding: 2px 8px; border-radius: 5px; font-weight: 500; background: rgba(255,255,255,0.05); color: var(--text2); border: 1px solid rgba(255,255,255,0.08); }
+        .ptag-primary { background: rgba(255,255,255,0.05); color: var(--text2); border: 1px solid rgba(255,255,255,0.08); }
+        .ptag-cyan   { background: rgba(255,255,255,0.05); color: var(--text2); border: 1px solid rgba(255,255,255,0.08); }
+        .ptag-emerald{ background: rgba(255,255,255,0.05); color: var(--text2); border: 1px solid rgba(255,255,255,0.08); }
+        .ptag-amber  { background: rgba(255,255,255,0.05); color: var(--text2); border: 1px solid rgba(255,255,255,0.08); }
+        .ptag-slate  { background: rgba(255,255,255,0.04); color: var(--muted); border: 1px solid rgba(255,255,255,0.07); }
 
         /* Skill pills */
-        .skill-pill { background: var(--surface2); border: 1px solid var(--border); color: var(--text2); font-size: 0.78rem; padding: 4px 12px; border-radius: 999px; transition: all 0.15s; }
-        .skill-pill:hover { border-color: var(--border2); color: var(--text); background: var(--surface3); }
+        .skill-pill { background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--text2); font-size: 0.78rem; padding: 4px 12px; border-radius: 999px; transition: color 0.15s, border-color 0.15s; }
+        .skill-pill:hover { border-color: var(--border2); color: var(--text); background: rgba(255,255,255,0.06); }
 
         /* Scrollbar */
         ::-webkit-scrollbar { width: 4px; }
@@ -85,7 +85,7 @@
         .fade-up-2 { animation: fadeUp 0.42s 0.14s ease both; }
         .fade-up-3 { animation: fadeUp 0.42s 0.21s ease both; }
         .pulse-dot { animation: pulseDot 2.2s ease-in-out infinite; }
-        .type-cursor { display:inline-block; width:2px; height:1em; background:var(--primary); margin-left:2px; vertical-align:text-bottom; animation:typeBlink 0.75s step-end infinite; }
+        .type-cursor { display:inline-block; width:2px; height:1em; background:var(--text2); margin-left:2px; vertical-align:text-bottom; animation:typeBlink 0.75s step-end infinite; }
         .shimmer-card::after { content:''; position:absolute; top:0; left:0; width:35%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.02),transparent); animation:shimmer 4.5s ease-in-out infinite; pointer-events:none; }
         .stat-pop   { animation: popIn 0.48s cubic-bezier(0.34,1.4,0.64,1) both; }
         .stat-pop-1 { animation: popIn 0.48s 0.09s cubic-bezier(0.34,1.4,0.64,1) both; }
@@ -93,24 +93,24 @@
         .slide-down { animation: slideDown 0.15s ease both; }
 
         /* Featured cert */
-        .featured-card { background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%); border: 1px solid rgba(59,130,246,0.35); border-radius: 18px; position: relative; overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s; cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
-        .featured-card:hover { border-color: rgba(59,130,246,0.65); box-shadow: 0 0 32px rgba(59,130,246,0.1); }
+        .featured-card { background: var(--surface); border: 1px solid var(--border2); border-radius: 10px; position: relative; overflow: hidden; transition: border-color 0.2s; cursor: pointer; box-shadow: none; }
+        .featured-card:hover { border-color: rgba(255,255,255,0.15); box-shadow: none; }
 
         /* Cert ring */
-        .cert-ring { background: var(--surface3); border: 1px solid rgba(59,130,246,0.4); border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+        .cert-ring { background: var(--surface3); border: 1px solid var(--border2); border-radius: 10px; box-shadow: none; }
 
         /* Diff bar */
         .diff-bar-track { height:5px; background: var(--surface3); border-radius: 99px; overflow: hidden; }
         .diff-bar-fill { height:100%; border-radius: 99px; }
 
         /* Toggle */
-        .toggle-wrap { display: inline-flex; background: var(--surface2); border: 1px solid var(--border); border-radius: 11px; padding: 3px; gap: 2px; flex-wrap: nowrap; white-space: nowrap; }
-        .toggle-btn { padding: 6px 15px; border-radius: 8px; font-size: 0.84rem; font-weight: 500; color: var(--muted); transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px; background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; white-space: nowrap; }
-        .toggle-btn.on { background: var(--surface3); color: var(--primary-light); border: 1px solid rgba(59,130,246,0.3); }
+        .toggle-wrap { display: inline-flex; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 3px; gap: 2px; flex-wrap: nowrap; white-space: nowrap; }
+        .toggle-btn { padding: 6px 15px; border-radius: 4px; font-size: 0.84rem; font-weight: 500; color: var(--muted); transition: color 0.15s; display: inline-flex; align-items: center; gap: 6px; background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; white-space: nowrap; }
+        .toggle-btn.on { background: var(--surface3); color: var(--text); border: 1px solid var(--border); }
 
         /* Modal */
         .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(12px); z-index:10000; display:flex; align-items:center; justify-content:center; padding:1rem; animation:fadeIn 0.18s ease both; }
-        .modal-box { background:var(--surface); border:1px solid var(--border2); border-radius:20px; max-width:520px; width:100%; max-height:85vh; overflow-y:auto; animation:modalIn 0.25s cubic-bezier(0.34,1.2,0.64,1) both; box-shadow:0 40px 80px rgba(0,0,0,0.55); }
+        .modal-box { background:var(--surface); border:1px solid var(--border2); border-radius:12px; max-width:520px; width:100%; max-height:85vh; overflow-y:auto; animation:modalIn 0.25s cubic-bezier(0.34,1.2,0.64,1) both; box-shadow:0 20px 50px rgba(0,0,0,0.4); }
         .modal-box::-webkit-scrollbar { width:3px; }
         .modal-box::-webkit-scrollbar-thumb { background:var(--surface3); border-radius:2px; }
 
@@ -184,7 +184,7 @@ const NAV = [
     { id:'skills',       label:'Skills',          icon:'Cpu'          },
 ];
 const DIFF_COLOR = { Easy:'emerald', Medium:'amber', Hard:'amber', Extreme:'slate' };
-const DIFF_HEX   = { Easy:'#10b981', Medium:'#f59e0b', Hard:'#f59e0b', Extreme:'#64748b' };
+const DIFF_HEX   = { Easy:'#a3a3a3', Medium:'#a3a3a3', Hard:'#737373', Extreme:'#525252' };
 
 // ── Components ────────────────────────────────────────────────
 const Badge = ({ color='primary', children }) => <span className={`ptag ptag-${color}`}>{children}</span>;
@@ -253,7 +253,7 @@ const CertModal = ({ cert, onClose }) => {
                         </a>
                     </div>
                 )}
-                <div style={{position:'absolute', left:0, top:0, bottom:0, width:3, borderRadius:'20px 0 0 20px', background:'linear-gradient(to bottom, var(--primary), transparent)'}}/>
+                <div style={{position:'absolute', left:0, top:0, bottom:0, width:2, borderRadius:'8px 0 0 8px', background:'linear-gradient(to bottom, var(--border2), transparent)'}}/>
             </div>
         </div>
     );
@@ -265,8 +265,8 @@ const HomePage = () => {
     return (
     <div style={{display:'flex',flexDirection:'column',gap:16}}>
         <div className="card shimmer-card fade-up" style={{padding:'44px 36px'}}>
-            <div style={{position:'absolute',top:-40,right:-40,width:300,height:300,borderRadius:'50%',background:'radial-gradient(circle,rgba(59,130,246,0.06),transparent 70%)',filter:'blur(50px)',pointerEvents:'none'}}/>
-            <div style={{position:'absolute',bottom:-40,left:-40,width:220,height:220,borderRadius:'50%',background:'radial-gradient(circle,rgba(16,185,129,0.04),transparent 70%)',filter:'blur(40px)',pointerEvents:'none'}}/>
+            <div style={{position:'absolute',top:-40,right:-40,width:300,height:300,borderRadius:'50%',background:'radial-gradient(circle,rgba(255,255,255,0.025),transparent 70%)',filter:'blur(50px)',pointerEvents:'none'}}/>
+            <div style={{position:'absolute',bottom:-40,left:-40,width:220,height:220,borderRadius:'50%',background:'radial-gradient(circle,rgba(255,255,255,0.015),transparent 70%)',filter:'blur(40px)',pointerEvents:'none'}}/>
             <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:22}}>
                 <span className="pulse-dot" style={{width:7,height:7,borderRadius:'50%',background:'var(--accent-emerald)',display:'inline-block'}}/>
                 <span className="mono" style={{fontSize:'0.67rem',color:'var(--accent-emerald)',letterSpacing:'0.1em'}}>AVAILABLE FOR HIRE</span>
@@ -288,7 +288,7 @@ const HomePage = () => {
                         {label:'GitHub',   icon:'Github',   href:'https://github.com/JohannWeingertner'},
                         {label:'CyberDefenders', icon:'Shield', href:'https://cyberdefenders.org/p/Afterguard/'},
                     ].map((b,i)=>(
-                        <a key={i} href={b.href} target="_blank" rel="noopener noreferrer" style={{display:'flex',alignItems:'center',gap:7,padding:'8px 17px',borderRadius:10,fontSize:'0.85rem',fontWeight:500,textDecoration:'none',transition:'all 0.16s',...(b.primary?{background:'var(--primary)',color:'#0a0c10'}:{background:'var(--surface2)',color:'var(--text2)',border:'1px solid var(--border)'})}}
+                        <a key={i} href={b.href} target="_blank" rel="noopener noreferrer" style={{display:'flex',alignItems:'center',gap:7,padding:'8px 17px',borderRadius:10,fontSize:'0.85rem',fontWeight:500,textDecoration:'none',transition:'all 0.16s',...(b.primary?{background:'var(--primary)',color:'#0a0a0a'}:{background:'var(--surface2)',color:'var(--text2)',border:'1px solid var(--border)'})}}
                            onMouseEnter={e=>{if(!b.primary){e.currentTarget.style.borderColor='var(--border2)';e.currentTarget.style.color='var(--text)';}}}
                            onMouseLeave={e=>{if(!b.primary){e.currentTarget.style.borderColor='var(--border)';e.currentTarget.style.color='var(--text2)';}}}
                         ><Icon name={b.icon} className="w-4 h-4"/>{b.label}</a>
@@ -435,7 +435,7 @@ const ProjectsPage = () => {
             </div>
             <Card style={{padding:22}}>
                 <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8,marginBottom:18}}>
-                    {[{label:'Total',val:total,color:'var(--primary)'},{label:'Easy',val:counts.Easy||0,color:'#10b981'},{label:'Medium',val:counts.Medium||0,color:'#f59e0b'},{label:'Hard',val:counts.Hard||0,color:'#f97316'}].map((s,i)=>(
+                    {[{label:'Total',val:total,color:'var(--text)'},{label:'Easy',val:counts.Easy||0,color:'var(--text2)'},{label:'Medium',val:counts.Medium||0,color:'var(--text2)'},{label:'Hard',val:counts.Hard||0,color:'var(--muted)'}].map((s,i)=>(
                         <div key={i} style={{textAlign:'center',background:'var(--surface2)',borderRadius:10,padding:'10px 6px',border:'1px solid var(--border)'}}>
                             <div style={{fontSize:'1.3rem',fontWeight:800,color:s.color}}>{s.val}</div>
                             <div className="mono" style={{fontSize:'0.6rem',color:'var(--muted)',marginTop:2}}>{s.label.toUpperCase()}</div>
@@ -582,7 +582,7 @@ const SkillsPage = () => (
             {SKILLS.map((group,i)=>(
                 <Card key={i} style={{padding:20}}>
                     <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:14}}>
-                        <div style={{width:8,height:8,borderRadius:'50%',background:`var(--${group.color === 'primary' ? 'primary' : group.color === 'cyan' ? 'accent-cyan' : group.color === 'emerald' ? 'accent-emerald' : group.color === 'amber' ? 'accent-amber' : 'accent-slate'})`,flexShrink:0}}/>
+                        <div style={{width:8,height:8,borderRadius:'50%',background:'var(--muted)',flexShrink:0}}/>
                         <p style={{fontSize:'0.78rem',fontWeight:600,color:`var(--${group.color === 'primary' ? 'primary' : group.color === 'cyan' ? 'accent-cyan' : group.color === 'emerald' ? 'accent-emerald' : group.color === 'amber' ? 'accent-amber' : 'accent-slate'})`,letterSpacing:'0.03em'}}>{group.category}</p>
                     </div>
                     <div style={{display:'flex',flexWrap:'wrap',gap:6}}>

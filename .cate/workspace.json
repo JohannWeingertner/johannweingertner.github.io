@@ -1,0 +1,132 @@
+{
+  "version": 1,
+  "name": "johannweingertner.github.io",
+  "color": "",
+  "canvas": {
+    "nodes": [
+      {
+        "panelId": "c5eb2368-7f39-4422-b9bc-f1b24d450870",
+        "panelType": "terminal",
+        "title": "✳ restyle-portfolio-monochromatic",
+        "origin": {
+          "x": 273.5,
+          "y": 242.5
+        },
+        "size": {
+          "width": 640,
+          "height": 400
+        },
+        "dockLayout": {
+          "type": "tabs",
+          "id": "14797f4f-11ee-4991-b882-5d1f36ade22a",
+          "panelIds": [
+            "c5eb2368-7f39-4422-b9bc-f1b24d450870",
+            "cd0e95c1-9de2-421b-bab6-d2fe6c74e53e"
+          ],
+          "activeIndex": 1
+        }
+      },
+      {
+        "panelId": "29daa4ef-251a-4f72-9514-c216d5b11183",
+        "panelType": "browser",
+        "title": "johannweingertner.github.io",
+        "origin": {
+          "x": 960,
+          "y": 240
+        },
+        "size": {
+          "width": 800,
+          "height": 420
+        },
+        "url": "http://localhost:8911/",
+        "dockLayout": {
+          "type": "tabs",
+          "id": "e341d90c-6272-49b3-8d03-79bab20aaf6d",
+          "panelIds": [
+            "29daa4ef-251a-4f72-9514-c216d5b11183"
+          ],
+          "activeIndex": 0
+        }
+      }
+    ],
+    "zoomLevel": 1,
+    "viewportOffset": {
+      "x": -108.5,
+      "y": 47.5
+    }
+  },
+  "dockState": {
+    "zones": {
+      "left": {
+        "position": "left",
+        "visible": false,
+        "size": 260,
+        "layout": null
+      },
+      "right": {
+        "position": "right",
+        "visible": false,
+        "size": 260,
+        "layout": null
+      },
+      "bottom": {
+        "position": "bottom",
+        "visible": false,
+        "size": 240,
+        "layout": null
+      },
+      "center": {
+        "position": "center",
+        "visible": true,
+        "size": 0,
+        "layout": {
+          "type": "tabs",
+          "id": "47ecbeec-cc28-4165-91c3-0aff3e64c04f",
+          "panelIds": [
+            "658501a2-0cb1-4683-90a6-3ecd1c058932",
+            "55743ba6-0559-4861-9554-f282f3597e77",
+            "ea9bdc2e-0f4c-4788-b489-114f33edb6ce"
+          ],
+          "activeIndex": 0
+        }
+      }
+    },
+    "locations": {
+      "658501a2-0cb1-4683-90a6-3ecd1c058932": {
+        "type": "dock",
+        "zone": "center",
+        "stackId": "47ecbeec-cc28-4165-91c3-0aff3e64c04f"
+      },
+      "55743ba6-0559-4861-9554-f282f3597e77": {
+        "type": "dock",
+        "zone": "center",
+        "stackId": "47ecbeec-cc28-4165-91c3-0aff3e64c04f"
+      },
+      "ea9bdc2e-0f4c-4788-b489-114f33edb6ce": {
+        "type": "dock",
+        "zone": "center",
+        "stackId": "47ecbeec-cc28-4165-91c3-0aff3e64c04f"
+      }
+    }
+  },
+  "dockPanels": {
+    "658501a2-0cb1-4683-90a6-3ecd1c058932": {
+      "type": "canvas",
+      "title": "Canvas"
+    },
+    "55743ba6-0559-4861-9554-f282f3597e77": {
+      "type": "editor",
+      "title": "index.html",
+      "filePath": "index.html"
+    },
+    "ea9bdc2e-0f4c-4788-b489-114f33edb6ce": {
+      "type": "editor",
+      "title": "index.html",
+      "filePath": "index.html"
+    },
+    "cd0e95c1-9de2-421b-bab6-d2fe6c74e53e": {
+      "type": "terminal",
+      "title": "Terminal 1"
+    }
+  }
+}
