@@ -7,14 +7,14 @@
       {
         "panelId": "c5eb2368-7f39-4422-b9bc-f1b24d450870",
         "panelType": "terminal",
-        "title": "✳ restyle-portfolio-monochromatic",
+        "title": "✳ Copy SOC report content into writeups",
         "origin": {
-          "x": 273.5,
-          "y": 242.5
+          "x": 120,
+          "y": -40
         },
         "size": {
-          "width": 640,
-          "height": 400
+          "width": 793.5,
+          "height": 682.5
         },
         "dockLayout": {
           "type": "tabs",
@@ -35,10 +35,10 @@
           "y": 240
         },
         "size": {
-          "width": 800,
-          "height": 420
+          "width": 840,
+          "height": 700
         },
-        "url": "http://localhost:8911/",
+        "url": "http://localhost:8950/",
         "dockLayout": {
           "type": "tabs",
           "id": "e341d90c-6272-49b3-8d03-79bab20aaf6d",
@@ -49,10 +49,10 @@
         }
       }
     ],
-    "zoomLevel": 1,
+    "zoomLevel": 0.9615749084571001,
     "viewportOffset": {
-      "x": -108.5,
-      "y": 47.5
+      "x": 42.23312077813989,
+      "y": 84.42872124118531
     }
   },
   "dockState": {
@@ -85,7 +85,7 @@
           "panelIds": [
             "658501a2-0cb1-4683-90a6-3ecd1c058932",
             "55743ba6-0559-4861-9554-f282f3597e77",
-            "ea9bdc2e-0f4c-4788-b489-114f33edb6ce"
+            "950c7396-de0d-4022-95f6-b489233caea9"
           ],
           "activeIndex": 0
         }
@@ -102,7 +102,7 @@
         "zone": "center",
         "stackId": "47ecbeec-cc28-4165-91c3-0aff3e64c04f"
       },
-      "ea9bdc2e-0f4c-4788-b489-114f33edb6ce": {
+      "950c7396-de0d-4022-95f6-b489233caea9": {
         "type": "dock",
         "zone": "center",
         "stackId": "47ecbeec-cc28-4165-91c3-0aff3e64c04f"
@@ -119,10 +119,10 @@
       "title": "index.html",
       "filePath": "index.html"
     },
-    "ea9bdc2e-0f4c-4788-b489-114f33edb6ce": {
+    "950c7396-de0d-4022-95f6-b489233caea9": {
       "type": "editor",
-      "title": "index.html",
-      "filePath": "index.html"
+      "title": "soc-reports.html",
+      "filePath": "soc-reports.html"
     },
     "cd0e95c1-9de2-421b-bab6-d2fe6c74e53e": {
       "type": "terminal",

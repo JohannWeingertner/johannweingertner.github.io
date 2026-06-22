@@ -12,11 +12,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
     <script src="https://unpkg.com/lucide@0.441.0/dist/umd/lucide.js"></script>
     <!-- ── Data files — edit these to update content ── -->
     <script src="/data/certifications.js"></script>
     <script src="/data/labs.js"></script>
+    <script src="/data/writeups.js"></script>
     <style>
         :root {
             --bg:        #0a0a0a;
@@ -38,10 +39,6 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; font-feature-settings: 'cv11', 'ss01'; }
-        body::before {
-            content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
-        }
         .mono { font-family: 'DM Mono', monospace; }
 
         /* Cards */
@@ -49,7 +46,7 @@
         .card:hover { border-color: var(--border2); transform: none; box-shadow: none; }
 
         /* Nav */
-        .nav-pill { border-radius: 0; padding: 5px 10px; font-size: 0.84rem; font-weight: 450; transition: color 0.15s; color: var(--muted); background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; font-family: 'Inter', sans-serif; }
+        .nav-pill { border-radius: 0; padding: 5px 8px; font-size: 0.82rem; font-weight: 450; transition: color 0.15s; color: var(--muted); background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 5px; font-family: 'Inter', sans-serif; white-space: nowrap; }
         .nav-pill:hover { color: var(--text2); background: none; }
         .nav-pill.active { background: none; color: var(--text); border: none; }
 
@@ -71,33 +68,47 @@
         ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 4px; }
 
         /* Animations */
-        @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
-        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-        @keyframes pulseDot { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
+        @keyframes fadeUp   { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes fadeIn   { from { opacity:0; } to { opacity:1; } }
         @keyframes typeBlink { 0%,100%{opacity:1;} 50%{opacity:0;} }
-        @keyframes popIn { 0%{transform:scale(0.65);opacity:0;} 65%{transform:scale(1.06);} 100%{transform:scale(1);opacity:1;} }
-        @keyframes shimmer { from{transform:translateX(-100%) skewX(-12deg);} to{transform:translateX(260%) skewX(-12deg);} }
+        @keyframes modalIn  { from{opacity:0;transform:scale(0.93) translateY(10px);} to{opacity:1;transform:scale(1) translateY(0);} }
         @keyframes slideDown { from{opacity:0;transform:translateY(-6px);} to{opacity:1;transform:translateY(0);} }
-        @keyframes modalIn { from{opacity:0;transform:scale(0.93) translateY(10px);} to{opacity:1;transform:scale(1) translateY(0);} }
+        @keyframes nameGlow { 0%,100%{text-shadow:none;} 50%{text-shadow:0 0 60px rgba(255,255,255,0.07);} }
+        @keyframes rowSlide { from{opacity:0;transform:translateX(-10px);} to{opacity:1;transform:translateX(0);} }
+        @keyframes ctaPop   { 0%{opacity:0;transform:scale(0.9) translateY(6px);} 100%{opacity:1;transform:scale(1) translateY(0);} }
 
-        .fade-up   { animation: fadeUp 0.42s ease both; }
-        .fade-up-1 { animation: fadeUp 0.42s 0.07s ease both; }
-        .fade-up-2 { animation: fadeUp 0.42s 0.14s ease both; }
-        .fade-up-3 { animation: fadeUp 0.42s 0.21s ease both; }
-        .pulse-dot { animation: pulseDot 2.2s ease-in-out infinite; }
-        .type-cursor { display:inline-block; width:2px; height:1em; background:var(--text2); margin-left:2px; vertical-align:text-bottom; animation:typeBlink 0.75s step-end infinite; }
-        .shimmer-card::after { content:''; position:absolute; top:0; left:0; width:35%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.02),transparent); animation:shimmer 4.5s ease-in-out infinite; pointer-events:none; }
-        .stat-pop   { animation: popIn 0.48s cubic-bezier(0.34,1.4,0.64,1) both; }
-        .stat-pop-1 { animation: popIn 0.48s 0.09s cubic-bezier(0.34,1.4,0.64,1) both; }
-        .stat-pop-2 { animation: popIn 0.48s 0.18s cubic-bezier(0.34,1.4,0.64,1) both; }
+        .fade-up   { animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) both; }
+        .fade-up-1 { animation: fadeUp 0.5s 0.08s cubic-bezier(0.22,1,0.36,1) both; }
+        .fade-up-2 { animation: fadeUp 0.5s 0.16s cubic-bezier(0.22,1,0.36,1) both; }
+        .fade-up-3 { animation: fadeUp 0.5s 0.24s cubic-bezier(0.22,1,0.36,1) both; }
         .slide-down { animation: slideDown 0.15s ease both; }
+        .type-cursor { display:inline-block; width:2px; height:1em; background:var(--text2); margin-left:2px; vertical-align:text-bottom; animation:typeBlink 0.75s step-end infinite; }
+        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(12px); z-index:10000; display:flex; align-items:center; justify-content:center; padding:1rem; animation:fadeIn 0.18s ease both; }
+        .modal-box { background:var(--surface); border:1px solid var(--border2); border-radius:12px; max-width:520px; width:100%; max-height:85vh; overflow-y:auto; animation:modalIn 0.25s cubic-bezier(0.34,1.2,0.64,1) both; box-shadow:0 20px 50px rgba(0,0,0,0.4); }
+        .modal-box::-webkit-scrollbar { width:3px; }
+        .modal-box::-webkit-scrollbar-thumb { background:var(--surface3); border-radius:2px; }
 
-        /* Featured cert */
-        .featured-card { background: var(--surface); border: 1px solid var(--border2); border-radius: 10px; position: relative; overflow: hidden; transition: border-color 0.2s; cursor: pointer; box-shadow: none; }
-        .featured-card:hover { border-color: rgba(255,255,255,0.15); box-shadow: none; }
+        /* Name heading glow */
+        .hero-name { animation: nameGlow 5s ease-in-out infinite; }
 
-        /* Cert ring */
-        .cert-ring { background: var(--surface3); border: 1px solid var(--border2); border-radius: 10px; box-shadow: none; }
+        /* List row hover highlight */
+        .list-row { position: relative; transition: background 0.15s; cursor: pointer; }
+        .list-row::before { content:''; position:absolute; left:-12px; top:0; bottom:0; width:2px; background:var(--text2); border-radius:2px; opacity:0; transition: opacity 0.15s; }
+        .list-row:hover { background: rgba(255,255,255,0.025); }
+        .list-row:hover::before { opacity: 1; }
+
+        /* Row enter animation */
+        .row-in { animation: rowSlide 0.4s cubic-bezier(0.22,1,0.36,1) both; }
+
+        /* CTA buttons */
+        .cta-btn { display:inline-flex; align-items:center; gap:8px; padding:9px 17px; border-radius:8px; font-size:0.85rem; font-weight:500; text-decoration:none; transition:all 0.18s; border:1px solid var(--border); color:var(--text2); background:rgba(255,255,255,0.03); cursor:pointer; font-family:'Inter',sans-serif; animation: ctaPop 0.4s cubic-bezier(0.22,1,0.36,1) both; }
+        .cta-btn:hover { border-color:var(--border2); color:var(--text); background:rgba(255,255,255,0.06); transform:translateY(-1px); }
+        .cta-btn.primary { background:var(--text); color:#0a0a0a; border-color:transparent; }
+        .cta-btn.primary:hover { background:var(--primary-light); transform:translateY(-1px); }
+
+        /* Nav active underline */
+        .nav-pill { position:relative; }
+        .nav-pill.active::after { content:''; position:absolute; bottom:-1px; left:10px; right:10px; height:1px; background:var(--text2); border-radius:1px; }
 
         /* Diff bar */
         .diff-bar-track { height:5px; background: var(--surface3); border-radius: 99px; overflow: hidden; }
@@ -107,21 +118,6 @@
         .toggle-wrap { display: inline-flex; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 3px; gap: 2px; flex-wrap: nowrap; white-space: nowrap; }
         .toggle-btn { padding: 6px 15px; border-radius: 4px; font-size: 0.84rem; font-weight: 500; color: var(--muted); transition: color 0.15s; display: inline-flex; align-items: center; gap: 6px; background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; white-space: nowrap; }
         .toggle-btn.on { background: var(--surface3); color: var(--text); border: 1px solid var(--border); }
-
-        /* Modal */
-        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(12px); z-index:10000; display:flex; align-items:center; justify-content:center; padding:1rem; animation:fadeIn 0.18s ease both; }
-        .modal-box { background:var(--surface); border:1px solid var(--border2); border-radius:12px; max-width:520px; width:100%; max-height:85vh; overflow-y:auto; animation:modalIn 0.25s cubic-bezier(0.34,1.2,0.64,1) both; box-shadow:0 20px 50px rgba(0,0,0,0.4); }
-        .modal-box::-webkit-scrollbar { width:3px; }
-        .modal-box::-webkit-scrollbar-thumb { background:var(--surface3); border-radius:2px; }
-
-        /* Nav spacing */
-        .nav-spacer { flex: 1; }
-        @media (max-width: 768px) { .nav-spacer { display: none; } }
-        .md\:hidden { display: none !important; }
-        button.md\:hidden { display: none !important; }
-        
-        .page-header h1 { white-space: nowrap; }
-        @media (max-width: 640px) { .page-header h1 { white-space: normal; font-size: 1.5rem; } }
     </style>
 </head>
 <body>
@@ -129,15 +125,15 @@
 <script type="text/babel">
 const { useState, useEffect, useRef } = React;
 
-const Icon = ({ name, className = 'w-5 h-5', ...props }) => {
+const Icon = ({ name, className = '', size = 15, ...props }) => {
     const ref = useRef(null);
     useEffect(() => {
         if (ref.current && lucide[name]) {
-            const el = lucide.createElement(lucide[name], { class: className });
+            const el = lucide.createElement(lucide[name], { width: size, height: size, 'stroke-width': 1.75 });
             ref.current.innerHTML = ''; ref.current.appendChild(el);
         }
-    }, [name, className]);
-    return <i ref={ref} className={`flex-shrink-0 ${className}`} {...props} />;
+    }, [name, size]);
+    return <i ref={ref} className={`flex-shrink-0 ${className}`} style={{display:'inline-flex',alignItems:'center',justifyContent:'center',width:size,height:size}} {...props} />;
 };
 
 const useTyping = (text, speed = 42, delay = 800) => {
@@ -162,11 +158,6 @@ const SKILLS = [
     { category:'Cloud & Infrastructure',color:'amber',   items:['Cloud Security (Azure & AWS)','Active Directory','DHCP/DNS','GuardDuty'] },
     { category:'Intel & OSINT',         color:'slate',   items:['OSINT','OleTools','Phishing Analysis','VBA Macro Analysis','IOC Identification'] },
 ];
-const PROJECTS = [
-    { name:'Active Directory Lab',       detail:'Deployed Windows Server DC, configured domain, joined client, managed users',                                         icon:'Server',  color:'primary' },
-    { name:'School Gaming Tournament',   detail:'Deployed LAN for 50+ concurrent players, configured DHCP/DNS, resolved misconfiguration under pressure',              icon:'Network', color:'cyan' },
-    { name:'SOC Investigation Reports', detail:'Collection of SOC investigation reports with interactive PDF viewer — threat analysis, incident response, and forensic findings', icon:'FileText', color:'emerald', url:'soc-reports.html' },
-];
 const EXPERIENCE = [{
     role:'Cybersecurity Intern', org:'Chesterfield County IST Department', period:'June 2025 – February 2026',
     bullets:['Participated in tabletop exercise simulating cybersecurity incident response','Gained exposure to enterprise ticketing, security workflows, and professional mindset','Developed understanding of compliance auditing and cybersecurity insurance requirements','Observed security team communication and documentation practices'],
@@ -176,455 +167,460 @@ const COMPETITIONS = [
     { name:'CyberPatriot',                detail:'Top 30% — Windows hardening, vulnerability auditing, malware hunting',                icon:'Shield', color:'emerald', period:'2025' },
 ];
 const NAV = [
-    { id:'home',         label:'Home',           icon:'House'        },
-    { id:'certs',        label:'Certifications',  icon:'Award'        },
-    { id:'projects',     label:'Labs & Projects', icon:'FlaskConical' },
-    { id:'competitions', label:'Competitions',    icon:'Trophy'       },
-    { id:'experience',   label:'Experience',      icon:'Briefcase'    },
-    { id:'skills',       label:'Skills',          icon:'Cpu'          },
+    { id:'home',         label:'Home'       },
+    { id:'certs',        label:'Certs'      },
+    { id:'projects',     label:'Labs'       },
+    { id:'competitions', label:'CTFs'       },
+    { id:'experience',   label:'Experience' },
+    { id:'skills',       label:'Skills'     },
+    { id:'writeups',     label:'Writeups'   },
 ];
+
 const DIFF_COLOR = { Easy:'emerald', Medium:'amber', Hard:'amber', Extreme:'slate' };
 const DIFF_HEX   = { Easy:'#a3a3a3', Medium:'#a3a3a3', Hard:'#737373', Extreme:'#525252' };
 
+// ── Shared style tokens ───────────────────────────────────────
+const ST = {fontSize:'0.7rem',fontWeight:600,color:'var(--muted)',letterSpacing:'0.09em',textTransform:'uppercase',marginBottom:24};
+const ROW = {borderTop:'1px solid var(--border)'};
+const rowItem = {display:'flex',alignItems:'center',width:'100%',padding:'13px 0',borderBottom:'1px solid var(--border)',background:'none',border:'none',borderBottom:'1px solid var(--border)',cursor:'pointer',textAlign:'left',gap:0};
+
 // ── Components ────────────────────────────────────────────────
-const Badge = ({ color='primary', children }) => <span className={`ptag ptag-${color}`}>{children}</span>;
-
-const Card = ({ children, className='', style={}, ...p }) => (
-    <div className={`card ${className}`} style={style} {...p}>{children}</div>
-);
-
-const PageHeader = ({ title, sub }) => (
-    <div className="mb-8 fade-up page-header">
-        <h1 style={{fontSize:'1.7rem',fontWeight:800,color:'var(--text)',letterSpacing:'-0.025em',whiteSpace:'nowrap'}}>{title}</h1>
-        {sub && <p className="mt-1" style={{fontSize:'0.85rem',color:'var(--muted)'}}>{sub}</p>}
-    </div>
-);
-
-const CertBadgeImg = ({ src, alt, fallback, size=60 }) => (
-    <div className="cert-ring" style={{width:size,height:size,borderRadius:14,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,overflow:'hidden',background:'var(--surface2)'}}>
-        <img src={src} alt={alt} style={{width:'100%',height:'100%',objectFit:'contain',padding:7}}
+const CertBadgeImg = ({ src, alt, fallback, size=44 }) => (
+    <div style={{width:size,height:size,borderRadius:7,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,overflow:'hidden',background:'var(--surface2)',border:'1px solid var(--border)'}}>
+        <img src={src} alt={alt} style={{width:'100%',height:'100%',objectFit:'contain',padding:5}}
             onError={e=>{e.target.style.display='none';e.target.nextSibling.style.display='flex';}} />
-        <span className="mono" style={{color:'var(--primary)',display:'none',width:'100%',height:'100%',alignItems:'center',justifyContent:'center',textAlign:'center',fontSize:'0.65rem',fontWeight:700}}>{fallback}</span>
+        <span style={{color:'var(--muted)',display:'none',width:'100%',height:'100%',alignItems:'center',justifyContent:'center',textAlign:'center',fontSize:'0.6rem',fontWeight:600}}>{fallback}</span>
     </div>
 );
 
-// ── Cert Modal Component ─────────────────────────────────────
 const CertModal = ({ cert, onClose }) => {
     useEffect(() => {
-        const handleEsc = (e) => { if (e.key === 'Escape') onClose(); };
-        document.addEventListener('keydown', handleEsc);
-        return () => document.removeEventListener('keydown', handleEsc);
+        const h = (e) => { if (e.key === 'Escape') onClose(); };
+        document.addEventListener('keydown', h);
+        return () => document.removeEventListener('keydown', h);
     }, [onClose]);
     return (
         <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-box" onClick={e => e.stopPropagation()}>
-                <div style={{padding:'24px 24px 20px', borderBottom:'1px solid var(--border)'}}>
-                    <div style={{display:'flex', alignItems:'flex-start', gap:16}}>
-                        <CertBadgeImg src={cert.badge} alt={cert.short} fallback={cert.short} size={58} />
-                        <div style={{flex:1, minWidth:0}}>
-                            <div style={{display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:8}}>
-                                <p style={{fontSize:'1rem', fontWeight:700, color:'var(--text)', lineHeight:1.3}}>{cert.name}</p>
-                                <button onClick={onClose} style={{color:'var(--muted)', background:'none', border:'none', cursor:'pointer', flexShrink:0}}>
-                                    <Icon name="X" className="w-5 h-5"/>
+            <div className="modal-box" onClick={e=>e.stopPropagation()}>
+                <div style={{padding:'22px 22px 18px',borderBottom:'1px solid var(--border)'}}>
+                    <div style={{display:'flex',alignItems:'flex-start',gap:14}}>
+                        <CertBadgeImg src={cert.badge} alt={cert.short} fallback={cert.short} size={48}/>
+                        <div style={{flex:1,minWidth:0}}>
+                            <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:8}}>
+                                <p style={{fontSize:'0.94rem',fontWeight:600,color:'var(--text)',lineHeight:1.3}}>{cert.name}</p>
+                                <button onClick={onClose} style={{color:'var(--muted)',background:'none',border:'none',cursor:'pointer',flexShrink:0,padding:2}}>
+                                    <Icon name="X" size={14}/>
                                 </button>
                             </div>
-                            <p className="mono mt-1" style={{fontSize:'0.68rem', color:'var(--muted)'}}>{cert.issuer} · {cert.year}</p>
-                            <div style={{marginTop:8}}><Badge color="emerald">Active</Badge></div>
+                            <p style={{fontSize:'0.76rem',color:'var(--muted)',marginTop:4}}>{cert.issuer} · {cert.year}</p>
                         </div>
                     </div>
-                    {cert.description && <p style={{marginTop:16, fontSize:'0.85rem', lineHeight:1.65, color:'var(--text2)'}}>{cert.description}</p>}
+                    {cert.description && <p style={{marginTop:14,fontSize:'0.84rem',lineHeight:1.7,color:'var(--text2)'}}>{cert.description}</p>}
                 </div>
                 {cert.learned && cert.learned.length > 0 && (
-                    <div style={{padding:'20px 24px'}}>
-                        <p className="mono mb-4" style={{fontSize:'0.65rem', color:'var(--primary)', letterSpacing:'0.1em'}}>WHAT I LEARNED</p>
-                        <div style={{display:'flex', flexDirection:'column', gap:9}}>
-                            {cert.learned.map((item, i) => (
-                                <div key={i} style={{display:'flex', alignItems:'flex-start', gap:10, fontSize:'0.85rem', color:'var(--text2)'}}>
-                                    <span style={{color:'var(--primary)', flexShrink:0, marginTop:2, fontWeight:600}}>·</span>{item}
+                    <div style={{padding:'16px 22px'}}>
+                        <p style={{...ST,marginBottom:10}}>What I learned</p>
+                        <div style={{display:'flex',flexDirection:'column',gap:8}}>
+                            {cert.learned.map((item,i)=>(
+                                <div key={i} style={{display:'flex',alignItems:'flex-start',gap:10,fontSize:'0.83rem',color:'var(--text2)'}}>
+                                    <span style={{color:'var(--border2)',flexShrink:0}}>—</span>{item}
                                 </div>
                             ))}
                         </div>
                     </div>
                 )}
                 {cert.url && (
-                    <div style={{padding:'16px 24px 24px', borderTop:'1px solid var(--border)'}}>
-                        <a href={cert.url} target="_blank" rel="noopener noreferrer" style={{display:'inline-flex', alignItems:'center', gap:8, color:'var(--primary)', textDecoration:'none', fontSize:'0.85rem', fontWeight:500}}>
-                            View official credential <Icon name="ExternalLink" className="w-4 h-4"/>
+                    <div style={{padding:'14px 22px 20px',borderTop:'1px solid var(--border)'}}>
+                        <a href={cert.url} target="_blank" rel="noopener noreferrer" style={{color:'var(--text2)',textDecoration:'none',fontSize:'0.83rem',display:'inline-flex',alignItems:'center',gap:6}}>
+                            View credential <Icon name="ExternalLink" size={13}/>
                         </a>
                     </div>
                 )}
-                <div style={{position:'absolute', left:0, top:0, bottom:0, width:2, borderRadius:'8px 0 0 8px', background:'linear-gradient(to bottom, var(--border2), transparent)'}}/>
             </div>
         </div>
     );
 };
 
 // ── Pages ─────────────────────────────────────────────────────
-const HomePage = () => {
+const HomePage = ({ setPage }) => {
     const { displayed, done } = useTyping('Networking & Cybersecurity', 43, 800);
+    const ctaLinks = [
+        {label:'LinkedIn',       icon:'Linkedin', href:'https://www.linkedin.com/in/johann-weingertner-61b884358/', primary:true},
+        {label:'GitHub',         icon:'Github',   href:'https://github.com/JohannWeingertner'},
+        {label:'CyberDefenders', icon:'Shield',   href:'https://cyberdefenders.org/p/Afterguard/'},
+    ];
+    const highlights = [
+        {label:'Certifications',  val:'7 active',                          nav:'certs'},
+        {label:'Lab Hours',       val:'250+ hrs · Top 100 CyberDefenders', nav:'projects'},
+        {label:'Experience',      val:'Chesterfield County IST Dept.',      nav:'experience'},
+        {label:'Competitions',    val:'NCL Top 15% · CyberPatriot Top 30%',nav:'competitions'},
+    ];
     return (
-    <div style={{display:'flex',flexDirection:'column',gap:16}}>
-        <div className="card shimmer-card fade-up" style={{padding:'44px 36px'}}>
-            <div style={{position:'absolute',top:-40,right:-40,width:300,height:300,borderRadius:'50%',background:'radial-gradient(circle,rgba(255,255,255,0.025),transparent 70%)',filter:'blur(50px)',pointerEvents:'none'}}/>
-            <div style={{position:'absolute',bottom:-40,left:-40,width:220,height:220,borderRadius:'50%',background:'radial-gradient(circle,rgba(255,255,255,0.015),transparent 70%)',filter:'blur(40px)',pointerEvents:'none'}}/>
-            <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:22}}>
-                <span className="pulse-dot" style={{width:7,height:7,borderRadius:'50%',background:'var(--accent-emerald)',display:'inline-block'}}/>
-                <span className="mono" style={{fontSize:'0.67rem',color:'var(--accent-emerald)',letterSpacing:'0.1em'}}>AVAILABLE FOR HIRE</span>
-            </div>
-            <div style={{position:'relative',zIndex:1}}>
-                <p className="mono" style={{fontSize:'0.7rem',color:'var(--muted)',letterSpacing:'0.06em',marginBottom:10}}>portfolio</p>
-                <h1 style={{fontSize:'clamp(2.2rem,5vw,3.8rem)',fontWeight:800,color:'var(--text)',letterSpacing:'-0.035em',lineHeight:1.05,marginBottom:12}}>Afterguard</h1>
-                <p className="mono" style={{fontSize:'0.85rem',color:'var(--primary)',marginBottom:18,minHeight:'1.3em'}}>
-                    {displayed}{!done && <span className="type-cursor"/>}
-                </p>
-                <p style={{fontSize:'0.92rem',lineHeight:1.8,color:'var(--text2)',maxWidth:540,marginBottom:26}}>
-                    Aspiring networking and cybersecurity professional with hands-on experience across both disciplines.
-                    On the networking side, I've worked with Cisco devices, built homelabs, and actively studying for my CCNA.
-                    On the security side, I've job shadowed at Chesterfield County, accumulated 250+ hours in the CyberDefenders CyberRange (Top 100), and hold 7 active industry certifications.
-                </p>
-                <div style={{display:'flex',flexWrap:'wrap',gap:9}}>
-                    {[
-                        {label:'LinkedIn', icon:'Linkedin', href:'https://www.linkedin.com/in/johann-weingertner-61b884358/', primary:true},
-                        {label:'GitHub',   icon:'Github',   href:'https://github.com/JohannWeingertner'},
-                        {label:'CyberDefenders', icon:'Shield', href:'https://cyberdefenders.org/p/Afterguard/'},
-                    ].map((b,i)=>(
-                        <a key={i} href={b.href} target="_blank" rel="noopener noreferrer" style={{display:'flex',alignItems:'center',gap:7,padding:'8px 17px',borderRadius:10,fontSize:'0.85rem',fontWeight:500,textDecoration:'none',transition:'all 0.16s',...(b.primary?{background:'var(--primary)',color:'#0a0a0a'}:{background:'var(--surface2)',color:'var(--text2)',border:'1px solid var(--border)'})}}
-                           onMouseEnter={e=>{if(!b.primary){e.currentTarget.style.borderColor='var(--border2)';e.currentTarget.style.color='var(--text)';}}}
-                           onMouseLeave={e=>{if(!b.primary){e.currentTarget.style.borderColor='var(--border)';e.currentTarget.style.color='var(--text2)';}}}
-                        ><Icon name={b.icon} className="w-4 h-4"/>{b.label}</a>
-                    ))}
-                </div>
+    <div style={{display:'flex',flexDirection:'column',gap:56}}>
+        <div style={{paddingTop:16}} className="fade-up">
+            <h1 className="hero-name" style={{fontSize:'clamp(2rem,6vw,3rem)',fontWeight:700,color:'var(--text)',letterSpacing:'-0.03em',lineHeight:1.1,marginBottom:12}}>
+                Afterguard
+            </h1>
+            <p style={{fontSize:'0.95rem',color:'var(--text2)',marginBottom:22,minHeight:'1.5em'}}>
+                {displayed}{!done && <span className="type-cursor"/>}
+            </p>
+            <p style={{fontSize:'0.9rem',lineHeight:1.85,color:'var(--muted)',maxWidth:520,marginBottom:32}}>
+                Aspiring networking and cybersecurity professional with hands-on experience across both disciplines.
+                On the networking side, I've worked with Cisco devices, built homelabs, and am actively studying for my CCNA.
+                On the security side, I've job shadowed at Chesterfield County, accumulated 250+ hours in the CyberDefenders CyberRange, and hold 7 active industry certifications.
+            </p>
+            <div style={{display:'flex',flexWrap:'wrap',gap:10}}>
+                {ctaLinks.map((b,i)=>(
+                    <a key={i} href={b.href} target="_blank" rel="noopener noreferrer"
+                       className={`cta-btn${b.primary?' primary':''}`}
+                       style={{animationDelay:`${i*0.08}s`}}>
+                        <Icon name={b.icon} size={14}/>{b.label}
+                    </a>
+                ))}
             </div>
         </div>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10}}>
-            {[
-                {val:'7', label:'Certifications', icon:'Award', color:'var(--primary)', cls:'stat-pop'},
-                {val:'250+', label:'Lab Hours', icon:'Clock', color:'var(--accent-emerald)', cls:'stat-pop-1'},
-                {val:'Top 100', label:'CyberDefenders', icon:'Trophy', color:'var(--accent-cyan)', cls:'stat-pop-2'},
-            ].map((s,i)=>(
-                <Card key={i} className={s.cls} style={{padding:'18px 12px',textAlign:'center'}}>
-                    <Icon name={s.icon} className="w-5 h-5 mx-auto mb-2" style={{color:s.color}}/>
-                    <div style={{fontSize:'1.35rem',fontWeight:800,color:s.color,letterSpacing:'-0.02em'}}>{s.val}</div>
-                    <div className="mono" style={{fontSize:'0.6rem',color:'var(--muted)',marginTop:3,letterSpacing:'0.05em'}}>{s.label.toUpperCase()}</div>
-                </Card>
-            ))}
+        <div className="fade-up-1">
+            <p style={{...ST}}>Highlights</p>
+            <div style={ROW}>
+                {highlights.map((row,i)=>(
+                    <button key={i} onClick={()=>setPage(row.nav)}
+                        className="list-row"
+                        style={{...rowItem,justifyContent:'space-between',animationDelay:`${0.1+i*0.06}s`}}>
+                        <span style={{fontSize:'0.88rem',color:'var(--text2)',transition:'color 0.15s'}}>{row.label}</span>
+                        <span style={{fontSize:'0.82rem',color:'var(--muted)'}}>{row.val} <span style={{marginLeft:4,opacity:0.5}}>→</span></span>
+                    </button>
+                ))}
+            </div>
         </div>
     </div>
     );
 };
 
 const CertsPage = () => {
-    const [selectedCert, setSelectedCert] = useState(null);
-    const featured = CERTIFICATIONS?.find(c=>c.featured);
-    const rest = CERTIFICATIONS?.filter(c=>!c.featured) || [];
-    
-    const openModal = (cert) => {
-        setSelectedCert(cert);
-    };
-    
+    const [sel, setSel] = useState(null);
+    const all = CERTIFICATIONS || [];
     return (
-    <div className="fade-up" style={{display:'flex',flexDirection:'column',gap:16}}>
-        <PageHeader title="Certifications" sub="Click any certification to view details"/>
-        {featured && (
-        <div onClick={() => openModal(featured)} className="featured-card w-full text-left fade-up-1" style={{background:'none',border:'none',cursor:'pointer',padding:0}}>
-            <div style={{position:'absolute',top:14,right:14}}><Badge color="primary">★ Featured</Badge></div>
-            <div style={{padding:'28px 24px',display:'flex',gap:22,alignItems:'flex-start',flexWrap:'wrap',background:'linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%)'}}>
-                <CertBadgeImg src={featured.badge} alt={featured.short} fallback={featured.short} size={82}/>
-                <div style={{flex:1,minWidth:200}}>
-                    <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:8}}>
-                        <Badge color="emerald">Active</Badge>
-                        <span className="mono" style={{fontSize:'0.67rem',color:'var(--muted)'}}>Issued {featured.year}</span>
-                    </div>
-                    <p style={{fontSize:'1.08rem',fontWeight:700,color:'var(--text)',marginBottom:4}}>{featured.name}</p>
-                    <p style={{fontSize:'0.8rem',color:'var(--primary)',fontWeight:500,marginBottom:10}}>{featured.issuer}</p>
-                    <p style={{fontSize:'0.85rem',color:'var(--text2)',lineHeight:1.65,marginBottom:14}}>{featured.description}</p>
-                    <span style={{display:'flex',alignItems:'center',gap:5,color:'var(--primary)',fontSize:'0.82rem',fontWeight:500}}>
-                        More Info <Icon name="ExternalLink" className="w-3.5 h-3.5"/>
-                    </span>
-                </div>
-            </div>
-        </div>
-        )}
-        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(240px,1fr))',gap:10}}>
-            {rest.map((c,i)=>(
-                <div key={i} onClick={() => openModal(c)} className="text-left w-full fade-up-2" style={{cursor:'pointer',padding:0}}>
-                    <Card style={{padding:18,cursor:'pointer',height:'100%'}}>
-                        <div style={{display:'flex',alignItems:'flex-start',gap:12}}>
-                            <CertBadgeImg src={c.badge} alt={c.short} fallback={c.short} size={48}/>
-                            <div style={{flex:1,minWidth:0}}>
-                                <p style={{fontSize:'0.86rem',fontWeight:600,color:'var(--text)',marginBottom:3}}>{c.name}</p>
-                                <p className="mono" style={{fontSize:'0.67rem',color:'var(--muted)',marginBottom:8}}>{c.issuer} · {c.year}</p>
-                                <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-                                    <Badge color="emerald">Active</Badge>
-                                    <span className="mono" style={{display:'flex',alignItems:'center',gap:3,fontSize:'0.7rem',color:'var(--primary)',fontWeight:500}}>
-                                        More Info <Icon name="ExternalLink" className="w-3 h-3"/>
-                                    </span>
-                                </div>
-                            </div>
+    <div>
+        <p style={{...ST}}>Certifications</p>
+        <div style={ROW}>
+            {all.map((c,i)=>(
+                <button key={i} onClick={()=>setSel(c)} className="list-row"
+                    style={{...rowItem,justifyContent:'space-between',animationDelay:`${i*0.04}s`}}>
+                    <div style={{display:'flex',alignItems:'center',gap:14}}>
+                        <CertBadgeImg src={c.badge} alt={c.short} fallback={c.short} size={38}/>
+                        <div style={{textAlign:'left'}}>
+                            <p style={{fontSize:'0.88rem',fontWeight:500,color:'var(--text)',marginBottom:2}}>{c.name}</p>
+                            <p style={{fontSize:'0.74rem',color:'var(--muted)'}}>{c.issuer} · {c.year}</p>
                         </div>
-                    </Card>
-                </div>
+                    </div>
+                    <Icon name="ChevronRight" size={14} style={{color:'var(--muted)',flexShrink:0,transition:'transform 0.15s'}}/>
+                </button>
             ))}
         </div>
-        {selectedCert && <CertModal cert={selectedCert} onClose={() => setSelectedCert(null)} />}
+        {sel && <CertModal cert={sel} onClose={()=>setSel(null)}/>}
     </div>
     );
 };
 
 const ProjectsPage = () => {
-    const [tab, setTab] = useState('labs');
-    const [sortBy, setSortBy] = useState('date'); // 'date' or 'difficulty'
+    const [sortBy, setSortBy] = useState('date');
     const total = CD_LABS?.length || 0;
     const counts = CD_LABS?.reduce((a,l)=>{a[l.difficulty]=(a[l.difficulty]||0)+1;return a;},{}) || {};
-    const cats = CD_LABS?.reduce((a,l)=>{a[l.category]=(a[l.category]||0)+1;return a;},{}) || {};
-    const maxCat = Math.max(...Object.values(cats), 1);
 
-    // Sort labs based on selected criteria
     const sortedLabs = React.useMemo(() => {
         if (!CD_LABS) return [];
-        const labsCopy = [...CD_LABS];
-        if (sortBy === 'date') {
-            // Sort by completion date (most recent first), labs without dates go to the end
-            return labsCopy.sort((a, b) => {
-                if (!a.completed) return 1;
-                if (!b.completed) return -1;
-                const dateA = new Date(a.completed);
-                const dateB = new Date(b.completed);
-                return dateB - dateA;
-            });
-        } else if (sortBy === 'difficulty') {
-            // Sort by difficulty: Easy -> Medium -> Hard -> Extreme, then by name
-            const diffOrder = { 'Easy': 0, 'Medium': 1, 'Hard': 2, 'Extreme': 3 };
-            return labsCopy.sort((a, b) => {
-                const orderA = diffOrder[a.difficulty] ?? 4;
-                const orderB = diffOrder[b.difficulty] ?? 4;
-                if (orderA !== orderB) return orderA - orderB;
-                return a.name.localeCompare(b.name);
-            });
-        }
-        return labsCopy;
+        const copy = [...CD_LABS];
+        if (sortBy === 'date') return copy.sort((a,b)=>{ if(!a.completed)return 1; if(!b.completed)return -1; return new Date(b.completed)-new Date(a.completed); });
+        const ord = {Easy:0,Medium:1,Hard:2,Extreme:3};
+        return copy.sort((a,b)=>(ord[a.difficulty]??4)-(ord[b.difficulty]??4)||a.name.localeCompare(b.name));
     }, [sortBy]);
 
     return (
-    <div className="fade-up" style={{display:'flex',flexDirection:'column',gap:16}}>
-        <PageHeader title="Labs & Projects" />
-        <div style={{display:'flex',justifyContent:'flex-start',marginBottom:4,flexWrap:'wrap',gap:8}}>
-            <div className="toggle-wrap fade-up-1">
-                {[{id:'labs',label:'CyberDefenders Labs',icon:'FlaskConical'},{id:'projects',label:'Projects',icon:'Code2'}].map(t=>(
-                    <button key={t.id} onClick={()=>setTab(t.id)} className={`toggle-btn ${tab===t.id?'on':''}`}>
-                        <Icon name={t.icon} className="w-3.5 h-3.5"/>{t.label}
-                    </button>
-                ))}
-            </div>
-            {tab === 'labs' && (
-            <div className="toggle-wrap fade-up-1">
-                {[{id:'date',label:'By Date',icon:'Calendar'},{id:'difficulty',label:'By Difficulty',icon:'BarChart3'}].map(t=>(
-                    <button key={t.id} onClick={()=>setSortBy(t.id)} className={`toggle-btn ${sortBy===t.id?'on':''}`}>
-                        <Icon name={t.icon} className="w-3.5 h-3.5"/>{t.label}
-                    </button>
-                ))}
-            </div>
-            )}
-        </div>
-        {tab==='labs' && (
-        <div style={{display:'flex',flexDirection:'column',gap:14}}>
-            <div style={{display:'flex',justifyContent:'flex-end'}}>
-                <a href="https://cyberdefenders.org/p/Afterguard/" target="_blank" rel="noopener noreferrer" className="mono" style={{fontSize:'0.7rem',color:'var(--primary)',textDecoration:'none',display:'flex',alignItems:'center',gap:4}}>
-                    View Profile <Icon name="ExternalLink" className="w-3 h-3"/>
-                </a>
-            </div>
-            <Card style={{padding:22}}>
-                <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8,marginBottom:18}}>
-                    {[{label:'Total',val:total,color:'var(--text)'},{label:'Easy',val:counts.Easy||0,color:'var(--text2)'},{label:'Medium',val:counts.Medium||0,color:'var(--text2)'},{label:'Hard',val:counts.Hard||0,color:'var(--muted)'}].map((s,i)=>(
-                        <div key={i} style={{textAlign:'center',background:'var(--surface2)',borderRadius:10,padding:'10px 6px',border:'1px solid var(--border)'}}>
-                            <div style={{fontSize:'1.3rem',fontWeight:800,color:s.color}}>{s.val}</div>
-                            <div className="mono" style={{fontSize:'0.6rem',color:'var(--muted)',marginTop:2}}>{s.label.toUpperCase()}</div>
-                        </div>
-                    ))}
+    <div>
+        <div>
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:18,flexWrap:'wrap',gap:8}}>
+                <p style={{...ST,marginBottom:0}}>CyberDefenders Labs</p>
+                <div style={{display:'flex',alignItems:'center',gap:12}}>
+                    <div className="toggle-wrap">
+                        {[{id:'date',label:'Date'},{id:'difficulty',label:'Difficulty'}].map(t=>(
+                            <button key={t.id} onClick={()=>setSortBy(t.id)} className={`toggle-btn ${sortBy===t.id?'on':''}`}>{t.label}</button>
+                        ))}
+                    </div>
+                    <a href="https://cyberdefenders.org/p/Afterguard/" target="_blank" rel="noopener noreferrer"
+                       style={{fontSize:'0.75rem',color:'var(--muted)',textDecoration:'none'}}>Profile ↗</a>
                 </div>
-                <div style={{display:'flex',flexDirection:'column',gap:8,marginBottom:18}}>
-                    {Object.entries(DIFF_HEX).map(([diff,hex])=>(
-                        <div key={diff} style={{display:'flex',alignItems:'center',gap:10}}>
-                            <span className="mono" style={{fontSize:'0.67rem',color:hex,width:52,textAlign:'right'}}>{diff}</span>
-                            <div className="diff-bar-track" style={{flex:1}}><div className="diff-bar-fill" style={{width:total?`${((counts[diff]||0)/total)*100}%`:'0%',background:hex,opacity:0.75}}/></div>
-                            <span className="mono" style={{fontSize:'0.67rem',color:'var(--muted)',width:14,textAlign:'right'}}>{counts[diff]||0}</span>
+            </div>
+            <p style={{fontSize:'0.78rem',color:'var(--muted)',marginBottom:14}}>
+                {total} completed · Easy {counts.Easy||0} · Medium {counts.Medium||0} · Hard {counts.Hard||0}
+            </p>
+            <div style={ROW}>
+                {sortedLabs.map((lab,i)=>(
+                    <a key={i} href={lab.url} target="_blank" rel="noopener noreferrer"
+                       className="list-row"
+                       style={{display:'flex',alignItems:'center',padding:'11px 0',borderBottom:'1px solid var(--border)',textDecoration:'none',gap:12}}>
+                        <span style={{fontSize:'0.86rem',color:'var(--text)',flex:1,minWidth:0,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{lab.name}</span>
+                        <div style={{display:'flex',alignItems:'center',gap:10,flexShrink:0}}>
+                            <span style={{fontSize:'0.72rem',color:'var(--muted)'}}>{lab.category}</span>
+                            {lab.difficulty && <span style={{fontSize:'0.72rem',color:DIFF_HEX[lab.difficulty]||'var(--muted)'}}>{lab.difficulty}</span>}
+                            {lab.completed && <span style={{fontSize:'0.72rem',color:'var(--muted)'}}>{lab.completed}</span>}
                         </div>
-                    ))}
-                </div>
-                <div style={{display:'flex',flexDirection:'column',gap:7}}>
-                    {Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([cat,count])=>(
-                        <div key={cat} style={{display:'flex',alignItems:'center',gap:10}}>
-                            <span style={{fontSize:'0.78rem',color:'var(--text2)',width:140,flexShrink:0,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{cat}</span>
-                            <div className="diff-bar-track" style={{flex:1}}><div className="diff-bar-fill" style={{width:`${(count/maxCat)*100}%`,background:'var(--primary)',opacity:0.65}}/></div>
-                            <span className="mono" style={{fontSize:'0.67rem',color:'var(--muted)',width:14,textAlign:'right'}}>{count}</span>
-                        </div>
-                    ))}
-                </div>
-            </Card>
-            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(240px,1fr))',gap:9}}>
-                {sortedLabs?.map((lab,i)=>(
-                    <a key={i} href={lab.url} target="_blank" rel="noopener noreferrer" style={{textDecoration:'none'}}>
-                        <Card style={{padding:15}}>
-                            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:8}}>
-                                <p style={{fontSize:'0.84rem',fontWeight:600,color:'var(--text)'}}>{lab.name}</p>
-                                <Icon name="ExternalLink" className="w-3.5 h-3.5" style={{color:'var(--muted)'}}/>
-                            </div>
-                            <div style={{display:'flex',alignItems:'center',gap:6,flexWrap:'wrap'}}>
-                                <Badge color="primary">{lab.category}</Badge>
-                                {lab.difficulty && <Badge color={lab.difficulty === 'Easy' ? 'emerald' : 'amber'}>{lab.difficulty}</Badge>}
-                                {lab.completed && <span className="mono" style={{fontSize:'0.63rem',color:'var(--accent-emerald)',marginLeft:'auto'}}>✓ {lab.completed}</span>}
-                            </div>
-                        </Card>
                     </a>
                 ))}
             </div>
         </div>
-        )}
-        {tab==='projects' && (
-        <div style={{display:'flex',flexDirection:'column',gap:10}}>
-            {PROJECTS.map((p,i)=>{
-                const cardContent = (
-                    <Card key={i} style={{padding:22, cursor: p.url ? 'pointer' : 'default'}}>
-                        <div style={{display:'flex',alignItems:'flex-start',gap:14}}>
-                            <div style={{width:42,height:42,borderRadius:11,background:'var(--surface2)',border:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'center'}}>
-                                <Icon name={p.icon} className="w-4.5 h-4.5" style={{color:`var(--${p.color === 'primary' ? 'primary' : p.color === 'emerald' ? 'accent-emerald' : 'accent-cyan'})`}}/>
-                            </div>
-                            <div style={{flex:1}}>
-                                <div style={{display:'flex',alignItems:'center',gap:8}}>
-                                    <p style={{fontSize:'0.92rem',fontWeight:600,color:'var(--text)',marginBottom:4}}>{p.name}</p>
-                                    {p.url && <Icon name="ExternalLink" className="w-3.5 h-3.5" style={{color:'var(--muted)'}}/>}
-                                </div>
-                                <p style={{fontSize:'0.84rem',color:'var(--text2)',lineHeight:1.65}}>{p.detail}</p>
-                            </div>
-                        </div>
-                    </Card>
-                );
-                if (p.url) {
-                    return <a key={i} href={p.url} target="_blank" rel="noopener noreferrer" style={{textDecoration:'none',color:'inherit'}}>{cardContent}</a>;
-                }
-                return cardContent;
-            })}
-        </div>
-        )}
+
     </div>
     );
 };
 
 const CompetitionsPage = () => (
-    <div className="fade-up" style={{display:'flex',flexDirection:'column',gap:16}}>
-        <PageHeader title="Competitions" sub="CTF events and team competitions"/>
-        {COMPETITIONS.map((c,i)=>(
-            <Card key={i} style={{padding:22}}>
-                <div style={{display:'flex',alignItems:'flex-start',gap:14}}>
-                    <div style={{width:42,height:42,borderRadius:11,background:'var(--surface2)',border:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'center'}}>
-                        <Icon name={c.icon} className="w-4.5 h-4.5" style={{color:`var(--${c.color === 'primary' ? 'primary' : 'accent-emerald'})`}}/>
+    <div>
+        <p style={{...ST}}>Competitions</p>
+        <div style={ROW}>
+            {COMPETITIONS.map((c,i)=>(
+                <div key={i} style={{padding:'16px 0',borderBottom:'1px solid var(--border)'}}>
+                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:5}}>
+                        <p style={{fontSize:'0.9rem',fontWeight:500,color:'var(--text)'}}>{c.name}</p>
+                        <span style={{fontSize:'0.74rem',color:'var(--muted)',flexShrink:0,marginLeft:16}}>{c.period}</span>
                     </div>
-                    <div style={{flex:1}}>
-                        <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:4,flexWrap:'wrap'}}>
-                            <p style={{fontSize:'0.92rem',fontWeight:600,color:'var(--text)'}}>{c.name}</p>
-                            <span className="mono" style={{fontSize:'0.65rem',color:'var(--muted)',marginLeft:'auto'}}>{c.period}</span>
-                        </div>
-                        <p style={{fontSize:'0.84rem',color:'var(--text2)',lineHeight:1.65}}>{c.detail}</p>
-                    </div>
+                    <p style={{fontSize:'0.83rem',color:'var(--muted)',lineHeight:1.7}}>{c.detail}</p>
                 </div>
-            </Card>
-        ))}
-    </div>
-);
-
-const ExperiencePage = () => (
-    <div className="fade-up" style={{display:'flex',flexDirection:'column',gap:16}}>
-        <PageHeader title="Experience"/>
-        {EXPERIENCE.map((job,i)=>(
-            <Card key={i} style={{padding:24}}>
-                <div style={{display:'flex',alignItems:'flex-start',gap:14,marginBottom:18}}>
-                    <div style={{width:42,height:42,borderRadius:11,background:'var(--surface2)',border:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'center'}}>
-                        <Icon name="Briefcase" className="w-4 h-4" style={{color:'var(--primary)'}}/>
-                    </div>
-                    <div>
-                        <p style={{fontSize:'0.96rem',fontWeight:700,color:'var(--text)'}}>{job.role}</p>
-                        <p style={{fontSize:'0.82rem',color:'var(--accent-cyan)',fontWeight:500}}>{job.org}</p>
-                        <p className="mono mt-1" style={{fontSize:'0.67rem',color:'var(--muted)'}}>{job.period}</p>
-                    </div>
-                </div>
-                <div style={{marginLeft:56,display:'flex',flexDirection:'column',gap:8}}>
-                    {job.bullets.map((b,j)=>(
-                        <div key={j} style={{display:'flex',alignItems:'flex-start',gap:10,fontSize:'0.84rem',color:'var(--text2)'}}>
-                            <span style={{color:'var(--primary)',flexShrink:0,marginTop:2}}>·</span>{b}
-                        </div>
-                    ))}
-                </div>
-            </Card>
-        ))}
-        <div>
-            <p style={{fontSize:'1.05rem',fontWeight:700,color:'var(--text)',marginBottom:10}}>Education</p>
-            <Card style={{padding:22}}>
-                <div style={{display:'flex',alignItems:'flex-start',gap:14}}>
-                    <div style={{width:42,height:42,borderRadius:11,background:'var(--surface2)',border:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'center'}}>
-                        <Icon name="GraduationCap" className="w-4 h-4" style={{color:'var(--accent-emerald)'}}/>
-                    </div>
-                    <div>
-                        <p style={{fontSize:'0.93rem',fontWeight:700,color:'var(--text)'}}>Cisco Networking Academy</p>
-                        <p style={{fontSize:'0.82rem',color:'var(--accent-emerald)',fontWeight:500}}>Chesterfield Technical Center</p>
-                        <p style={{fontSize:'0.82rem',color:'var(--text2)',marginTop:4}}>Dual-enrolled college-level IT coursework via Brightpoint Community College</p>
-                        <p className="mono" style={{fontSize:'0.67rem',color:'var(--muted)',marginTop:5}}>Aug 2024 – Expected Dec 2026</p>
-                    </div>
-                </div>
-            </Card>
-        </div>
-    </div>
-);
-
-const SkillsPage = () => (
-    <div className="fade-up" style={{display:'flex',flexDirection:'column',gap:16}}>
-        <PageHeader title="Skills & Tools"/>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:10}}>
-            {SKILLS.map((group,i)=>(
-                <Card key={i} style={{padding:20}}>
-                    <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:14}}>
-                        <div style={{width:8,height:8,borderRadius:'50%',background:'var(--muted)',flexShrink:0}}/>
-                        <p style={{fontSize:'0.78rem',fontWeight:600,color:`var(--${group.color === 'primary' ? 'primary' : group.color === 'cyan' ? 'accent-cyan' : group.color === 'emerald' ? 'accent-emerald' : group.color === 'amber' ? 'accent-amber' : 'accent-slate'})`,letterSpacing:'0.03em'}}>{group.category}</p>
-                    </div>
-                    <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
-                        {group.items.map((item,j)=><span key={j} className="skill-pill">{item}</span>)}
-                    </div>
-                </Card>
             ))}
         </div>
     </div>
 );
 
+const ExperiencePage = () => (
+    <div>
+        <p style={{...ST}}>Experience</p>
+        <div style={ROW}>
+            {EXPERIENCE.map((job,i)=>(
+                <div key={i} style={{padding:'18px 0',borderBottom:'1px solid var(--border)'}}>
+                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:8}}>
+                        <div>
+                            <p style={{fontSize:'0.9rem',fontWeight:600,color:'var(--text)'}}>{job.role}</p>
+                            <p style={{fontSize:'0.81rem',color:'var(--text2)',marginTop:2}}>{job.org}</p>
+                        </div>
+                        <span style={{fontSize:'0.74rem',color:'var(--muted)',flexShrink:0,marginLeft:16}}>{job.period}</span>
+                    </div>
+                    <div style={{display:'flex',flexDirection:'column',gap:7,marginTop:10}}>
+                        {job.bullets.map((b,j)=>(
+                            <div key={j} style={{display:'flex',alignItems:'flex-start',gap:10,fontSize:'0.83rem',color:'var(--muted)'}}>
+                                <span style={{color:'var(--border2)',flexShrink:0}}>—</span>{b}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            ))}
+            <div style={{padding:'18px 0',borderBottom:'1px solid var(--border)'}}>
+                <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:5}}>
+                    <div>
+                        <p style={{fontSize:'0.9rem',fontWeight:600,color:'var(--text)'}}>Cisco Networking Academy</p>
+                        <p style={{fontSize:'0.81rem',color:'var(--text2)',marginTop:2}}>Chesterfield Technical Center</p>
+                    </div>
+                    <span style={{fontSize:'0.74rem',color:'var(--muted)',flexShrink:0,marginLeft:16}}>Aug 2024 – Dec 2026</span>
+                </div>
+                <p style={{fontSize:'0.83rem',color:'var(--muted)',marginTop:8}}>Dual-enrolled college-level IT coursework via Brightpoint Community College</p>
+            </div>
+        </div>
+    </div>
+);
+
+const SkillsPage = () => (
+    <div>
+        <p style={{...ST}}>Skills & Tools</p>
+        <div style={ROW}>
+            {SKILLS.map((group,i)=>(
+                <div key={i} style={{display:'flex',gap:20,padding:'14px 0',borderBottom:'1px solid var(--border)',flexWrap:'wrap'}}>
+                    <span style={{fontSize:'0.78rem',color:'var(--text2)',width:170,flexShrink:0,paddingTop:1}}>{group.category}</span>
+                    <p style={{fontSize:'0.82rem',color:'var(--muted)',lineHeight:1.8,flex:1}}>{group.items.join(' · ')}</p>
+                </div>
+            ))}
+        </div>
+    </div>
+);
+
+const WriteupModal = ({ writeup, onClose }) => {
+    useEffect(() => {
+        const h = (e) => { if (e.key === 'Escape') onClose(); };
+        document.addEventListener('keydown', h);
+        document.body.style.overflow = 'hidden';
+        return () => { document.removeEventListener('keydown', h); document.body.style.overflow = ''; };
+    }, [onClose]);
+
+    const renderBlock = (block, i) => {
+        switch (block.type) {
+            case 'h2': return (
+                <p key={i} style={{fontSize:'0.7rem',fontWeight:600,color:'var(--muted)',letterSpacing:'0.09em',textTransform:'uppercase',marginTop:28,marginBottom:10}}>
+                    {block.text}
+                </p>
+            );
+            case 'h3': return (
+                <p key={i} style={{fontSize:'0.84rem',fontWeight:600,color:'var(--text)',marginTop:16,marginBottom:8}}>
+                    {block.text}
+                </p>
+            );
+            case 'p': return (
+                <p key={i} style={{fontSize:'0.87rem',lineHeight:1.8,color:'var(--text2)',marginBottom:10}}>
+                    {block.text}
+                </p>
+            );
+            case 'ul': return (
+                <ul key={i} style={{listStyle:'none',padding:0,margin:'0 0 12px',display:'flex',flexDirection:'column',gap:6}}>
+                    {block.items.map((item,j)=>(
+                        <li key={j} style={{display:'flex',alignItems:'flex-start',gap:10,fontSize:'0.86rem',color:'var(--text2)'}}>
+                            <span style={{color:'var(--muted)',flexShrink:0}}>—</span>{item}
+                        </li>
+                    ))}
+                </ul>
+            );
+            case 'ol': return (
+                <ol key={i} style={{listStyle:'none',padding:0,margin:'0 0 12px',display:'flex',flexDirection:'column',gap:6,counterReset:'ol-counter'}}>
+                    {block.items.map((item,j)=>(
+                        <li key={j} style={{display:'flex',alignItems:'flex-start',gap:10,fontSize:'0.86rem',color:'var(--text2)'}}>
+                            <span style={{color:'var(--muted)',flexShrink:0,minWidth:16,fontVariantNumeric:'tabular-nums'}}>{j+1}.</span>{item}
+                        </li>
+                    ))}
+                </ol>
+            );
+            case 'code': return (
+                <pre key={i} style={{margin:'0 0 14px',padding:'11px 14px',background:'rgba(255,255,255,0.04)',border:'1px solid var(--border)',borderRadius:6,fontSize:'0.78rem',color:'var(--text2)',fontFamily:"'DM Mono',monospace",overflowX:'auto',lineHeight:1.7,whiteSpace:'pre-wrap',wordBreak:'break-all'}}>
+                    {block.text}
+                </pre>
+            );
+            case 'note': return (
+                <div key={i} style={{margin:'0 0 14px',padding:'11px 14px',background:'rgba(255,255,255,0.03)',borderLeft:'2px solid var(--border2)',borderRadius:'0 6px 6px 0',fontSize:'0.83rem',color:'var(--text2)',lineHeight:1.7}}>
+                    <span style={{color:'var(--muted)',fontWeight:600,fontSize:'0.7rem',letterSpacing:'0.06em',textTransform:'uppercase',display:'block',marginBottom:4}}>Note</span>
+                    {block.text}
+                </div>
+            );
+            case 'table': return (
+                <div key={i} style={{margin:'0 0 16px',overflowX:'auto'}}>
+                    <table style={{width:'100%',borderCollapse:'collapse',fontSize:'0.82rem'}}>
+                        <thead>
+                            <tr style={{borderBottom:'1px solid var(--border2)'}}>
+                                {block.headers.map((h,j)=>(
+                                    <th key={j} style={{textAlign:'left',padding:'7px 12px',color:'var(--muted)',fontWeight:600,fontSize:'0.7rem',letterSpacing:'0.07em',textTransform:'uppercase',whiteSpace:'nowrap'}}>
+                                        {h}
+                                    </th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {block.rows.map((row,j)=>(
+                                <tr key={j} style={{borderBottom:'1px solid var(--border)'}}>
+                                    {row.map((cell,k)=>(
+                                        <td key={k} style={{padding:'8px 12px',color:'var(--text2)',verticalAlign:'top',fontFamily:k===0?"'DM Mono',monospace":'inherit',fontSize:k===0?'0.78rem':'0.82rem'}}>
+                                            {cell}
+                                        </td>
+                                    ))}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            );
+            case 'figure': return (
+                <figure key={i} style={{margin:'20px 0',padding:0}}>
+                    <img src={block.src} alt={block.caption||''} style={{width:'100%',borderRadius:6,border:'1px solid var(--border)',display:'block'}}/>
+                    {block.caption && (
+                        <figcaption style={{fontSize:'0.75rem',color:'var(--muted)',textAlign:'center',marginTop:6,fontStyle:'italic'}}>
+                            {block.caption}
+                        </figcaption>
+                    )}
+                </figure>
+            );
+            default: return null;
+        }
+    };
+
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-box" onClick={e=>e.stopPropagation()} style={{maxWidth:600}}>
+                <div style={{padding:'22px 22px 18px',borderBottom:'1px solid var(--border)',position:'sticky',top:0,background:'var(--surface)',zIndex:1}}>
+                    <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:12}}>
+                        <div>
+                            <p style={{fontSize:'0.96rem',fontWeight:600,color:'var(--text)',lineHeight:1.3,marginBottom:6}}>{writeup.title}</p>
+                            <div style={{display:'flex',gap:12,alignItems:'center'}}>
+                                <span style={{fontSize:'0.72rem',color:'var(--muted)'}}>{writeup.category}</span>
+                                <span style={{fontSize:'0.72rem',color:DIFF_HEX[writeup.difficulty]||'var(--muted)'}}>{writeup.difficulty}</span>
+                                <span style={{fontSize:'0.72rem',color:'var(--muted)'}}>{writeup.date}</span>
+                            </div>
+                        </div>
+                        <button onClick={onClose} style={{color:'var(--muted)',background:'none',border:'none',cursor:'pointer',padding:2,flexShrink:0}}>
+                            <Icon name="X" size={14}/>
+                        </button>
+                    </div>
+                </div>
+                <div style={{padding:'4px 22px 28px'}}>
+                    {writeup.content.map(renderBlock)}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const WriteupsPage = () => {
+    const [sel, setSel] = useState(null);
+    return (
+    <div>
+        <p style={{...ST}}>Writeups</p>
+        <div style={ROW}>
+            {WRITEUPS.map((w,i)=>(
+                <button key={i} onClick={()=>setSel(w)} className="list-row"
+                    style={{...rowItem,justifyContent:'space-between',animationDelay:`${i*0.05}s`}}>
+                    <div style={{textAlign:'left',flex:1,minWidth:0}}>
+                        <p style={{fontSize:'0.9rem',fontWeight:500,color:'var(--text)',marginBottom:4}}>{w.title}</p>
+                        <p style={{fontSize:'0.78rem',color:'var(--muted)'}}>{w.summary}</p>
+                    </div>
+                    <div style={{display:'flex',alignItems:'center',gap:10,flexShrink:0,marginLeft:16}}>
+                        <span style={{fontSize:'0.72rem',color:'var(--muted)'}}>{w.category}</span>
+                        <span style={{fontSize:'0.72rem',color:DIFF_HEX[w.difficulty]||'var(--muted)'}}>{w.difficulty}</span>
+                        <span style={{fontSize:'0.72rem',color:'var(--muted)'}}>{w.date}</span>
+                    </div>
+                </button>
+            ))}
+        </div>
+        {sel && <WriteupModal writeup={sel} onClose={()=>setSel(null)}/>}
+    </div>
+    );
+};
+
 // ── App ───────────────────────────────────────────────────────
 const App = () => {
     const [page, setPage] = useState('home');
-    const pages = { home:<HomePage/>, certs:<CertsPage/>, projects:<ProjectsPage/>, competitions:<CompetitionsPage/>, experience:<ExperiencePage/>, skills:<SkillsPage/> };
+    const pages = {
+        home:<HomePage setPage={setPage}/>,
+        certs:<CertsPage/>,
+        projects:<ProjectsPage/>,
+        competitions:<CompetitionsPage/>,
+        experience:<ExperiencePage/>,
+        skills:<SkillsPage/>,
+        writeups:<WriteupsPage/>
+    };
     return (
     <div style={{minHeight:'100vh',background:'var(--bg)'}}>
-        <nav style={{position:'sticky',top:0,zIndex:50,background:'rgba(10,12,16,0.85)',backdropFilter:'blur(18px)',borderBottom:'1px solid var(--border)'}}>
-            <div style={{maxWidth:860,margin:'0 auto',padding:'0 20px',display:'flex',alignItems:'center',justifyContent:'space-between',height:54}}>
-                <button onClick={()=>setPage('home')} style={{display:'flex',alignItems:'center',gap:10,background:'none',border:'none',cursor:'pointer'}}>
-                    <div style={{width:28,height:28,borderRadius:8,background:'var(--surface2)',border:'1px solid var(--border2)',display:'flex',alignItems:'center',justifyContent:'center'}}>
-                        <Icon name="Shield" className="w-3.5 h-3.5" style={{color:'var(--primary)'}}/>
-                    </div>
-                    <span style={{fontWeight:700,fontSize:'0.92rem',color:'var(--text)',letterSpacing:'-0.01em'}}>Afterguard</span>
+        <nav style={{position:'sticky',top:0,zIndex:50,background:'var(--bg)',borderBottom:'1px solid var(--border)'}}>
+            <div style={{maxWidth:720,margin:'0 auto',padding:'0 24px',display:'flex',alignItems:'center',justifyContent:'space-between',height:50,gap:8}}>
+                <button onClick={()=>setPage('home')} style={{background:'none',border:'none',cursor:'pointer',fontSize:'0.9rem',fontWeight:600,color:'var(--text)',letterSpacing:'-0.01em'}}>
+                    afterguard.
                 </button>
-                <div className="nav-spacer" style={{flex:1, minWidth:'24px'}}></div>
-                <div style={{display:'flex',gap:2}}>
+                <div style={{display:'flex',gap:0,flexWrap:'nowrap',justifyContent:'flex-end',alignItems:'center'}}>
                     {NAV.map(item=>(
                         <button key={item.id} onClick={()=>setPage(item.id)} className={`nav-pill ${page===item.id?'active':''}`}>
-                            <Icon name={item.icon} className="w-3.5 h-3.5"/>{item.label}
+                            {item.label}
                         </button>
                     ))}
                 </div>
             </div>
         </nav>
-        <main style={{maxWidth:860,margin:'0 auto',padding:'32px 20px 64px'}}>
+        <main style={{maxWidth:720,margin:'0 auto',padding:'48px 24px 100px'}}>
             {pages[page]}
         </main>
-        <footer style={{textAlign:'center',padding:'20px',borderTop:'1px solid var(--border)'}}>
-            <p className="mono" style={{fontSize:'0.65rem',color:'var(--muted)'}}>
-                © 2026 Afterguard · Johann Weingertner · johannweingertner.github.io
-            </p>
+        <footer style={{borderTop:'1px solid var(--border)',padding:'20px 24px'}}>
+            <div style={{maxWidth:720,margin:'0 auto',textAlign:'center'}}>
+                <span style={{fontSize:'0.72rem',color:'var(--muted)'}}>© 2026 Johann Weingertner</span>
+            </div>
         </footer>
     </div>
     );
