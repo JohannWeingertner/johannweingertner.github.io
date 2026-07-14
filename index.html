@@ -14,9 +14,9 @@
     <script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
     <script src="https://unpkg.com/lucide@0.441.0/dist/umd/lucide.js"></script>
     <!-- ── Data files — edit these to update content ── -->
-    <script src="/data/certifications.js"></script>
-    <script src="/data/labs.js"></script>
-    <script src="/data/writeups.js"></script>
+    <script src="/data/certifications.js?v=20260714b"></script>
+    <script src="/data/labs.js?v=20260714"></script>
+    <script src="/data/writeups.js?v=20260714"></script>
     <style>
         :root {
             --bg:        #0a0a0a;
@@ -26,6 +26,10 @@
             --primary:   #d4d4d4;
             --primary-light: #e5e5e5;
             --primary-dim: #404040;
+            --accent:    #dc2626;
+            --accent-soft: rgba(220, 38, 38, 0.10);
+            --accent-border: rgba(220, 38, 38, 0.32);
+            --accent-text: #fca5a5;
             --accent-cyan:    #a3a3a3;
             --accent-emerald: #a3a3a3;
             --accent-amber:   #a3a3a3;
@@ -72,7 +76,7 @@
         @keyframes typeBlink { 0%,100%{opacity:1;} 50%{opacity:0;} }
         @keyframes modalIn  { from{opacity:0;transform:scale(0.93) translateY(10px);} to{opacity:1;transform:scale(1) translateY(0);} }
         @keyframes slideDown { from{opacity:0;transform:translateY(-6px);} to{opacity:1;transform:translateY(0);} }
-        @keyframes nameGlow { 0%,100%{text-shadow:none;} 50%{text-shadow:0 0 60px rgba(255,255,255,0.07);} }
+        @keyframes nameGlow { 0%,100%{text-shadow:none;} 50%{text-shadow:0 0 48px rgba(220,38,38,0.18);} }
         @keyframes rowSlide { from{opacity:0;transform:translateX(-10px);} to{opacity:1;transform:translateX(0);} }
         @keyframes ctaPop   { 0%{opacity:0;transform:scale(0.9) translateY(6px);} 100%{opacity:1;transform:scale(1) translateY(0);} }
 
@@ -81,7 +85,7 @@
         .fade-up-2 { animation: fadeUp 0.5s 0.16s cubic-bezier(0.22,1,0.36,1) both; }
         .fade-up-3 { animation: fadeUp 0.5s 0.24s cubic-bezier(0.22,1,0.36,1) both; }
         .slide-down { animation: slideDown 0.15s ease both; }
-        .type-cursor { display:inline-block; width:2px; height:1em; background:var(--text2); margin-left:2px; vertical-align:text-bottom; animation:typeBlink 0.75s step-end infinite; }
+        .type-cursor { display:inline-block; width:2px; height:1em; background:var(--accent); margin-left:2px; vertical-align:text-bottom; animation:typeBlink 0.75s step-end infinite; }
         .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(12px); z-index:10000; display:flex; align-items:center; justify-content:center; padding:1rem; animation:fadeIn 0.18s ease both; }
         .modal-box { background:var(--surface); border:1px solid var(--border2); border-radius:12px; max-width:520px; width:100%; max-height:85vh; overflow-y:auto; animation:modalIn 0.25s cubic-bezier(0.34,1.2,0.64,1) both; box-shadow:0 20px 50px rgba(0,0,0,0.4); }
         .modal-box::-webkit-scrollbar { width:3px; }
@@ -92,8 +96,8 @@
 
         /* List row hover highlight */
         .list-row { position: relative; transition: background 0.15s; cursor: pointer; }
-        .list-row::before { content:''; position:absolute; left:-12px; top:0; bottom:0; width:2px; background:var(--text2); border-radius:2px; opacity:0; transition: opacity 0.15s; }
-        .list-row:hover { background: rgba(255,255,255,0.025); }
+        .list-row::before { content:''; position:absolute; left:-12px; top:0; bottom:0; width:2px; background:var(--accent); border-radius:2px; opacity:0; transition: opacity 0.15s; }
+        .list-row:hover { background: var(--accent-soft); }
         .list-row:hover::before { opacity: 1; }
 
         /* Row enter animation */
@@ -101,13 +105,14 @@
 
         /* CTA buttons */
         .cta-btn { display:inline-flex; align-items:center; gap:8px; padding:9px 17px; border-radius:8px; font-size:0.85rem; font-weight:500; text-decoration:none; transition:all 0.18s; border:1px solid var(--border); color:var(--text2); background:rgba(255,255,255,0.03); cursor:pointer; font-family:'Inter',sans-serif; animation: ctaPop 0.4s cubic-bezier(0.22,1,0.36,1) both; }
-        .cta-btn:hover { border-color:var(--border2); color:var(--text); background:rgba(255,255,255,0.06); transform:translateY(-1px); }
-        .cta-btn.primary { background:var(--text); color:#0a0a0a; border-color:transparent; }
-        .cta-btn.primary:hover { background:var(--primary-light); transform:translateY(-1px); }
+        .cta-btn:hover { border-color:var(--accent-border); color:var(--text); background:rgba(255,255,255,0.04); transform:translateY(-1px); }
+        .cta-btn.primary { background:var(--accent); color:#fafafa; border-color:transparent; }
+        .cta-btn.primary:hover { background:#ef4444; transform:translateY(-1px); }
 
         /* Nav active underline */
         .nav-pill { position:relative; }
-        .nav-pill.active::after { content:''; position:absolute; bottom:-1px; left:10px; right:10px; height:1px; background:var(--text2); border-radius:1px; }
+        .nav-pill.active::after { content:''; position:absolute; bottom:-1px; left:10px; right:10px; height:1px; background:var(--accent); border-radius:1px; }
+        .nav-pill.active { color: var(--text); }
 
         /* Diff bar */
         .diff-bar-track { height:5px; background: var(--surface3); border-radius: 99px; overflow: hidden; }
@@ -117,10 +122,332 @@
         .toggle-wrap { display: inline-flex; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 3px; gap: 2px; flex-wrap: nowrap; white-space: nowrap; }
         .toggle-btn { padding: 6px 15px; border-radius: 4px; font-size: 0.84rem; font-weight: 500; color: var(--muted); transition: color 0.15s; display: inline-flex; align-items: center; gap: 6px; background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; white-space: nowrap; }
         .toggle-btn.on { background: var(--surface3); color: var(--text); border: 1px solid var(--border); }
+
+        /* Interactive 3D cube-grid background */
+        #bg-canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        #root { position: relative; z-index: 1; }
+        /* Soft radial scrim — readable center, cubes visible at edges */
+        .content-scrim {
+            position: relative;
+            isolation: isolate;
+        }
+        .content-scrim::before {
+            content: '';
+            position: absolute;
+            inset: -48px -80px -96px;
+            background: radial-gradient(ellipse 78% 65% at 50% 42%, var(--bg) 50%, transparent 100%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .hero-row {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            margin-bottom: 24px;
+        }
+
+        .profile-avatar {
+            width: 88px;
+            height: 88px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center 15%;
+            border: 2px solid var(--accent-border);
+            box-shadow: 0 0 24px rgba(220, 38, 38, 0.15);
+            flex-shrink: 0;
+            margin-bottom: 0;
+            display: block;
+        }
+
+        .hero-bio {
+            font-size: 0.9rem;
+            line-height: 1.75;
+            color: var(--muted);
+            max-width: 520px;
+            margin-bottom: 22px;
+        }
+
+        .stat-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 28px;
+        }
+
+        .stat-chip {
+            font-size: 0.74rem;
+            font-weight: 500;
+            padding: 5px 13px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            color: var(--text2);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .stat-chip.accent {
+            border-color: var(--accent-border);
+            color: var(--accent-text);
+            background: var(--accent-soft);
+        }
+
+        /* Labs */
+        .labs-toolbar {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .labs-search {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            font-size: 0.84rem;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+        .labs-search::placeholder { color: var(--muted); }
+        .labs-search:focus { border-color: var(--accent-border); }
+        .labs-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .labs-sort {
+            display: inline-flex;
+            align-items: center;
+            gap: 0;
+            flex-wrap: wrap;
+        }
+        .labs-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .labs-empty {
+            padding: 32px 0;
+            text-align: center;
+            font-size: 0.84rem;
+            color: var(--muted);
+        }
     </style>
 </head>
 <body>
+<canvas id="bg-canvas"></canvas>
 <div id="root"></div>
+<script>
+(function () {
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let w, h, dpr, time = 0, scale = 36, originX = 0, originY = 0;
+    let COLS = 28, ROWS = 28;
+
+    // ── Full-screen isometric red cube grid (dark theme) ─────
+    // Oversized floor so the diamond covers the whole viewport.
+    // Soft ambient cubes; hover/click still lift brightly.
+    const CELL = 1;
+    const HALF = 0.40;
+    const BASE_H = 0.28;
+    const LIFT_MAX = 1.9;
+    const HOVER_PX = 150;
+
+    let cubes = [];
+    let waves = [];
+    const mouse = { x: -9999, y: -9999, active: false };
+
+    function seed() {
+        cubes = [];
+        const ox = (COLS - 1) * CELL * 0.5;
+        const oz = (ROWS - 1) * CELL * 0.5;
+        for (let j = 0; j < ROWS; j++) {
+            for (let i = 0; i < COLS; i++) {
+                cubes.push({
+                    i, j,
+                    x: i * CELL - ox,
+                    z: j * CELL - oz,
+                    h: BASE_H,
+                    vh: 0,
+                    phase: (i * 0.35 + j * 0.41),
+                    sx: 0, sy: 0,
+                    depth: 0,
+                });
+            }
+        }
+    }
+
+    function project(x, y, z) {
+        const sx = originX + (x - z) * scale * 0.866;
+        const sy = originY + (x + z) * scale * 0.5 - y * scale;
+        return { x: sx, y: sy, depth: x + z };
+    }
+
+    function drawCube(cx, cz, height, brightness) {
+        const top = height;
+        const c1 = project(cx + HALF, 0,   cz - HALF);
+        const c2 = project(cx + HALF, 0,   cz + HALF);
+        const c3 = project(cx - HALF, 0,   cz + HALF);
+        const t0 = project(cx - HALF, top, cz - HALF);
+        const t1 = project(cx + HALF, top, cz - HALF);
+        const t2 = project(cx + HALF, top, cz + HALF);
+        const t3 = project(cx - HALF, top, cz + HALF);
+
+        const b = Math.max(0, Math.min(1, brightness));
+        const topA = 0.22 + b * 0.44;
+        const leftA = 0.15 + b * 0.34;
+        const rightA = 0.11 + b * 0.28;
+        const topFill   = `rgba(255, 55, 55, ${topA})`;
+        const leftFill  = `rgba(200, 32, 32, ${leftA})`;
+        const rightFill = `rgba(130, 18, 18, ${rightA})`;
+        const edge      = `rgba(255, 100, 80, ${0.26 + b * 0.48})`;
+
+        function face(pts, fill) {
+            ctx.beginPath();
+            ctx.moveTo(pts[0].x, pts[0].y);
+            for (let k = 1; k < pts.length; k++) ctx.lineTo(pts[k].x, pts[k].y);
+            ctx.closePath();
+            ctx.fillStyle = fill;
+            ctx.fill();
+            ctx.strokeStyle = edge;
+            ctx.lineWidth = 0.6;
+            ctx.stroke();
+        }
+
+        face([c3, c2, t2, t3], leftFill);
+        face([c1, c2, t2, t1], rightFill);
+        face([t0, t1, t2, t3], topFill);
+    }
+
+    function spawnWave(clientX, clientY) {
+        let best = null, bestD = Infinity;
+        for (let k = 0; k < cubes.length; k++) {
+            const c = cubes[k];
+            const dx = c.sx - clientX, dy = c.sy - clientY;
+            const d = dx * dx + dy * dy;
+            if (d < bestD) { bestD = d; best = c; }
+        }
+        if (!best) return;
+        waves.push({ x: best.x, z: best.z, r: 0, speed: 0.26, amp: 1.6, life: 1 });
+        best.vh += 0.65;
+    }
+
+    window.addEventListener('mousemove', e => {
+        mouse.x = e.clientX; mouse.y = e.clientY; mouse.active = true;
+    });
+    window.addEventListener('mouseleave', () => { mouse.active = false; });
+    window.addEventListener('touchmove', e => {
+        if (e.touches[0]) {
+            mouse.x = e.touches[0].clientX;
+            mouse.y = e.touches[0].clientY;
+            mouse.active = true;
+        }
+    }, { passive: true });
+    window.addEventListener('click', e => spawnWave(e.clientX, e.clientY));
+    window.addEventListener('touchstart', e => {
+        if (e.touches[0]) spawnWave(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: true });
+
+    function resize() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        w = window.innerWidth;
+        h = window.innerHeight;
+        canvas.width = w * dpr;
+        canvas.height = h * dpr;
+        canvas.style.width = w + 'px';
+        canvas.style.height = h + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        // Cube size that tiles nicely; expand grid until the diamond covers
+        // the full rectangle (diamond ≠ AABB — need larger than half-extents).
+        scale = Math.max(18, Math.min(w, h) / 26);
+        originX = w * 0.5;
+        originY = h * 0.45;
+        const halfW = w * 0.5 + 100;
+        const halfH = Math.max(originY, h - originY) + 100;
+        // Inside-diamond test: |dx|/A + |dy|/B <= 1 with A=N*s*0.866, B=N*s*0.5
+        const nFromDiamond = Math.ceil(halfW / (scale * 0.866) + halfH / (scale * 0.5));
+        COLS = Math.min(56, Math.max(30, nFromDiamond));
+        ROWS = COLS;
+        seed();
+    }
+
+    function step() {
+        time += 0.016;
+        ctx.clearRect(0, 0, w, h);
+
+        const glow = ctx.createRadialGradient(originX, originY * 0.85, 0, originX, originY, Math.max(w, h) * 0.72);
+        glow.addColorStop(0, 'rgba(160, 18, 18, 0.08)');
+        glow.addColorStop(0.5, 'rgba(60, 8, 8, 0.04)');
+        glow.addColorStop(1, 'rgba(10, 10, 10, 0)');
+        ctx.fillStyle = glow;
+        ctx.fillRect(0, 0, w, h);
+
+        waves = waves.filter(wv => wv.life > 0.02 && wv.r < COLS);
+        waves.forEach(wv => {
+            wv.r += wv.speed;
+            wv.life *= 0.987;
+            wv.amp *= 0.99;
+        });
+
+        for (let k = 0; k < cubes.length; k++) {
+            const c = cubes[k];
+            const breathe = Math.sin(time * 1.15 + c.phase) * 0.05;
+            let target = BASE_H + breathe;
+
+            if (mouse.active) {
+                const dx = c.sx - mouse.x, dy = c.sy - mouse.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < HOVER_PX) {
+                    const t = 1 - dist / HOVER_PX;
+                    target += LIFT_MAX * t * t;
+                }
+            }
+
+            for (let wi = 0; wi < waves.length; wi++) {
+                const wv = waves[wi];
+                const dx = c.x - wv.x, dz = c.z - wv.z;
+                const d = Math.sqrt(dx * dx + dz * dz);
+                const band = Math.abs(d - wv.r);
+                if (band < 1.4) target += (1 - band / 1.4) * wv.amp * wv.life;
+            }
+
+            const force = (target - c.h) * 0.16;
+            c.vh = (c.vh + force) * 0.78;
+            c.h += c.vh;
+            if (c.h < 0.1) { c.h = 0.1; c.vh *= 0.5; }
+        }
+
+        const sorted = cubes.slice();
+        for (let k = 0; k < sorted.length; k++) {
+            const c = sorted[k];
+            const p = project(c.x, c.h, c.z);
+            c.sx = p.x; c.sy = p.y; c.depth = p.depth;
+        }
+        sorted.sort((a, b) => a.depth - b.depth);
+
+        for (let k = 0; k < sorted.length; k++) {
+            const c = sorted[k];
+            // Skip off-screen cubes for perf
+            if (c.sx < -80 || c.sx > w + 80 || c.sy < -80 || c.sy > h + 80) continue;
+            const lift = Math.max(0, Math.min(1, (c.h - BASE_H) / LIFT_MAX));
+            const brightness = 0.28 + lift * 0.62 + Math.sin(time * 1.1 + c.phase) * 0.03;
+            drawCube(c.x, c.z, c.h, brightness);
+        }
+
+        if (!reduceMotion) requestAnimationFrame(step);
+    }
+
+    const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.addEventListener('resize', resize);
+    resize();
+    step();
+})();
+</script>
 <script type="text/babel">
 const { useState, useEffect, useRef } = React;
 
@@ -151,32 +478,65 @@ const useTyping = (text, speed = 42, delay = 800) => {
 
 // ── Static data ───────────────────────────────────────────────
 const SKILLS = [
-    { category:'SIEM & Threat Hunting', color:'primary', items:['Splunk SPL','Sentinel KQL','Log Analysis','Threat Hunting','AWS CloudTrail','Azure Sentinel'] },
-    { category:'Digital Forensics',     color:'cyan',    items:['Memory Forensics','Disk Forensics','Windows Event Logs','FTK Imager','Autopsy','Volatility','EZ Tools'] },
-    { category:'Network & Traffic',     color:'emerald', items:['Traffic Analysis','Wireshark','Port Scan Detection','Beaconing Analysis'] },
-    { category:'Cloud & Infrastructure',color:'amber',   items:['Cloud Security (Azure & AWS)','Active Directory','DHCP/DNS','GuardDuty'] },
-    { category:'Intel & OSINT',         color:'slate',   items:['OSINT','OleTools','Phishing Analysis','VBA Macro Analysis','IOC Identification'] },
+    { category:'Tools',                   items:['Wireshark','Autopsy','Volatility','Splunk','Azure Sentinel','AWS CloudTrail','FTK Imager','OleTools','Eric Zimmerman Tools'] },
+    { category:'Analysis & Hunting',      items:['Splunk SPL','Microsoft Sentinel KQL','OSINT','Network Traffic Analysis','Log Analysis','Threat Hunting','Incident Investigations'] },
+    { category:'Forensics & Endpoints',   items:['Memory Forensics','Disk Forensics','Windows Event Log Analysis','Active Directory','Linux','Windows','macOS'] },
+    { category:'Cloud & Networking',      items:['Cloud Security (Azure & AWS)','Cisco IOS'] },
+    { category:'Frameworks & Scripting',  items:['NIST Framework','MITRE ATT&CK Framework','Basic Python','Basic PowerShell'] },
 ];
-const EXPERIENCE = [{
-    role:'Cybersecurity Intern', org:'Chesterfield County IST Department', period:'June 2025 – February 2026',
-    bullets:['Participated in tabletop exercise simulating cybersecurity incident response','Gained exposure to enterprise ticketing, security workflows, and professional mindset','Developed understanding of compliance auditing and cybersecurity insurance requirements','Observed security team communication and documentation practices'],
-}];
+const EXPERIENCE = [
+    {
+        role:'Cyber Job Shadowing Intern',
+        org:'Chesterfield County IST Department',
+        period:'June 2025 – February 2026',
+        bullets:[
+            'Participated in a tabletop exercise simulating a cybersecurity incident to practice response procedures and decision-making',
+            'Shadowed senior analysts, observing daily security workflows including Active Directory management and threat investigations',
+            'Attended business meetings and briefings, gaining insight into how cybersecurity teams communicate and operate',
+            'Developed understanding of documentation practices and asset tracking within a professional security environment',
+            'Gained exposure to compliance auditing, ensuring environments meet regulatory and cybersecurity insurance requirements',
+        ],
+    },
+    {
+        role:'Volunteer Network Technician',
+        org:'Minecraft School Gaming Tournament Setup',
+        period:'',
+        bullets:[
+            'Assisted in designing and deploying a LAN to support 50+ concurrent competitors, including configuring DHCP and DNS servers',
+            'Showcased troubleshooting skills by identifying and resolving a DHCP server misconfiguration during pre-event testing',
+        ],
+    },
+];
 const COMPETITIONS = [
-    { name:'National Cyber League (NCL)', detail:'Top 15% overall (Rank 1189 / 7875) · Top 9% High School bracket (Rank 91 / 1046)', icon:'Trophy', color:'primary', period:'Fall 2025' },
-    { name:'CyberPatriot',                detail:'Top 30% — Windows hardening, vulnerability auditing, malware hunting',                icon:'Shield', color:'emerald', period:'2025' },
+    { name:'National Cyber League (NCL)', detail:'Competed across cryptography, log analysis, network traffic analysis, OSINT, and password cracking.', period:'Fall 2025' },
+    { name:'CyberPatriot',                detail:'Hardened Windows systems by auditing configurations, removing vulnerabilities, and hunting for malware to secure the virtual environment.', period:'2025' },
+    { name:'Null404',                     detail:'Investigated a full enterprise ransomware attack chain spanning initial access, lateral movement, privilege escalation, cloud forensics, and memory analysis.', period:'' },
 ];
 const NAV = [
     { id:'home',         label:'Home'       },
     { id:'certs',        label:'Certs'      },
     { id:'projects',     label:'Labs'       },
+    { id:'writeups',     label:'Writeup'    },
     { id:'competitions', label:'CTFs'       },
     { id:'experience',   label:'Experience' },
-    { id:'skills',       label:'Skills'     },
-    { id:'writeups',     label:'Writeups'   },
 ];
 
 const DIFF_COLOR = { Easy:'emerald', Medium:'amber', Hard:'amber', Extreme:'slate' };
-const DIFF_HEX   = { Easy:'#a3a3a3', Medium:'#a3a3a3', Hard:'#737373', Extreme:'#525252' };
+const DIFF_HEX   = { Easy:'#a3a3a3', Medium:'#a3a3a3', Hard:'#fca5a5', Extreme:'#fca5a5' };
+const LAB_CATEGORIES = ['All','Network Forensics','Endpoint Forensics','Cloud Forensics','Threat Hunting','Threat Intel','Detection Engineering'];
+const formatLabDate = (d) => {
+    if (!d) return '';
+    const date = new Date(d);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+};
+const shortCategory = (c) => ({
+    'Network Forensics': 'Network',
+    'Endpoint Forensics': 'Endpoint',
+    'Cloud Forensics': 'Cloud',
+    'Threat Hunting': 'Hunting',
+    'Threat Intel': 'Intel',
+    'Detection Engineering': 'Detection',
+}[c] || c);
 
 // ── Shared style tokens ───────────────────────────────────────
 const ST = {fontSize:'0.7rem',fontWeight:600,color:'var(--muted)',letterSpacing:'0.09em',textTransform:'uppercase',marginBottom:24};
@@ -241,53 +601,54 @@ const CertModal = ({ cert, onClose }) => {
 };
 
 // ── Pages ─────────────────────────────────────────────────────
-const HomePage = ({ setPage }) => {
+const HomePage = () => {
     const { displayed, done } = useTyping('Networking & Cybersecurity', 43, 800);
     const ctaLinks = [
-        {label:'LinkedIn',       icon:'Linkedin', href:'https://www.linkedin.com/in/johann-weingertner-61b884358/', primary:true},
-        {label:'GitHub',         icon:'Github',   href:'https://github.com/JohannWeingertner'},
+        {label:'LinkedIn',       icon:'Linkedin', href:'https://www.linkedin.com/in/johann-weingertner-61b884358/'},
         {label:'CyberDefenders', icon:'Shield',   href:'https://cyberdefenders.org/p/Afterguard/'},
     ];
-    const highlights = [
-        {label:'Certifications',  val:'7 active',                          nav:'certs'},
-        {label:'Lab Hours',       val:'250+ hrs · Top 100 CyberDefenders', nav:'projects'},
-        {label:'Experience',      val:'Chesterfield County IST Dept.',      nav:'experience'},
-        {label:'Competitions',    val:'NCL Top 15% · CyberPatriot Top 30%',nav:'competitions'},
+    const stats = [
+        {label:'8 active certs', accent:true},
+        {label:'CyberDefenders CyberRange Top 100'},
     ];
     return (
-    <div style={{display:'flex',flexDirection:'column',gap:56}}>
-        <div style={{paddingTop:16}} className="fade-up">
-            <h1 className="hero-name" style={{fontSize:'clamp(2rem,6vw,3rem)',fontWeight:700,color:'var(--text)',letterSpacing:'-0.03em',lineHeight:1.1,marginBottom:12}}>
-                Afterguard
-            </h1>
-            <p style={{fontSize:'0.95rem',color:'var(--text2)',marginBottom:22,minHeight:'1.5em'}}>
-                {displayed}{!done && <span className="type-cursor"/>}
-            </p>
-            <p style={{fontSize:'0.9rem',lineHeight:1.85,color:'var(--muted)',maxWidth:520,marginBottom:32}}>
-                Aspiring networking and cybersecurity professional with hands-on experience across both disciplines.
-                On the networking side, I've worked with Cisco devices, built homelabs, and am actively studying for my CCNA.
-                On the security side, I've job shadowed at Chesterfield County, accumulated 250+ hours in the CyberDefenders CyberRange, and hold 7 active industry certifications.
-            </p>
-            <div style={{display:'flex',flexWrap:'wrap',gap:10}}>
-                {ctaLinks.map((b,i)=>(
-                    <a key={i} href={b.href} target="_blank" rel="noopener noreferrer"
-                       className={`cta-btn${b.primary?' primary':''}`}
-                       style={{animationDelay:`${i*0.08}s`}}>
-                        <Icon name={b.icon} size={14}/>{b.label}
-                    </a>
-                ))}
+    <div style={{paddingTop:16}} className="fade-up">
+        <div className="hero-row">
+            <img src="/assets/profile.png" alt="Johann profile" className="profile-avatar" />
+            <div>
+                <h1 className="hero-name" style={{fontSize:'clamp(1.85rem,5vw,2.6rem)',fontWeight:700,color:'var(--text)',letterSpacing:'-0.03em',lineHeight:1.1,marginBottom:8}}>
+                    Johann
+                </h1>
+                <p style={{fontSize:'0.92rem',color:'var(--text2)',minHeight:'1.5em'}}>
+                    {displayed}{!done && <span className="type-cursor"/>}
+                </p>
             </div>
         </div>
-        <div className="fade-up-1">
-            <p style={{...ST}}>Highlights</p>
+        <p className="hero-bio">
+            I began pursuing technology at age 16 and earned eight industry-recognized certifications, including CCNA, CompTIA Trifecta and others, by age 18. Since then, I have focused on building practical, real-world skills through lab environments and independent projects.
+        </p>
+        <div className="stat-chips">
+            {stats.map((s,i)=>(
+                <span key={i} className={`stat-chip${s.accent?' accent':''}`}>{s.label}</span>
+            ))}
+        </div>
+        <div style={{display:'flex',flexWrap:'wrap',gap:10}}>
+            {ctaLinks.map((b,i)=>(
+                <a key={i} href={b.href} target="_blank" rel="noopener noreferrer"
+                   className={`cta-btn${b.primary?' primary':''}`}
+                   style={{animationDelay:`${i*0.08}s`}}>
+                    <Icon name={b.icon} size={14}/>{b.label}
+                </a>
+            ))}
+        </div>
+        <div style={{marginTop:48}}>
+            <p style={{...ST}}>Skills & Tools</p>
             <div style={ROW}>
-                {highlights.map((row,i)=>(
-                    <button key={i} onClick={()=>setPage(row.nav)}
-                        className="list-row"
-                        style={{...rowItem,justifyContent:'space-between',animationDelay:`${0.1+i*0.06}s`}}>
-                        <span style={{fontSize:'0.88rem',color:'var(--text2)',transition:'color 0.15s'}}>{row.label}</span>
-                        <span style={{fontSize:'0.82rem',color:'var(--muted)'}}>{row.val} <span style={{marginLeft:4,opacity:0.5}}>→</span></span>
-                    </button>
+                {SKILLS.map((group,i)=>(
+                    <div key={i} style={{display:'flex',gap:20,padding:'14px 0',borderBottom:'1px solid var(--border)',flexWrap:'wrap'}}>
+                        <span style={{fontSize:'0.78rem',color:'var(--text2)',width:170,flexShrink:0,paddingTop:1}}>{group.category}</span>
+                        <p style={{fontSize:'0.82rem',color:'var(--muted)',lineHeight:1.8,flex:1}}>{group.items.join(' · ')}</p>
+                    </div>
                 ))}
             </div>
         </div>
@@ -297,10 +658,18 @@ const HomePage = ({ setPage }) => {
 
 const CertsPage = () => {
     const [sel, setSel] = useState(null);
-    const all = CERTIFICATIONS || [];
+    const all = React.useMemo(() => {
+        const list = CERTIFICATIONS || [];
+        return [...list].sort((a, b) => {
+            if (a.featured !== b.featured) return a.featured ? -1 : 1;
+            if (b.year !== a.year) return b.year - a.year;
+            return a.name.localeCompare(b.name);
+        });
+    }, []);
     return (
     <div>
         <p style={{...ST}}>Certifications</p>
+        <p style={{fontSize:'0.78rem',color:'var(--muted)',marginTop:-16,marginBottom:18}}>{all.length} active certifications</p>
         <div style={ROW}>
             {all.map((c,i)=>(
                 <button key={i} onClick={()=>setSel(c)} className="list-row"
@@ -323,51 +692,82 @@ const CertsPage = () => {
 
 const ProjectsPage = () => {
     const [sortBy, setSortBy] = useState('date');
-    const total = CD_LABS?.length || 0;
-    const counts = CD_LABS?.reduce((a,l)=>{a[l.difficulty]=(a[l.difficulty]||0)+1;return a;},{}) || {};
+    const [category, setCategory] = useState('All');
+    const [query, setQuery] = useState('');
+    const allLabs = CD_LABS || [];
+    const total = allLabs.length;
 
-    const sortedLabs = React.useMemo(() => {
-        if (!CD_LABS) return [];
-        const copy = [...CD_LABS];
-        if (sortBy === 'date') return copy.sort((a,b)=>{ if(!a.completed)return 1; if(!b.completed)return -1; return new Date(b.completed)-new Date(a.completed); });
+    const counts = React.useMemo(() => allLabs.reduce((a,l)=>{a[l.difficulty]=(a[l.difficulty]||0)+1;return a;},{}), [allLabs]);
+    const catCounts = React.useMemo(() => allLabs.reduce((a,l)=>{a[l.category]=(a[l.category]||0)+1;return a;},{}), [allLabs]);
+
+    const filteredLabs = React.useMemo(() => {
+        let list = [...allLabs];
+        if (category !== 'All') list = list.filter(l => l.category === category);
+        if (query.trim()) {
+            const q = query.trim().toLowerCase();
+            list = list.filter(l => l.name.toLowerCase().includes(q) || l.category.toLowerCase().includes(q));
+        }
+        if (sortBy === 'date') return list.sort((a,b)=>{ if(!a.completed)return 1; if(!b.completed)return -1; return new Date(b.completed)-new Date(a.completed); });
+        if (sortBy === 'name') return list.sort((a,b)=>a.name.localeCompare(b.name));
         const ord = {Easy:0,Medium:1,Hard:2,Extreme:3};
-        return copy.sort((a,b)=>(ord[a.difficulty]??4)-(ord[b.difficulty]??4)||a.name.localeCompare(b.name));
-    }, [sortBy]);
+        return list.sort((a,b)=>(ord[a.difficulty]??4)-(ord[b.difficulty]??4)||a.name.localeCompare(b.name));
+    }, [allLabs, sortBy, category, query]);
 
     return (
     <div>
-        <div>
-            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:18,flexWrap:'wrap',gap:8}}>
-                <p style={{...ST,marginBottom:0}}>CyberDefenders Labs</p>
-                <div style={{display:'flex',alignItems:'center',gap:12}}>
-                    <div className="toggle-wrap">
-                        {[{id:'date',label:'Date'},{id:'difficulty',label:'Difficulty'}].map(t=>(
-                            <button key={t.id} onClick={()=>setSortBy(t.id)} className={`toggle-btn ${sortBy===t.id?'on':''}`}>{t.label}</button>
-                        ))}
-                    </div>
-                    <a href="https://cyberdefenders.org/p/Afterguard/" target="_blank" rel="noopener noreferrer"
-                       style={{fontSize:'0.75rem',color:'var(--muted)',textDecoration:'none'}}>Profile ↗</a>
-                </div>
-            </div>
-            <p style={{fontSize:'0.78rem',color:'var(--muted)',marginBottom:14}}>
-                {total} completed · Easy {counts.Easy||0} · Medium {counts.Medium||0} · Hard {counts.Hard||0}
-            </p>
-            <div style={ROW}>
-                {sortedLabs.map((lab,i)=>(
-                    <a key={i} href={lab.url} target="_blank" rel="noopener noreferrer"
-                       className="list-row"
-                       style={{display:'flex',alignItems:'center',padding:'11px 0',borderBottom:'1px solid var(--border)',textDecoration:'none',gap:12}}>
-                        <span style={{fontSize:'0.86rem',color:'var(--text)',flex:1,minWidth:0,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{lab.name}</span>
-                        <div style={{display:'flex',alignItems:'center',gap:10,flexShrink:0}}>
-                            <span style={{fontSize:'0.72rem',color:'var(--muted)'}}>{lab.category}</span>
-                            {lab.difficulty && <span style={{fontSize:'0.72rem',color:DIFF_HEX[lab.difficulty]||'var(--muted)'}}>{lab.difficulty}</span>}
-                            {lab.completed && <span style={{fontSize:'0.72rem',color:'var(--muted)'}}>{lab.completed}</span>}
-                        </div>
-                    </a>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:18,flexWrap:'wrap',gap:8}}>
+            <p style={{...ST,marginBottom:0}}>CyberDefenders Labs</p>
+            <a href="https://cyberdefenders.org/p/Afterguard/" target="_blank" rel="noopener noreferrer"
+               className="cta-btn" style={{fontSize:'0.78rem',padding:'7px 14px',animation:'none'}}>
+                <Icon name="Shield" size={13}/> Profile
+            </a>
+        </div>
+        <p style={{fontSize:'0.78rem',color:'var(--muted)',marginBottom:18}}>
+            CyberDefenders CyberRange Top 100 · {total} labs completed · 250+ hours · Easy {counts.Easy||0} · Medium {counts.Medium||0} · Hard {counts.Hard||0}
+            {category !== 'All' || query ? ` · ${filteredLabs.length} shown` : ''}
+        </p>
+
+        <div className="labs-toolbar">
+            <input
+                className="labs-search"
+                type="search"
+                placeholder="Search labs..."
+                value={query}
+                onChange={e=>setQuery(e.target.value)}
+            />
+            <div className="labs-filters">
+                {LAB_CATEGORIES.map(cat=>(
+                    <button key={cat} onClick={()=>setCategory(cat)} className={`nav-pill${category===cat?' active':''}`}>
+                        {cat === 'All' ? `All (${total})` : `${shortCategory(cat)} (${catCounts[cat]||0})`}
+                    </button>
                 ))}
+            </div>
+            <div className="labs-controls">
+                <div className="labs-sort">
+                    <span style={{fontSize:'0.72rem',color:'var(--muted)',marginRight:8,textTransform:'uppercase',letterSpacing:'0.06em'}}>Sort</span>
+                    {[{id:'date',label:'Recent'},{id:'difficulty',label:'Difficulty'},{id:'name',label:'A–Z'}].map(t=>(
+                        <button key={t.id} onClick={()=>setSortBy(t.id)} className={`nav-pill${sortBy===t.id?' active':''}`}>{t.label}</button>
+                    ))}
+                </div>
             </div>
         </div>
 
+        <div style={ROW}>
+            {filteredLabs.length === 0 ? (
+                <p className="labs-empty">No labs match your filters.</p>
+            ) : filteredLabs.map((lab,i)=>(
+                <a key={`${lab.name}-${i}`} href={lab.url} target="_blank" rel="noopener noreferrer"
+                   className="list-row"
+                   style={{display:'flex',alignItems:'center',padding:'11px 0',borderBottom:'1px solid var(--border)',textDecoration:'none',gap:12}}>
+                    <span style={{fontSize:'0.86rem',color:'var(--text)',flex:1,minWidth:0,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{lab.name}</span>
+                    <div style={{display:'flex',alignItems:'center',gap:10,flexShrink:0}}>
+                        <span style={{fontSize:'0.72rem',color:'var(--muted)'}}>{shortCategory(lab.category)}</span>
+                        {lab.difficulty && <span style={{fontSize:'0.72rem',color:DIFF_HEX[lab.difficulty]||'var(--muted)'}}>{lab.difficulty}</span>}
+                        {lab.completed && <span className="mono" style={{fontSize:'0.72rem',color:'var(--muted)'}}>{formatLabDate(lab.completed)}</span>}
+                    </div>
+                </a>
+            ))}
+        </div>
     </div>
     );
 };
@@ -391,7 +791,7 @@ const CompetitionsPage = () => (
 
 const ExperiencePage = () => (
     <div>
-        <p style={{...ST}}>Experience</p>
+        <p style={{...ST}}>Work Experience</p>
         <div style={ROW}>
             {EXPERIENCE.map((job,i)=>(
                 <div key={i} style={{padding:'18px 0',borderBottom:'1px solid var(--border)'}}>
@@ -400,7 +800,7 @@ const ExperiencePage = () => (
                             <p style={{fontSize:'0.9rem',fontWeight:600,color:'var(--text)'}}>{job.role}</p>
                             <p style={{fontSize:'0.81rem',color:'var(--text2)',marginTop:2}}>{job.org}</p>
                         </div>
-                        <span style={{fontSize:'0.74rem',color:'var(--muted)',flexShrink:0,marginLeft:16}}>{job.period}</span>
+                        {job.period && <span style={{fontSize:'0.74rem',color:'var(--muted)',flexShrink:0,marginLeft:16}}>{job.period}</span>}
                     </div>
                     <div style={{display:'flex',flexDirection:'column',gap:7,marginTop:10}}>
                         {job.bullets.map((b,j)=>(
@@ -409,30 +809,6 @@ const ExperiencePage = () => (
                             </div>
                         ))}
                     </div>
-                </div>
-            ))}
-            <div style={{padding:'18px 0',borderBottom:'1px solid var(--border)'}}>
-                <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:5}}>
-                    <div>
-                        <p style={{fontSize:'0.9rem',fontWeight:600,color:'var(--text)'}}>Cisco Networking Academy</p>
-                        <p style={{fontSize:'0.81rem',color:'var(--text2)',marginTop:2}}>Chesterfield Technical Center</p>
-                    </div>
-                    <span style={{fontSize:'0.74rem',color:'var(--muted)',flexShrink:0,marginLeft:16}}>Aug 2024 – Dec 2026</span>
-                </div>
-                <p style={{fontSize:'0.83rem',color:'var(--muted)',marginTop:8}}>Dual-enrolled college-level IT coursework via Brightpoint Community College</p>
-            </div>
-        </div>
-    </div>
-);
-
-const SkillsPage = () => (
-    <div>
-        <p style={{...ST}}>Skills & Tools</p>
-        <div style={ROW}>
-            {SKILLS.map((group,i)=>(
-                <div key={i} style={{display:'flex',gap:20,padding:'14px 0',borderBottom:'1px solid var(--border)',flexWrap:'wrap'}}>
-                    <span style={{fontSize:'0.78rem',color:'var(--text2)',width:170,flexShrink:0,paddingTop:1}}>{group.category}</span>
-                    <p style={{fontSize:'0.82rem',color:'var(--muted)',lineHeight:1.8,flex:1}}>{group.items.join(' · ')}</p>
                 </div>
             ))}
         </div>
@@ -589,20 +965,19 @@ const WriteupsPage = () => {
 const App = () => {
     const [page, setPage] = useState('home');
     const pages = {
-        home:<HomePage setPage={setPage}/>,
+        home:<HomePage/>,
         certs:<CertsPage/>,
         projects:<ProjectsPage/>,
+        writeups:<WriteupsPage/>,
         competitions:<CompetitionsPage/>,
         experience:<ExperiencePage/>,
-        skills:<SkillsPage/>,
-        writeups:<WriteupsPage/>
     };
     return (
-    <div style={{minHeight:'100vh',background:'var(--bg)'}}>
+    <div style={{minHeight:'100vh'}}>
         <nav style={{position:'sticky',top:0,zIndex:50,background:'var(--bg)',borderBottom:'1px solid var(--border)'}}>
             <div style={{maxWidth:720,margin:'0 auto',padding:'0 24px',display:'flex',alignItems:'center',justifyContent:'space-between',height:50,gap:8}}>
                 <button onClick={()=>setPage('home')} style={{background:'none',border:'none',cursor:'pointer',fontSize:'0.9rem',fontWeight:600,color:'var(--text)',letterSpacing:'-0.01em'}}>
-                    afterguard.
+                    johann.
                 </button>
                 <div style={{display:'flex',gap:0,flexWrap:'nowrap',justifyContent:'flex-end',alignItems:'center'}}>
                     {NAV.map(item=>(
@@ -613,7 +988,7 @@ const App = () => {
                 </div>
             </div>
         </nav>
-        <main style={{maxWidth:720,margin:'0 auto',padding:'48px 24px 100px'}}>
+        <main className="content-scrim" style={{maxWidth:720,margin:'0 auto',padding:'48px 24px 100px'}}>
             {pages[page]}
         </main>
         <footer style={{borderTop:'1px solid var(--border)',padding:'20px 24px'}}>
