@@ -39,8 +39,8 @@
             --muted:     #525252;
             --border:    rgba(255,255,255,0.05);
             --border2:   rgba(255,255,255,0.09);
-            --overlay-backdrop: rgba(6, 6, 6, 0.88);
-            --overlay-glow: rgba(220, 38, 38, 0.08);
+            --overlay-backdrop: rgba(10, 10, 10, 0.94);
+            --overlay-glow: rgba(220, 38, 38, 0.05);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; font-feature-settings: 'cv11', 'ss01'; }
@@ -89,7 +89,7 @@
         .slide-down { animation: slideDown 0.15s ease both; }
         .type-cursor { display:inline-block; width:2px; height:1em; background:var(--accent); margin-left:2px; vertical-align:text-bottom; animation:typeBlink 0.75s step-end infinite; }
         .modal-overlay { position:fixed; inset:0; background:radial-gradient(circle at 50% 32%, var(--overlay-glow), transparent 52%), var(--overlay-backdrop); backdrop-filter:blur(12px); z-index:10000; display:flex; align-items:center; justify-content:center; padding:1rem; animation:fadeIn 0.18s ease both; }
-        .modal-box { background:var(--surface); border:1px solid var(--accent-border); border-radius:10px; max-width:520px; width:100%; max-height:85vh; overflow-y:auto; animation:modalIn 0.25s cubic-bezier(0.34,1.2,0.64,1) both; box-shadow:0 24px 60px rgba(0,0,0,0.55), 0 0 0 1px rgba(220,38,38,0.06); }
+        .modal-box { background:var(--surface); border:none; border-radius:10px; max-width:520px; width:100%; max-height:85vh; overflow-y:auto; animation:modalIn 0.25s cubic-bezier(0.34,1.2,0.64,1) both; box-shadow:0 24px 60px rgba(0,0,0,0.55); }
         .modal-box::-webkit-scrollbar { width:3px; }
         .modal-box::-webkit-scrollbar-thumb { background:var(--accent-border); border-radius:2px; }
         .modal-close { color:var(--muted); background:transparent; border:1px solid transparent; border-radius:5px; cursor:pointer; padding:4px; transition:color 0.15s, border-color 0.15s, background 0.15s; }
