@@ -52,6 +52,7 @@ window.CERTIFICATIONS = [
         status: 'Active',
         color: '#ff6b35',
         badge: '/badges/splunk.png',
+        credential: '/assets/certifications/splunk.pdf',
         description: 'Advanced Splunk certification validating expertise in search processing language and data analysis.',
         learned: [
             'Advanced SPL for complex search queries and data correlation',
