@@ -14,7 +14,7 @@ window.CERTIFICATIONS = [
         status: 'Active',
         color: '#00c8ff',
         badge: '/badges/ccdl1.png',
-        credential: '/assets/certifications/ccdl1.pdf',
+        credential: '/assets/certifications/ccdl1.png',
         featured: true,
         description: 'Earned through hands-on practical training and investigations simulating real-world enterprise threats.',
         learned: [
