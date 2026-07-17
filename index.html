@@ -95,6 +95,8 @@
         .modal-close { color:var(--muted); background:transparent; border:1px solid transparent; border-radius:5px; cursor:pointer; padding:4px; transition:color 0.15s, border-color 0.15s, background 0.15s; }
         .modal-close:hover { color:var(--accent-text); border-color:var(--accent-border); background:var(--accent-soft); }
         .modal-note { margin:0 0 14px; padding:11px 14px; background:var(--accent-soft); border:1px solid var(--accent-border); border-radius:6px; font-size:0.83rem; color:var(--text2); line-height:1.7; }
+        .cert-modal-box { max-width:820px; }
+        .credential-image { width:100%; max-height:620px; object-fit:contain; display:block; border-radius:6px; background:var(--surface); }
 
         /* Name heading glow */
         .hero-name { animation: nameGlow 5s ease-in-out infinite; }
@@ -565,7 +567,7 @@ const CertModal = ({ cert, onClose }) => {
     }, [onClose]);
     return (
         <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-box" onClick={e=>e.stopPropagation()}>
+            <div className="modal-box cert-modal-box" onClick={e=>e.stopPropagation()}>
                 <div style={{padding:'22px 22px 18px',borderBottom:'1px solid var(--border)'}}>
                     <div style={{display:'flex',alignItems:'flex-start',gap:14}}>
                         <CertBadgeImg src={cert.badge} alt={cert.short} fallback={cert.short} size={48}/>
@@ -579,8 +581,11 @@ const CertModal = ({ cert, onClose }) => {
                             <p style={{fontSize:'0.76rem',color:'var(--muted)',marginTop:4}}>{cert.issuer} · {cert.year}</p>
                         </div>
                     </div>
-                {cert.description && <p style={{marginTop:14,fontSize:'0.84rem',lineHeight:1.7,color:'var(--text2)'}}>{cert.description}</p>}
-                {cert.credential && (
+                    {cert.description && <p style={{marginTop:14,fontSize:'0.84rem',lineHeight:1.7,color:'var(--text2)'}}>{cert.description}</p>}
+                    {cert.credential && /\.png$/i.test(cert.credential) && (
+                        <img className="credential-image" src={cert.credential} alt={`${cert.name} certificate`} style={{marginTop:16}} />
+                    )}
+                {cert.credential && !/\.png$/i.test(cert.credential) && (
                     <a href={cert.credential} target="_blank" rel="noopener noreferrer" className="cta-btn" style={{marginTop:14,fontSize:'0.78rem',padding:'7px 12px',animation:'none'}}>
                         <Icon name="FileBadge" size={13}/> View certificate
                     </a>
