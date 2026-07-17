@@ -39,6 +39,8 @@
             --muted:     #525252;
             --border:    rgba(255,255,255,0.05);
             --border2:   rgba(255,255,255,0.09);
+            --overlay-backdrop: rgba(6, 6, 6, 0.88);
+            --overlay-glow: rgba(220, 38, 38, 0.08);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; font-feature-settings: 'cv11', 'ss01'; }
@@ -86,10 +88,13 @@
         .fade-up-3 { animation: fadeUp 0.5s 0.24s cubic-bezier(0.22,1,0.36,1) both; }
         .slide-down { animation: slideDown 0.15s ease both; }
         .type-cursor { display:inline-block; width:2px; height:1em; background:var(--accent); margin-left:2px; vertical-align:text-bottom; animation:typeBlink 0.75s step-end infinite; }
-        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(12px); z-index:10000; display:flex; align-items:center; justify-content:center; padding:1rem; animation:fadeIn 0.18s ease both; }
-        .modal-box { background:var(--surface); border:1px solid var(--border2); border-radius:12px; max-width:520px; width:100%; max-height:85vh; overflow-y:auto; animation:modalIn 0.25s cubic-bezier(0.34,1.2,0.64,1) both; box-shadow:0 20px 50px rgba(0,0,0,0.4); }
+        .modal-overlay { position:fixed; inset:0; background:radial-gradient(circle at 50% 32%, var(--overlay-glow), transparent 52%), var(--overlay-backdrop); backdrop-filter:blur(12px); z-index:10000; display:flex; align-items:center; justify-content:center; padding:1rem; animation:fadeIn 0.18s ease both; }
+        .modal-box { background:var(--surface); border:1px solid var(--accent-border); border-radius:10px; max-width:520px; width:100%; max-height:85vh; overflow-y:auto; animation:modalIn 0.25s cubic-bezier(0.34,1.2,0.64,1) both; box-shadow:0 24px 60px rgba(0,0,0,0.55), 0 0 0 1px rgba(220,38,38,0.06); }
         .modal-box::-webkit-scrollbar { width:3px; }
-        .modal-box::-webkit-scrollbar-thumb { background:var(--surface3); border-radius:2px; }
+        .modal-box::-webkit-scrollbar-thumb { background:var(--accent-border); border-radius:2px; }
+        .modal-close { color:var(--muted); background:transparent; border:1px solid transparent; border-radius:5px; cursor:pointer; padding:4px; transition:color 0.15s, border-color 0.15s, background 0.15s; }
+        .modal-close:hover { color:var(--accent-text); border-color:var(--accent-border); background:var(--accent-soft); }
+        .modal-note { margin:0 0 14px; padding:11px 14px; background:var(--accent-soft); border:1px solid var(--accent-border); border-radius:6px; font-size:0.83rem; color:var(--text2); line-height:1.7; }
 
         /* Name heading glow */
         .hero-name { animation: nameGlow 5s ease-in-out infinite; }
@@ -567,7 +572,7 @@ const CertModal = ({ cert, onClose }) => {
                         <div style={{flex:1,minWidth:0}}>
                             <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:8}}>
                                 <p style={{fontSize:'0.94rem',fontWeight:600,color:'var(--text)',lineHeight:1.3}}>{cert.name}</p>
-                                <button onClick={onClose} style={{color:'var(--muted)',background:'none',border:'none',cursor:'pointer',flexShrink:0,padding:2}}>
+                                <button className="modal-close" onClick={onClose} style={{flexShrink:0}}>
                                     <Icon name="X" size={14}/>
                                 </button>
                             </div>
@@ -659,7 +664,7 @@ const HomePage = () => {
 const CertsPage = () => {
     const [sel, setSel] = useState(null);
     const all = React.useMemo(() => {
-        const list = CERTIFICATIONS || [];
+        const list = window.CERTIFICATIONS || [];
         return [...list].sort((a, b) => {
             if (a.featured !== b.featured) return a.featured ? -1 : 1;
             if (b.year !== a.year) return b.year - a.year;
@@ -694,7 +699,7 @@ const ProjectsPage = () => {
     const [sortBy, setSortBy] = useState('date');
     const [category, setCategory] = useState('All');
     const [query, setQuery] = useState('');
-    const allLabs = CD_LABS || [];
+    const allLabs = window.CD_LABS || [];
     const total = allLabs.length;
 
     const counts = React.useMemo(() => allLabs.reduce((a,l)=>{a[l.difficulty]=(a[l.difficulty]||0)+1;return a;},{}), [allLabs]);
@@ -864,7 +869,7 @@ const WriteupModal = ({ writeup, onClose }) => {
                 </pre>
             );
             case 'note': return (
-                <div key={i} style={{margin:'0 0 14px',padding:'11px 14px',background:'rgba(255,255,255,0.03)',borderLeft:'2px solid var(--border2)',borderRadius:'0 6px 6px 0',fontSize:'0.83rem',color:'var(--text2)',lineHeight:1.7}}>
+                <div key={i} className="modal-note">
                     <span style={{color:'var(--muted)',fontWeight:600,fontSize:'0.7rem',letterSpacing:'0.06em',textTransform:'uppercase',display:'block',marginBottom:4}}>Note</span>
                     {block.text}
                 </div>
@@ -922,7 +927,7 @@ const WriteupModal = ({ writeup, onClose }) => {
                                 <span style={{fontSize:'0.72rem',color:'var(--muted)'}}>{writeup.date}</span>
                             </div>
                         </div>
-                        <button onClick={onClose} style={{color:'var(--muted)',background:'none',border:'none',cursor:'pointer',padding:2,flexShrink:0}}>
+                        <button className="modal-close" onClick={onClose} style={{flexShrink:0}}>
                             <Icon name="X" size={14}/>
                         </button>
                     </div>
@@ -941,7 +946,7 @@ const WriteupsPage = () => {
     <div>
         <p style={{...ST}}>Writeups</p>
         <div style={ROW}>
-            {WRITEUPS.map((w,i)=>(
+            {(window.WRITEUPS || []).map((w,i)=>(
                 <button key={i} onClick={()=>setSel(w)} className="list-row"
                     style={{...rowItem,justifyContent:'space-between',animationDelay:`${i*0.05}s`}}>
                     <div style={{textAlign:'left',flex:1,minWidth:0}}>

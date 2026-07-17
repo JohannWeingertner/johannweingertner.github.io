@@ -6,7 +6,7 @@
 //  Difficulty: 'Easy' | 'Medium' | 'Hard' | 'Extreme'
 // ─────────────────────────────────────────────────────────────
 
-const CD_LABS = [
+window.CD_LABS = [
     { name: 'T1595',                       url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/t1595/',                       category: 'Network Forensics',    difficulty: 'Easy',   completed: '3/27/2026' },
     { name: 'Tomcat Takeover',             url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/tomcat-takeover/',             category: 'Network Forensics',    difficulty: 'Easy',   completed: '3/24/2026' },
     { name: 'Web Investigation',           url: 'https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/web-investigation/',           category: 'Network Forensics',    difficulty: 'Easy',   completed: '3/23/2026' },

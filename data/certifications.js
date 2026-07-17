@@ -5,7 +5,7 @@
 //  badge path: put the PNG in /badges/ and reference it here.
 // ─────────────────────────────────────────────────────────────
 
-const CERTIFICATIONS = [
+window.CERTIFICATIONS = [
     {
         name: 'Certified CyberDefenders Level 1',
         short: 'CCDL1',

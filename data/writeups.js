@@ -28,7 +28,7 @@
 //       rows:    [['row1a', 'row1b', 'row1c'],
 //                 ['row2a', 'row2b', 'row2c']] }
 
-const WRITEUPS = [
+window.WRITEUPS = [
     {
         id: 1,
         title: 'Shadow Token Symphony — APT29 Azure Compromise',
