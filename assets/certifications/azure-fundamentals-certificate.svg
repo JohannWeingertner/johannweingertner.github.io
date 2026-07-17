@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1067" role="img" aria-labelledby="title desc">
+  <title id="title">Microsoft Certified: Azure Fundamentals</title>
+  <desc id="desc">Certificate awarded to J W on September 15, 2025.</desc>
+  <rect width="1600" height="1067" rx="24" fill="#202020"/>
+  <g transform="translate(660 58)">
+    <rect width="28" height="28" fill="#f25022"/><rect x="32" width="28" height="28" fill="#7fba00"/>
+    <rect y="32" width="28" height="28" fill="#00a4ef"/><rect x="32" y="32" width="28" height="28" fill="#ffb900"/>
+    <text x="75" y="47" fill="#e8e8e8" font-family="Arial,sans-serif" font-size="47">Microsoft</text>
+  </g>
+  <text x="800" y="295" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="54" font-weight="700">J W</text>
+  <text x="800" y="365" text-anchor="middle" fill="#f5f5f5" font-family="Arial,sans-serif" font-size="34">has successfully passed all requirements for</text>
+  <text x="800" y="455" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="42" font-weight="700">Microsoft Certified: Azure Fundamentals</text>
+  <g fill="#f5f5f5" font-family="Arial,sans-serif" font-size="28">
+    <text x="96" y="685">Credential ID: 253AC93627AA8722</text>
+    <text x="96" y="735">Certification number: DNA290-472ED7</text>
+    <text x="96" y="785">Earned on: September 15, 2025</text>
+  </g>
+  <rect x="96" y="850" width="315" height="56" rx="28" fill="#1268a8" stroke="#83c9ff" stroke-width="3"/>
+  <text x="250" y="888" text-anchor="middle" fill="#b9dcfa" font-family="Arial,sans-serif" font-size="25">✓  Online Verifiable</text>
+  <g transform="translate(690 645)">
+    <path d="M110 0 L205 28 L220 160 L110 235 L0 160 L15 28 Z" fill="#0877c9" stroke="#063e85" stroke-width="18"/>
+    <path d="M18 70 Q110 38 202 70 L190 150 Q110 172 30 150 Z" fill="#fff" stroke="#666" stroke-width="10"/>
+    <text x="110" y="77" text-anchor="middle" fill="#19326b" font-family="Arial,sans-serif" font-size="23" font-weight="700">Microsoft</text>
+    <text x="110" y="104" text-anchor="middle" fill="#19326b" font-family="Arial,sans-serif" font-size="17" letter-spacing="4">CERTIFIED</text>
+    <text x="110" y="137" text-anchor="middle" fill="#333" font-family="Arial,sans-serif" font-size="22" font-weight="700">FUNDAMENTALS</text>
+    <text x="110" y="205" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="50">★</text>
+  </g>
+  <text x="1380" y="838" text-anchor="middle" fill="#f1f1f1" font-family="Arial,sans-serif" font-size="21" font-weight="700">Satya Narayana Nadella</text>
+  <path d="M1290 790 Q1375 730 1470 785" fill="none" stroke="#eee" stroke-width="4"/>
+</svg>
