@@ -14,6 +14,7 @@ window.CERTIFICATIONS = [
         status: 'Active',
         color: '#00c8ff',
         badge: '/badges/ccdl1.png',
+        credential: '/assets/certifications/ccdl1.pdf',
         featured: true,
         description: 'Earned through hands-on practical training and investigations simulating real-world enterprise threats.',
         learned: [
@@ -33,6 +34,7 @@ window.CERTIFICATIONS = [
         status: 'Active',
         color: '#1ba0e2',
         badge: '/badges/ccna.png',
+        credential: '/assets/certifications/ccna.pdf',
         description: 'Industry-standard Cisco certification validating core networking skills for enterprise environments.',
         learned: [
             'Network fundamentals, IP connectivity, and subnetting',
@@ -67,6 +69,7 @@ window.CERTIFICATIONS = [
         status: 'Active',
         color: '#c8302a',
         badge: '/badges/aplus.png',
+        credential: '/assets/certifications/comptia-a-plus.pdf',
         description: 'Industry-standard certification validating foundational IT skills across hardware, OS, networking, and troubleshooting.',
         learned: [
             'Hardware installation, configuration, and troubleshooting',
@@ -85,6 +88,7 @@ window.CERTIFICATIONS = [
         status: 'Active',
         color: '#c8302a',
         badge: '/badges/secplus.png',
+        credential: '/assets/certifications/comptia-security-plus.pdf',
         description: 'Globally recognized certification validating core cybersecurity skills required for security analyst roles.',
         learned: [
             'Threats, attacks, and vulnerability identification',
@@ -104,6 +108,7 @@ window.CERTIFICATIONS = [
         status: 'Active',
         color: '#00a3e0',
         badge: '/badges/isc2cc.png',
+        credential: '/assets/certifications/isc2-cc.pdf',
         description: 'Entry-level ISC2 certification covering foundational cybersecurity principles and practices.',
         learned: [
             'Security principles and the CIA triad',
@@ -121,6 +126,7 @@ window.CERTIFICATIONS = [
         status: 'Active',
         color: '#0078d4',
         badge: '/badges/az900.png',
+        credential: '/assets/certifications/azure-fundamentals.mhtml',
         description: 'Microsoft certification validating foundational knowledge of cloud concepts and Azure services.',
         learned: [
             'Core cloud computing concepts and deployment models',
@@ -139,6 +145,7 @@ window.CERTIFICATIONS = [
         status: 'Active',
         color: '#c8302a',
         badge: '/badges/networkplus.png',
+        credential: '/assets/certifications/comptia-network-plus.pdf',
         description: 'Vendor-neutral certification validating networking fundamentals, implementation, operations, security, and troubleshooting.',
         learned: [
             'Networking concepts including OSI model, TCP/IP, subnetting',
@@ -149,4 +156,3 @@ window.CERTIFICATIONS = [
         ],
     },
 ];
-window.CERTIFICATIONS = CERTIFICATIONS;

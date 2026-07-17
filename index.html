@@ -579,8 +579,13 @@ const CertModal = ({ cert, onClose }) => {
                             <p style={{fontSize:'0.76rem',color:'var(--muted)',marginTop:4}}>{cert.issuer} · {cert.year}</p>
                         </div>
                     </div>
-                    {cert.description && <p style={{marginTop:14,fontSize:'0.84rem',lineHeight:1.7,color:'var(--text2)'}}>{cert.description}</p>}
-                </div>
+                {cert.description && <p style={{marginTop:14,fontSize:'0.84rem',lineHeight:1.7,color:'var(--text2)'}}>{cert.description}</p>}
+                {cert.credential && (
+                    <a href={cert.credential} target="_blank" rel="noopener noreferrer" className="cta-btn" style={{marginTop:14,fontSize:'0.78rem',padding:'7px 12px',animation:'none'}}>
+                        <Icon name="FileBadge" size={13}/> View certificate
+                    </a>
+                )}
+            </div>
                 {cert.learned && cert.learned.length > 0 && (
                     <div style={{padding:'16px 22px'}}>
                         <p style={{...ST,marginBottom:10}}>What I learned</p>
