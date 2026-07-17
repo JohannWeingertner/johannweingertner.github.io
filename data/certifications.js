@@ -127,7 +127,7 @@ window.CERTIFICATIONS = [
         status: 'Active',
         color: '#0078d4',
         badge: '/badges/az900.png',
-        credential: '/assets/certifications/azure-fundamentals.mhtml',
+        credential: '/assets/certifications/azure-fundamentals.svg',
         description: 'Microsoft certification validating foundational knowledge of cloud concepts and Azure services.',
         learned: [
             'Core cloud computing concepts and deployment models',
