@@ -283,7 +283,22 @@ window.WRITEUPS = [
             { type: 'h2', text: 'Containment & Hardening' },
             { type: 'ul', items: ['Preserve and isolate the workstation before removing the MCP configuration or payload', 'Disable the compromised admin user, revoke keys and sessions, and rotate all accessible secrets', 'Terminate unauthorized EC2 resources and inspect related cloud artifacts in every region', 'Block awesomeawsmcp.com, 3.72.63.40, the payload URL, and rx.unmineable.com:3333', 'Allow-list MCP servers; detect IDE-to-shell-to-temporary-binary execution chains', 'Use short-lived MFA-protected AWS roles, SCPs, region and instance-family restrictions, budgets, and anomaly alerts'] },
             { type: 'h2', text: 'Conclusion' },
-            { type: 'p', text: 'The supplied endpoint, Cursor, CloudTrail, mining-script, and blockchain artifacts support a high-confidence conclusion that a fraudulent MCP integration enabled endpoint code execution, privileged AWS credential theft, unauthorized GPU deployment, and cryptomining. The report is based on supplied lab artifacts; time-sensitive public labels and token values should be preserved with timestamps outside a training context.' }
+            { type: 'p', text: 'The supplied endpoint, Cursor, CloudTrail, mining-script, and blockchain artifacts support a high-confidence conclusion that a fraudulent MCP integration enabled endpoint code execution, privileged AWS credential theft, unauthorized GPU deployment, and cryptomining. The report is based on supplied lab artifacts; time-sensitive public labels and token values should be preserved with timestamps outside a training context.' },
+            { type: 'h2', text: 'Evidence Screenshots' },
+            { type: 'p', text: 'The original investigation report includes the following evidence screenshots. They are reproduced here from the supplied DOCX.' },
+            { type: 'figure', src: 'assets/writeups/cursorjack/image1.png', caption: 'Figure 1 — Browser history showing awesomeawsmcp.com' },
+            { type: 'figure', src: 'assets/writeups/cursorjack/image2.png', caption: 'Figure 2 — Chromium timestamp conversion' },
+            { type: 'figure', src: 'assets/writeups/cursorjack/image3.png', caption: 'Figure 3 — Cursor MCP configuration' },
+            { type: 'figure', src: 'assets/writeups/cursorjack/image4.png', caption: 'Figure 4 — Sysmon payload download event' },
+            { type: 'figure', src: 'assets/writeups/cursorjack/image5.png', caption: 'Figure 5 — First observed C2 command' },
+            { type: 'figure', src: 'assets/writeups/cursorjack/image6.png', caption: 'Figure 6 — AWS credential staging' },
+            { type: 'figure', src: 'assets/writeups/cursorjack/image7.png', caption: 'Figure 7 — CloudTrail identity attribution' },
+            { type: 'figure', src: 'assets/writeups/cursorjack/image8.png', caption: 'Figure 8 — Multi-region RunInstances activity' },
+            { type: 'figure', src: 'assets/writeups/cursorjack/image9.png', caption: 'Figure 9 — p3.2xlarge instance request' },
+            { type: 'figure', src: 'assets/writeups/cursorjack/image10.png', caption: 'Figure 10 — prod-web-server resource tag' },
+            { type: 'figure', src: 'assets/writeups/cursorjack/image11.png', caption: 'Figure 11 — Recovered XMRig mining script' },
+            { type: 'figure', src: 'assets/writeups/cursorjack/image12.png', caption: 'Figure 12 — Public wallet attribution research' },
+            { type: 'figure', src: 'assets/writeups/cursorjack/image13.png', caption: 'Figure 13 — Solscan Drift Vault transfer' }
         ]
     },
 ];
