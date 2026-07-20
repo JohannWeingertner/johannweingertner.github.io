@@ -16,7 +16,26 @@
     <!-- ── Data files — edit these to update content ── -->
     <script src="/data/certifications.js?v=20260714b"></script>
     <script src="/data/labs.js?v=20260714"></script>
-    <script src="/data/writeups.js?v=20260714"></script>
+    <script src="/data/writeups.js?v=20260720"></script>
+    <script>
+        // Keep the writeup visible even when a static host serves a stale data-file cache.
+        if (window.WRITEUPS && !window.WRITEUPS.some(w => w.id === 2)) {
+            window.WRITEUPS.push({
+                id: 2,
+                title: 'CursorJack — Malicious MCP Integration to AWS Cryptomining',
+                category: 'Cloud / DFIR',
+                difficulty: 'Hard',
+                date: 'Jul 2026',
+                summary: 'Fraudulent Cursor MCP integration leading to AWS credential theft, 16 unauthorized GPU instances, and XMRig cryptomining.',
+                content: [
+                    { type: 'h2', text: 'CursorJack Investigation' },
+                    { type: 'p', text: 'A malicious Cursor MCP integration downloaded and executed s.exe, staged local AWS credentials, and enabled abuse of an admin IAM user. The actor launched 16 p3.2xlarge instances across four regions and deployed an XMRig miner through unMineable.' },
+                    { type: 'h2', text: 'Key Findings' },
+                    { type: 'ul', items: ['awesomeawsmcp.com supplied the fraudulent MCP integration', 'Payload downloaded from 3.72.63.40 and executed via cmd.exe', 'AWS credentials copied to C:\\Users\\Administrator\\.exfil\\', '16 p3.2xlarge instances launched across four AWS regions', 'Solana payout wallet labeled Drift Exploiter 1'] }
+                ]
+            });
+        }
+    </script>
     <style>
         :root {
             --bg:        #0a0a0a;

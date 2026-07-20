@@ -134,6 +134,16 @@ const Icon = ({ name, className = 'w-5 h-5', ...props }) => {
 
 // ── Static data ───────────────────────────────────────────────
 const SOC_REPORTS = [
+    {
+        id: '2026-04-20',
+        title: 'CursorJack MCP / AWS Cryptomining Investigation',
+        date: 'July 2026',
+        description: 'Malicious Cursor MCP integration leading to endpoint execution, AWS admin credential theft, 16 unauthorized GPU instances, and XMRig cryptomining.',
+        file: 'assets/projects/2026-04-20-cursorjack-investigation-report.docx',
+        tags: ['Cursor MCP', 'AWS', 'Credential Theft', 'Cryptomining'],
+        status: 'Completed',
+        external: true
+    },
     { 
         id: '2026-04-11',
         title: 'Azure Environment Compromise Investigation',
@@ -227,7 +237,7 @@ const App = () => {
                     
                     <div style={{display:'flex',flexDirection:'column',gap:12}}>
                         {SOC_REPORTS.map((report,i)=>(
-                            <Card key={i} style={{padding:22, cursor:'pointer'}} onClick={()=>setSelectedReport(report)}>
+                            <Card key={i} style={{padding:22, cursor:'pointer'}} onClick={()=>report.external ? window.open(report.file, '_blank') : setSelectedReport(report)}>
                                 <div style={{display:'flex',alignItems:'center',gap:16}}>
                                     <div style={{width:48,height:48,borderRadius:12,background:'var(--surface2)',border:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
                                         <Icon name="FileText" className="w-5 h-5" style={{color:'var(--accent-emerald)'}}/>
