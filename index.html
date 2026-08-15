@@ -4,38 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>johannweingertner.github.io</title>
-    <link rel="icon" type="image/png" href="/assets/profile.png">
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
-    <script src="https://unpkg.com/lucide@0.441.0/dist/umd/lucide.js"></script>
-    <!-- ── Data files — edit these to update content ── -->
-    <script src="/data/certifications.js?v=20260714b"></script>
-    <script src="/data/labs.js?v=20260714"></script>
-    <script src="/data/writeups.js?v=20260720"></script>
-    <script>
-        // Keep the writeup visible even when a static host serves a stale data-file cache.
-        if (window.WRITEUPS && !window.WRITEUPS.some(w => w.id === 2)) {
-            window.WRITEUPS.push({
-                id: 2,
-                title: 'CursorJack — Malicious MCP Integration to AWS Cryptomining',
-                category: 'Cloud / DFIR',
-                difficulty: 'Hard',
-                date: 'Jul 2026',
-                summary: 'Fraudulent Cursor MCP integration leading to AWS credential theft, 16 unauthorized GPU instances, and XMRig cryptomining.',
-                content: [
-                    { type: 'h2', text: 'CursorJack Investigation' },
-                    { type: 'p', text: 'A malicious Cursor MCP integration downloaded and executed s.exe, staged local AWS credentials, and enabled abuse of an admin IAM user. The actor launched 16 p3.2xlarge instances across four regions and deployed an XMRig miner through unMineable.' },
-                    { type: 'h2', text: 'Key Findings' },
-                    { type: 'ul', items: ['awesomeawsmcp.com supplied the fraudulent MCP integration', 'Payload downloaded from 3.72.63.40 and executed via cmd.exe', 'AWS credentials copied to C:\\Users\\Administrator\\.exfil\\', '16 p3.2xlarge instances launched across four AWS regions', 'Solana payout wallet labeled Drift Exploiter 1'] }
-                ]
-            });
-        }
-    </script>
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+    <link rel="preload" as="image" href="/assets/profile-avatar.png">
     <style>
         :root {
             --bg:        #0a0a0a;
@@ -107,7 +81,8 @@
         .fade-up-3 { animation: fadeUp 0.5s 0.24s cubic-bezier(0.22,1,0.36,1) both; }
         .slide-down { animation: slideDown 0.15s ease both; }
         .type-cursor { display:inline-block; width:2px; height:1em; background:var(--accent); margin-left:2px; vertical-align:text-bottom; animation:typeBlink 0.75s step-end infinite; }
-        .modal-overlay { position:fixed; inset:0; background:radial-gradient(circle at 50% 32%, var(--overlay-glow), transparent 52%), var(--overlay-backdrop); backdrop-filter:blur(12px); z-index:10000; display:flex; align-items:center; justify-content:center; padding:1rem; animation:fadeIn 0.18s ease both; }
+        .flex-shrink-0 { flex-shrink: 0; }
+        .modal-overlay { position:fixed; inset:0; background:radial-gradient(circle at 50% 32%, var(--overlay-glow), transparent 52%), var(--overlay-backdrop); z-index:10000; display:flex; align-items:center; justify-content:center; padding:1rem; animation:fadeIn 0.18s ease both; }
         .modal-box { background:var(--bg); border:none; border-radius:10px; max-width:520px; width:100%; max-height:85vh; overflow-y:auto; animation:modalIn 0.25s cubic-bezier(0.34,1.2,0.64,1) both; box-shadow:0 24px 60px rgba(0,0,0,0.65); }
         .modal-box::-webkit-scrollbar { width:3px; }
         .modal-box::-webkit-scrollbar-thumb { background:var(--accent-border); border-radius:2px; }
@@ -262,6 +237,13 @@
             font-size: 0.84rem;
             color: var(--muted);
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            .fade-up, .fade-up-1, .fade-up-2, .fade-up-3, .row-in, .hero-name, .cta-btn {
+                animation: none !important;
+            }
+            .type-cursor { animation: none; opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -270,22 +252,32 @@
 <script>
 (function () {
     const canvas = document.getElementById('bg-canvas');
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: false });
     let w, h, dpr, time = 0, scale = 36, originX = 0, originY = 0;
-    let COLS = 28, ROWS = 28;
+    let COLS = 20, ROWS = 20;
 
     // ── Full-screen isometric red cube grid (dark theme) ─────
-    // Oversized floor so the diamond covers the whole viewport.
-    // Soft ambient cubes; hover/click still lift brightly.
+    // Soft ambient cubes; hover/click still lift. Frozen when idle.
     const CELL = 1;
     const HALF = 0.40;
     const BASE_H = 0.28;
     const LIFT_MAX = 1.9;
     const HOVER_PX = 150;
+    const FRAME_MS = 1000 / 30;
+    const IDLE_MS = 1600;
+
+    const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const saveData = !!(navigator.connection && navigator.connection.saveData);
+    const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    const staticOnly = reduceMotion || saveData || (coarse && Math.min(window.innerWidth, window.innerHeight) < 700);
 
     let cubes = [];
     let waves = [];
     const mouse = { x: -9999, y: -9999, active: false };
+    let running = false;
+    let raf = 0;
+    let lastFrame = 0;
+    let idleTimer = 0;
 
     function seed() {
         cubes = [];
@@ -293,27 +285,38 @@
         const oz = (ROWS - 1) * CELL * 0.5;
         for (let j = 0; j < ROWS; j++) {
             for (let i = 0; i < COLS; i++) {
+                const x = i * CELL - ox;
+                const z = j * CELL - oz;
                 cubes.push({
-                    i, j,
-                    x: i * CELL - ox,
-                    z: j * CELL - oz,
+                    i, j, x, z,
                     h: BASE_H,
                     vh: 0,
                     phase: (i * 0.35 + j * 0.41),
                     sx: 0, sy: 0,
-                    depth: 0,
+                    depth: x + z,
                 });
             }
         }
+        cubes.sort((a, b) => a.depth - b.depth);
     }
 
     function project(x, y, z) {
-        const sx = originX + (x - z) * scale * 0.866;
-        const sy = originY + (x + z) * scale * 0.5 - y * scale;
-        return { x: sx, y: sy, depth: x + z };
+        return {
+            x: originX + (x - z) * scale * 0.866,
+            y: originY + (x + z) * scale * 0.5 - y * scale,
+        };
     }
 
-    function drawCube(cx, cz, height, brightness) {
+    function face(pts) {
+        ctx.beginPath();
+        ctx.moveTo(pts[0].x, pts[0].y);
+        ctx.lineTo(pts[1].x, pts[1].y);
+        ctx.lineTo(pts[2].x, pts[2].y);
+        ctx.lineTo(pts[3].x, pts[3].y);
+        ctx.closePath();
+    }
+
+    function drawCube(cx, cz, height, brightness, stroke) {
         const top = height;
         const c1 = project(cx + HALF, 0,   cz - HALF);
         const c2 = project(cx + HALF, 0,   cz + HALF);
@@ -323,33 +326,27 @@
         const t2 = project(cx + HALF, top, cz + HALF);
         const t3 = project(cx - HALF, top, cz + HALF);
 
-        const b = Math.max(0, Math.min(1, brightness));
-        const topA = 0.22 + b * 0.44;
-        const leftA = 0.15 + b * 0.34;
-        const rightA = 0.11 + b * 0.28;
-        const topFill   = `rgba(255, 55, 55, ${topA})`;
-        const leftFill  = `rgba(200, 32, 32, ${leftA})`;
-        const rightFill = `rgba(130, 18, 18, ${rightA})`;
-        const edge      = `rgba(255, 100, 80, ${0.26 + b * 0.48})`;
-
-        function face(pts, fill) {
-            ctx.beginPath();
-            ctx.moveTo(pts[0].x, pts[0].y);
-            for (let k = 1; k < pts.length; k++) ctx.lineTo(pts[k].x, pts[k].y);
-            ctx.closePath();
-            ctx.fillStyle = fill;
-            ctx.fill();
-            ctx.strokeStyle = edge;
+        const b = brightness < 0 ? 0 : brightness > 1 ? 1 : brightness;
+        if (stroke) {
+            ctx.strokeStyle = `rgba(255, 100, 80, ${0.26 + b * 0.48})`;
             ctx.lineWidth = 0.6;
-            ctx.stroke();
         }
-
-        face([c3, c2, t2, t3], leftFill);
-        face([c1, c2, t2, t1], rightFill);
-        face([t0, t1, t2, t3], topFill);
+        ctx.fillStyle = `rgba(130, 18, 18, ${0.11 + b * 0.28})`;
+        face([c1, c2, t2, t1]);
+        ctx.fill();
+        if (stroke) ctx.stroke();
+        ctx.fillStyle = `rgba(200, 32, 32, ${0.15 + b * 0.34})`;
+        face([c3, c2, t2, t3]);
+        ctx.fill();
+        if (stroke) ctx.stroke();
+        ctx.fillStyle = `rgba(255, 55, 55, ${0.22 + b * 0.44})`;
+        face([t0, t1, t2, t3]);
+        ctx.fill();
+        if (stroke) ctx.stroke();
     }
 
     function spawnWave(clientX, clientY) {
+        if (staticOnly) return;
         let best = null, bestD = Infinity;
         for (let k = 0; k < cubes.length; k++) {
             const c = cubes[k];
@@ -360,26 +357,52 @@
         if (!best) return;
         waves.push({ x: best.x, z: best.z, r: 0, speed: 0.26, amp: 1.6, life: 1 });
         best.vh += 0.65;
+        kick();
     }
 
-    window.addEventListener('mousemove', e => {
-        mouse.x = e.clientX; mouse.y = e.clientY; mouse.active = true;
-    });
+    function poke(x, y) {
+        mouse.x = x; mouse.y = y; mouse.active = true;
+        kick();
+    }
+
+    function kick() {
+        if (staticOnly) return;
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(() => {
+            mouse.active = false;
+            if (!waves.length) stop();
+        }, IDLE_MS);
+        if (!running && document.visibilityState !== 'hidden') start();
+    }
+
+    function start() {
+        if (running || staticOnly) return;
+        running = true;
+        lastFrame = 0;
+        raf = requestAnimationFrame(step);
+    }
+
+    function stop() {
+        running = false;
+        if (raf) cancelAnimationFrame(raf);
+        raf = 0;
+    }
+
+    window.addEventListener('mousemove', e => poke(e.clientX, e.clientY), { passive: true });
     window.addEventListener('mouseleave', () => { mouse.active = false; });
     window.addEventListener('touchmove', e => {
-        if (e.touches[0]) {
-            mouse.x = e.touches[0].clientX;
-            mouse.y = e.touches[0].clientY;
-            mouse.active = true;
-        }
+        if (e.touches[0]) poke(e.touches[0].clientX, e.touches[0].clientY);
     }, { passive: true });
     window.addEventListener('click', e => spawnWave(e.clientX, e.clientY));
     window.addEventListener('touchstart', e => {
         if (e.touches[0]) spawnWave(e.touches[0].clientX, e.touches[0].clientY);
     }, { passive: true });
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') stop();
+    });
 
     function resize() {
-        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        dpr = Math.min(window.devicePixelRatio || 1, staticOnly ? 1 : 1.25);
         w = window.innerWidth;
         h = window.innerHeight;
         canvas.width = w * dpr;
@@ -387,24 +410,23 @@
         canvas.style.width = w + 'px';
         canvas.style.height = h + 'px';
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.imageSmoothingEnabled = false;
 
-        // Cube size that tiles nicely; expand grid until the diamond covers
-        // the full rectangle (diamond ≠ AABB — need larger than half-extents).
-        scale = Math.max(18, Math.min(w, h) / 26);
+        scale = Math.max(22, Math.min(w, h) / 22);
         originX = w * 0.5;
         originY = h * 0.45;
-        const halfW = w * 0.5 + 100;
-        const halfH = Math.max(originY, h - originY) + 100;
-        // Inside-diamond test: |dx|/A + |dy|/B <= 1 with A=N*s*0.866, B=N*s*0.5
+        const halfW = w * 0.5 + 80;
+        const halfH = Math.max(originY, h - originY) + 80;
         const nFromDiamond = Math.ceil(halfW / (scale * 0.866) + halfH / (scale * 0.5));
-        COLS = Math.min(56, Math.max(30, nFromDiamond));
+        COLS = Math.min(staticOnly ? 18 : 24, Math.max(16, nFromDiamond));
         ROWS = COLS;
         seed();
+        paint(true);
     }
 
-    function step() {
-        time += 0.016;
-        ctx.clearRect(0, 0, w, h);
+    function paint(forceStatic) {
+        ctx.fillStyle = '#0a0a0a';
+        ctx.fillRect(0, 0, w, h);
 
         const glow = ctx.createRadialGradient(originX, originY * 0.85, 0, originX, originY, Math.max(w, h) * 0.72);
         glow.addColorStop(0, 'rgba(160, 18, 18, 0.08)');
@@ -413,80 +435,126 @@
         ctx.fillStyle = glow;
         ctx.fillRect(0, 0, w, h);
 
-        waves = waves.filter(wv => wv.life > 0.02 && wv.r < COLS);
-        waves.forEach(wv => {
-            wv.r += wv.speed;
-            wv.life *= 0.987;
-            wv.amp *= 0.99;
-        });
+        const animate = !forceStatic && !staticOnly;
+        if (animate) {
+            waves = waves.filter(wv => wv.life > 0.02 && wv.r < COLS);
+            for (let wi = 0; wi < waves.length; wi++) {
+                const wv = waves[wi];
+                wv.r += wv.speed;
+                wv.life *= 0.987;
+                wv.amp *= 0.99;
+            }
+        }
 
         for (let k = 0; k < cubes.length; k++) {
             const c = cubes[k];
-            const breathe = Math.sin(time * 1.15 + c.phase) * 0.05;
-            let target = BASE_H + breathe;
-
-            if (mouse.active) {
-                const dx = c.sx - mouse.x, dy = c.sy - mouse.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < HOVER_PX) {
-                    const t = 1 - dist / HOVER_PX;
-                    target += LIFT_MAX * t * t;
+            if (animate) {
+                const breathe = Math.sin(time * 1.15 + c.phase) * 0.05;
+                let target = BASE_H + breathe;
+                if (mouse.active) {
+                    const dx = c.sx - mouse.x, dy = c.sy - mouse.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < HOVER_PX) {
+                        const t = 1 - dist / HOVER_PX;
+                        target += LIFT_MAX * t * t;
+                    }
                 }
+                for (let wi = 0; wi < waves.length; wi++) {
+                    const wv = waves[wi];
+                    const dx = c.x - wv.x, dz = c.z - wv.z;
+                    const d = Math.sqrt(dx * dx + dz * dz);
+                    const band = Math.abs(d - wv.r);
+                    if (band < 1.4) target += (1 - band / 1.4) * wv.amp * wv.life;
+                }
+                const force = (target - c.h) * 0.16;
+                c.vh = (c.vh + force) * 0.78;
+                c.h += c.vh;
+                if (c.h < 0.1) { c.h = 0.1; c.vh *= 0.5; }
             }
-
-            for (let wi = 0; wi < waves.length; wi++) {
-                const wv = waves[wi];
-                const dx = c.x - wv.x, dz = c.z - wv.z;
-                const d = Math.sqrt(dx * dx + dz * dz);
-                const band = Math.abs(d - wv.r);
-                if (band < 1.4) target += (1 - band / 1.4) * wv.amp * wv.life;
-            }
-
-            const force = (target - c.h) * 0.16;
-            c.vh = (c.vh + force) * 0.78;
-            c.h += c.vh;
-            if (c.h < 0.1) { c.h = 0.1; c.vh *= 0.5; }
-        }
-
-        const sorted = cubes.slice();
-        for (let k = 0; k < sorted.length; k++) {
-            const c = sorted[k];
             const p = project(c.x, c.h, c.z);
-            c.sx = p.x; c.sy = p.y; c.depth = p.depth;
+            c.sx = p.x; c.sy = p.y;
         }
-        sorted.sort((a, b) => a.depth - b.depth);
 
-        for (let k = 0; k < sorted.length; k++) {
-            const c = sorted[k];
-            // Skip off-screen cubes for perf
+        for (let k = 0; k < cubes.length; k++) {
+            const c = cubes[k];
             if (c.sx < -80 || c.sx > w + 80 || c.sy < -80 || c.sy > h + 80) continue;
             const lift = Math.max(0, Math.min(1, (c.h - BASE_H) / LIFT_MAX));
-            const brightness = 0.28 + lift * 0.62 + Math.sin(time * 1.1 + c.phase) * 0.03;
-            drawCube(c.x, c.z, c.h, brightness);
+            const brightness = 0.28 + lift * 0.62 + (animate ? Math.sin(time * 1.1 + c.phase) * 0.03 : 0);
+            drawCube(c.x, c.z, c.h, brightness, lift > 0.08);
         }
-
-        if (!reduceMotion) requestAnimationFrame(step);
     }
 
-    const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    window.addEventListener('resize', resize);
+    function step(now) {
+        if (!running) return;
+        raf = requestAnimationFrame(step);
+        if (now - lastFrame < FRAME_MS) return;
+        lastFrame = now;
+        time += 0.033;
+        paint(false);
+        if (!mouse.active && !waves.length) stop();
+    }
+
+    let resizeTimer = 0;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(resize, 120);
+    });
     resize();
-    step();
 })();
 </script>
+<script src="/data/certifications.js?v=20260814"></script>
+<script src="/data/labs.js?v=20260714"></script>
+<script src="/data/writeups.js?v=20260814"></script>
+<script>
+    if (window.WRITEUPS && !window.WRITEUPS.some(w => w.id === 2)) {
+        window.WRITEUPS.push({
+            id: 2,
+            title: 'CursorJack — Malicious MCP Integration to AWS Cryptomining',
+            category: 'Cloud / DFIR',
+            difficulty: 'Hard',
+            date: 'Jul 2026',
+            summary: 'Fraudulent Cursor MCP integration leading to AWS credential theft, 16 unauthorized GPU instances, and XMRig cryptomining.',
+            content: [
+                { type: 'h2', text: 'CursorJack Investigation' },
+                { type: 'p', text: 'A malicious Cursor MCP integration downloaded and executed s.exe, staged local AWS credentials, and enabled abuse of an admin IAM user. The actor launched 16 p3.2xlarge instances across four regions and deployed an XMRig miner through unMineable.' },
+                { type: 'h2', text: 'Key Findings' },
+                { type: 'ul', items: ['awesomeawsmcp.com supplied the fraudulent MCP integration', 'Payload downloaded from 3.72.63.40 and executed via cmd.exe', 'AWS credentials copied to C:\\Users\\Administrator\\.exfil\\', '16 p3.2xlarge instances launched across four AWS regions', 'Solana payout wallet labeled Drift Exploiter 1'] }
+            ]
+        });
+    }
+</script>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
 <script type="text/babel">
-const { useState, useEffect, useRef } = React;
+const { useState, useEffect } = React;
 
-const Icon = ({ name, className = '', size = 15, ...props }) => {
-    const ref = useRef(null);
-    useEffect(() => {
-        if (ref.current && lucide[name]) {
-            const el = lucide.createElement(lucide[name], { width: size, height: size, 'stroke-width': 1.75 });
-            ref.current.innerHTML = ''; ref.current.appendChild(el);
-        }
-    }, [name, size]);
-    return <i ref={ref} className={`flex-shrink-0 ${className}`} style={{display:'inline-flex',alignItems:'center',justifyContent:'center',width:size,height:size}} {...props} />;
+const ICONS = {
+    X: 'M18 6 6 18M6 6l12 12',
+    ChevronRight: 'm9 18 6-6-6-6',
+    ExternalLink: 'M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6',
+    Shield: 'M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z',
+    Linkedin: 'M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2zM4 4a2 2 0 1 1 0 4 2 2 0 0 1 0-4',
+    FileBadge: 'M12 22h6a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v3M14 2v4a2 2 0 0 0 2 2h4M5 17a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM7 16.5 8 22l-3-1-3 1 1-5.5',
 };
+
+const Icon = ({ name, className = '', size = 15, ...props }) => (
+    <svg
+        className={`flex-shrink-0 ${className}`}
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+        {...props}
+    >
+        <path d={ICONS[name] || ''} />
+    </svg>
+);
 
 const useTyping = (text, speed = 42, delay = 800) => {
     const [displayed, setDisplayed] = useState('');
@@ -572,7 +640,7 @@ const rowItem = {display:'flex',alignItems:'center',width:'100%',padding:'13px 0
 // ── Components ────────────────────────────────────────────────
 const CertBadgeImg = ({ src, alt, fallback, size=44 }) => (
     <div style={{width:size,height:size,borderRadius:7,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,overflow:'hidden',background:'var(--surface2)',border:'1px solid var(--border)'}}>
-        <img src={src} alt={alt} style={{width:'100%',height:'100%',objectFit:'contain',padding:5}}
+        <img src={src} alt={alt} width={size} height={size} decoding="async" style={{width:'100%',height:'100%',objectFit:'contain',padding:5}}
             onError={e=>{e.target.style.display='none';e.target.nextSibling.style.display='flex';}} />
         <span style={{color:'var(--muted)',display:'none',width:'100%',height:'100%',alignItems:'center',justifyContent:'center',textAlign:'center',fontSize:'0.6rem',fontWeight:600}}>{fallback}</span>
     </div>
@@ -601,10 +669,10 @@ const CertModal = ({ cert, onClose }) => {
                         </div>
                     </div>
                     {cert.description && <p style={{marginTop:14,fontSize:'0.84rem',lineHeight:1.7,color:'var(--text2)'}}>{cert.description}</p>}
-                    {cert.credential && /\.(png|svg)$/i.test(cert.credential) && (
-                        <img className="credential-image" src={cert.credential} alt={`${cert.name} certificate`} style={{marginTop:16}} />
+                    {cert.credential && /\.(png|svg|webp|jpe?g)$/i.test(cert.credential) && (
+                        <img className="credential-image" src={cert.credential} alt={`${cert.name} certificate`} decoding="async" style={{marginTop:16}} />
                     )}
-                {cert.credential && !/\.(png|svg)$/i.test(cert.credential) && (
+                {cert.credential && !/\.(png|svg|webp|jpe?g)$/i.test(cert.credential) && (
                     <a href={cert.credential} target="_blank" rel="noopener noreferrer" className="cta-btn" style={{marginTop:14,fontSize:'0.78rem',padding:'7px 12px',animation:'none'}}>
                         <Icon name="FileBadge" size={13}/> View certificate
                     </a>
@@ -648,7 +716,7 @@ const HomePage = () => {
     return (
     <div style={{paddingTop:16}} className="fade-up">
         <div className="hero-row">
-            <img src="/assets/profile.png" alt="Johann profile" className="profile-avatar" />
+            <img src="/assets/profile-avatar.png" alt="Johann profile" className="profile-avatar" width="88" height="88" decoding="async" />
             <div>
                 <h1 className="hero-name" style={{fontSize:'clamp(1.85rem,5vw,2.6rem)',fontWeight:700,color:'var(--text)',letterSpacing:'-0.03em',lineHeight:1.1,marginBottom:8}}>
                     Johann
@@ -931,7 +999,7 @@ const WriteupModal = ({ writeup, onClose }) => {
             );
             case 'figure': return (
                 <figure key={i} style={{margin:'20px 0',padding:0}}>
-                    <img src={block.src} alt={block.caption||''} style={{width:'100%',borderRadius:6,border:'1px solid var(--border)',display:'block'}}/>
+                    <img src={block.src} alt={block.caption||''} loading="lazy" decoding="async" style={{width:'100%',borderRadius:6,border:'1px solid var(--border)',display:'block'}}/>
                     {block.caption && (
                         <figcaption style={{fontSize:'0.75rem',color:'var(--muted)',textAlign:'center',marginTop:6,fontStyle:'italic'}}>
                             {block.caption}
@@ -998,14 +1066,12 @@ const WriteupsPage = () => {
 // ── App ───────────────────────────────────────────────────────
 const App = () => {
     const [page, setPage] = useState('home');
-    const pages = {
-        home:<HomePage/>,
-        certs:<CertsPage/>,
-        projects:<ProjectsPage/>,
-        writeups:<WriteupsPage/>,
-        competitions:<CompetitionsPage/>,
-        experience:<ExperiencePage/>,
-    };
+    const view = page === 'certs' ? <CertsPage/>
+        : page === 'projects' ? <ProjectsPage/>
+        : page === 'writeups' ? <WriteupsPage/>
+        : page === 'competitions' ? <CompetitionsPage/>
+        : page === 'experience' ? <ExperiencePage/>
+        : <HomePage/>;
     return (
     <div style={{minHeight:'100vh'}}>
         <nav style={{position:'sticky',top:0,zIndex:50,background:'var(--bg)',borderBottom:'1px solid var(--border)'}}>
@@ -1023,7 +1089,7 @@ const App = () => {
             </div>
         </nav>
         <main className="content-scrim" style={{maxWidth:720,margin:'0 auto',padding:'48px 24px 100px'}}>
-            {pages[page]}
+            {view}
         </main>
         <footer style={{borderTop:'1px solid var(--border)',padding:'20px 24px'}}>
             <div style={{maxWidth:720,margin:'0 auto',textAlign:'center'}}>

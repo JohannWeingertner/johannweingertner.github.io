@@ -14,7 +14,7 @@ window.CERTIFICATIONS = [
         status: 'Active',
         color: '#00c8ff',
         badge: '/badges/ccdl1.png',
-        credential: '/assets/certifications/ccdl1.png',
+        credential: '/assets/certifications/ccdl1.webp',
         featured: true,
         description: 'Earned through hands-on practical training and investigations simulating real-world enterprise threats.',
         learned: [
@@ -34,7 +34,7 @@ window.CERTIFICATIONS = [
         status: 'Active',
         color: '#1ba0e2',
         badge: '/badges/ccna.png',
-        credential: '/assets/certifications/ccna.pdf.png',
+        credential: '/assets/certifications/ccna.pdf.webp',
         description: 'Industry-standard Cisco certification validating core networking skills for enterprise environments.',
         learned: [
             'Network fundamentals, IP connectivity, and subnetting',
@@ -52,7 +52,7 @@ window.CERTIFICATIONS = [
         status: 'Active',
         color: '#ff6b35',
         badge: '/badges/splunk.png',
-        credential: '/assets/certifications/splunk.pdf.png',
+        credential: '/assets/certifications/splunk.pdf.webp',
         description: 'Advanced Splunk certification validating expertise in search processing language and data analysis.',
         learned: [
             'Advanced SPL for complex search queries and data correlation',
@@ -70,7 +70,7 @@ window.CERTIFICATIONS = [
         status: 'Active',
         color: '#c8302a',
         badge: '/badges/aplus.png',
-        credential: '/assets/certifications/comptia-a-plus.pdf.png',
+        credential: '/assets/certifications/comptia-a-plus.pdf.webp',
         description: 'Industry-standard certification validating foundational IT skills across hardware, OS, networking, and troubleshooting.',
         learned: [
             'Hardware installation, configuration, and troubleshooting',
@@ -89,7 +89,7 @@ window.CERTIFICATIONS = [
         status: 'Active',
         color: '#c8302a',
         badge: '/badges/secplus.png',
-        credential: '/assets/certifications/comptia-security-plus.pdf.png',
+        credential: '/assets/certifications/comptia-security-plus.pdf.webp',
         description: 'Globally recognized certification validating core cybersecurity skills required for security analyst roles.',
         learned: [
             'Threats, attacks, and vulnerability identification',
@@ -109,7 +109,7 @@ window.CERTIFICATIONS = [
         status: 'Active',
         color: '#00a3e0',
         badge: '/badges/isc2cc.png',
-        credential: '/assets/certifications/isc2-cc.pdf.png',
+        credential: '/assets/certifications/isc2-cc.pdf.webp',
         description: 'Entry-level ISC2 certification covering foundational cybersecurity principles and practices.',
         learned: [
             'Security principles and the CIA triad',
@@ -146,7 +146,7 @@ window.CERTIFICATIONS = [
         status: 'Active',
         color: '#c8302a',
         badge: '/badges/networkplus.png',
-        credential: '/assets/certifications/comptia-network-plus.pdf.png',
+        credential: '/assets/certifications/comptia-network-plus.pdf.webp',
         description: 'Vendor-neutral certification validating networking fundamentals, implementation, operations, security, and troubleshooting.',
         learned: [
             'Networking concepts including OSI model, TCP/IP, subnetting',
