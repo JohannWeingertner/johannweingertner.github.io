@@ -7,12 +7,8 @@
     <link rel="icon" type="image/png" href="/assets/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
-    <script src="https://unpkg.com/lucide@0.441.0/dist/umd/lucide.js"></script>
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg:        #0a0a0a;
@@ -39,6 +35,7 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
         }
         .mono { font-family: 'DM Mono', monospace; }
+        .flex-shrink-0 { flex-shrink: 0; }
 
         /* Cards */
         .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; position: relative; overflow: hidden; transition: border-color 0.2s; }
@@ -49,7 +46,7 @@
         .nav-pill:hover { color: var(--text2); background: none; }
         .nav-pill.active { background: none; color: var(--text); border: none; }
 
-        /* Tags - modern professional colors */
+        /* Tags */
         .ptag { font-family: 'Inter', sans-serif; font-size: 0.67rem; padding: 2px 8px; border-radius: 5px; font-weight: 500; background: rgba(255,255,255,0.05); color: var(--text2); border: 1px solid rgba(255,255,255,0.08); }
         .ptag-primary { background: rgba(255,255,255,0.05); color: var(--text2); border: 1px solid rgba(255,255,255,0.08); }
         .ptag-cyan   { background: rgba(255,255,255,0.05); color: var(--text2); border: 1px solid rgba(255,255,255,0.08); }
@@ -65,72 +62,64 @@
         /* Animations */
         @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
         @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-        @keyframes pulseDot { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
-        @keyframes typeBlink { 0%,100%{opacity:1;} 50%{opacity:0;} }
-        @keyframes popIn { 0%{transform:scale(0.65);opacity:0;} 65%{transform:scale(1.06);} 100%{transform:scale(1);opacity:1;} }
-        @keyframes shimmer { from{transform:translateX(-100%) skewX(-12deg);} to{transform:translateX(260%) skewX(-12deg);} }
-        @keyframes slideDown { from{opacity:0;transform:translateY(-6px);} to{opacity:1;transform:translateY(0);} }
         @keyframes modalIn { from{opacity:0;transform:scale(0.93) translateY(10px);} to{opacity:1;transform:scale(1) translateY(0);} }
 
         .fade-up   { animation: fadeUp 0.42s ease both; }
-        .fade-up-1 { animation: fadeUp 0.42s 0.07s ease both; }
-        .fade-up-2 { animation: fadeUp 0.42s 0.14s ease both; }
-        .fade-up-3 { animation: fadeUp 0.42s 0.21s ease both; }
-        .pulse-dot { animation: pulseDot 2.2s ease-in-out infinite; }
-        .type-cursor { display:inline-block; width:2px; height:1em; background:var(--text2); margin-left:2px; vertical-align:text-bottom; animation:typeBlink 0.75s step-end infinite; }
-        .shimmer-card::after { content:''; position:absolute; top:0; left:0; width:35%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.02),transparent); animation:shimmer 4.5s ease-in-out infinite; pointer-events:none; }
-        .stat-pop   { animation: popIn 0.48s cubic-bezier(0.34,1.4,0.64,1) both; }
-        .stat-pop-1 { animation: popIn 0.48s 0.09s cubic-bezier(0.34,1.4,0.64,1) both; }
-        .stat-pop-2 { animation: popIn 0.48s 0.18s cubic-bezier(0.34,1.4,0.64,1) both; }
-        .slide-down { animation: slideDown 0.15s ease both; }
-
-        /* Featured cert */
-        .featured-card { background: var(--surface); border: 1px solid var(--border2); border-radius: 10px; position: relative; overflow: hidden; transition: border-color 0.2s; cursor: pointer; box-shadow: none; }
-        .featured-card:hover { border-color: rgba(255,255,255,0.15); box-shadow: none; }
-
-        /* Cert ring */
-        .cert-ring { background: var(--surface3); border: 1px solid var(--border2); border-radius: 10px; box-shadow: none; }
-
-        /* Diff bar */
-        .diff-bar-track { height:5px; background: var(--surface3); border-radius: 99px; overflow: hidden; }
-        .diff-bar-fill { height:100%; border-radius: 99px; }
-
-        /* Toggle */
-        .toggle-wrap { display: inline-flex; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 3px; gap: 2px; flex-wrap: nowrap; white-space: nowrap; }
-        .toggle-btn { padding: 6px 15px; border-radius: 4px; font-size: 0.84rem; font-weight: 500; color: var(--muted); transition: color 0.15s; display: inline-flex; align-items: center; gap: 6px; background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; white-space: nowrap; }
-        .toggle-btn.on { background: var(--surface3); color: var(--text); border: 1px solid var(--border); }
 
         /* Modal */
-        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(12px); z-index:10000; display:flex; align-items:center; justify-content:center; padding:1rem; animation:fadeIn 0.18s ease both; }
-        .modal-box { background:var(--surface); border:1px solid var(--border2); border-radius:12px; max-width:520px; width:100%; max-height:85vh; overflow-y:auto; animation:modalIn 0.25s cubic-bezier(0.34,1.2,0.64,1) both; box-shadow:0 20px 50px rgba(0,0,0,0.4); }
+        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:10000; display:flex; align-items:center; justify-content:center; padding:1rem; animation:fadeIn 0.18s ease both; }
+        .modal-box { background:var(--surface); border:1px solid var(--border2); border-radius:12px; max-width:520px; width:100%; max-height:85vh; overflow-y:auto; animation:modalIn 0.25s cubic-bezier(0.34,1.2,0.64,1) both; box-shadow:0 20px 50px rgba(0,0,0,0.4); position:relative; }
         .modal-box::-webkit-scrollbar { width:3px; }
         .modal-box::-webkit-scrollbar-thumb { background:var(--surface3); border-radius:2px; }
 
         /* Nav spacing */
         .nav-spacer { flex: 1; }
         @media (max-width: 768px) { .nav-spacer { display: none; } }
-        .md\:hidden { display: none !important; }
-        button.md\:hidden { display: none !important; }
-        
+
+        .page-header { margin-bottom: 2rem; }
         .page-header h1 { white-space: nowrap; }
+        .page-header .sub { margin-top: 0.25rem; }
         @media (max-width: 640px) { .page-header h1 { white-space: normal; font-size: 1.5rem; } }
+
+        @media (prefers-reduced-motion: reduce) {
+            .fade-up { animation: none !important; }
+        }
     </style>
 </head>
 <body>
 <div id="root"></div>
-<script type="text/babel">
-const { useState, useEffect, useRef } = React;
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<!-- Edit this JSX, then run: npm run build  (writes assets/soc-reports.js) -->
+<script type="text/jsx" id="app-source">
+const { useState, useEffect } = React;
 
-const Icon = ({ name, className = 'w-5 h-5', ...props }) => {
-    const ref = useRef(null);
-    useEffect(() => {
-        if (ref.current && lucide[name]) {
-            const el = lucide.createElement(lucide[name], { class: className });
-            ref.current.innerHTML = ''; ref.current.appendChild(el);
-        }
-    }, [name, className]);
-    return <i ref={ref} className={`flex-shrink-0 ${className}`} {...props} />;
+const ICONS = {
+    X: 'M18 6 6 18M6 6l12 12',
+    ChevronRight: 'm9 18 6-6-6-6',
+    ExternalLink: 'M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6',
+    Shield: 'M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z',
+    House: 'M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z',
+    FileText: 'M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7ZM14 2v4a2 2 0 0 0 2 2h4M10 9H8M16 13H8M16 17H8',
 };
+
+const Icon = ({ name, className = '', size = 15, ...props }) => (
+    <svg
+        className={`flex-shrink-0 ${className}`}
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+        {...props}
+    >
+        <path d={ICONS[name] || ''} />
+    </svg>
+);
 
 // ── Static data ───────────────────────────────────────────────
 const SOC_REPORTS = [
@@ -144,7 +133,7 @@ const SOC_REPORTS = [
         status: 'Completed',
         external: true
     },
-    { 
+    {
         id: '2026-04-11',
         title: 'Azure Environment Compromise Investigation',
         date: 'July 2025',
@@ -163,9 +152,9 @@ const Card = ({ children, className='', style={}, ...p }) => (
 );
 
 const PageHeader = ({ title, sub }) => (
-    <div className="mb-8 fade-up page-header">
+    <div className="page-header fade-up">
         <h1 style={{fontSize:'1.7rem',fontWeight:800,color:'var(--text)',letterSpacing:'-0.025em',whiteSpace:'nowrap'}}>{title}</h1>
-        {sub && <p className="mt-1" style={{fontSize:'0.85rem',color:'var(--muted)'}}>{sub}</p>}
+        {sub && <p className="sub" style={{fontSize:'0.85rem',color:'var(--muted)'}}>{sub}</p>}
     </div>
 );
 
@@ -186,12 +175,12 @@ const PDFViewer = ({ pdfUrl, onClose }) => {
                         <p style={{fontSize:'1rem',fontWeight:700,color:'var(--text)'}}>Azure Environment Compromise</p>
                     </div>
                     <button onClick={onClose} style={{color:'var(--muted)', background:'none', border:'none', cursor:'pointer', flexShrink:0}}>
-                        <Icon name="X" className="w-5 h-5"/>
+                        <Icon name="X" size={20}/>
                     </button>
                 </div>
                 <div style={{padding:0, height:'70vh', minHeight:'400px'}}>
-                    <iframe 
-                        src={pdfUrl} 
+                    <iframe
+                        src={pdfUrl}
                         style={{width:'100%', height:'100%', border:'none'}}
                         title="SOC Investigation Report"
                     />
@@ -199,7 +188,7 @@ const PDFViewer = ({ pdfUrl, onClose }) => {
                 <div style={{padding:'12px 20px', borderTop:'1px solid var(--border)', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
                     <span className="mono" style={{fontSize:'0.67rem',color:'var(--muted)'}}>Interactive PDF Viewer</span>
                     <a href={pdfUrl} target="_blank" rel="noopener noreferrer" style={{display:'inline-flex', alignItems:'center', gap:6, color:'var(--primary)', textDecoration:'none', fontSize:'0.8rem', fontWeight:500}}>
-                        Open in new tab <Icon name="ExternalLink" className="w-3.5 h-3.5"/>
+                        Open in new tab <Icon name="ExternalLink" size={14}/>
                     </a>
                 </div>
                 <div style={{position:'absolute', left:0, top:0, bottom:0, width:3, borderRadius:'20px 0 0 20px', background:'linear-gradient(to bottom, var(--primary), transparent)'}}/>
@@ -211,36 +200,36 @@ const PDFViewer = ({ pdfUrl, onClose }) => {
 // ── Main App ───────────────────────────────────────────────────
 const App = () => {
     const [selectedReport, setSelectedReport] = useState(null);
-    
+
     return (
         <div style={{minHeight:'100vh',background:'var(--bg)'}}>
-            <nav style={{position:'sticky',top:0,zIndex:50,background:'rgba(10,12,16,0.85)',backdropFilter:'blur(18px)',borderBottom:'1px solid var(--border)'}}>
+            <nav style={{position:'sticky',top:0,zIndex:50,background:'rgba(10,12,16,0.92)',borderBottom:'1px solid var(--border)'}}>
                 <div style={{maxWidth:860,margin:'0 auto',padding:'0 20px',display:'flex',alignItems:'center',justifyContent:'space-between',height:54}}>
                     <button onClick={()=>window.location.href='index.html'} style={{display:'flex',alignItems:'center',gap:10,background:'none',border:'none',cursor:'pointer'}}>
                         <div style={{width:28,height:28,borderRadius:8,background:'var(--surface2)',border:'1px solid var(--border2)',display:'flex',alignItems:'center',justifyContent:'center'}}>
-                            <Icon name="Shield" className="w-3.5 h-3.5" style={{color:'var(--primary)'}}/>
+                            <Icon name="Shield" size={14} style={{color:'var(--primary)'}}/>
                         </div>
                         <span style={{fontWeight:700,fontSize:'0.92rem',color:'var(--text)',letterSpacing:'-0.01em'}}>Johann</span>
                     </button>
                     <div className="nav-spacer" style={{flex:1, minWidth:'24px'}}></div>
                     <div style={{display:'flex',gap:2}}>
                         <button onClick={()=>window.location.href='index.html'} className="nav-pill">
-                            <Icon name="House" className="w-3.5 h-3.5"/>Home
+                            <Icon name="House" size={14}/>Home
                         </button>
                     </div>
                 </div>
             </nav>
-            
+
             <main style={{maxWidth:860,margin:'0 auto',padding:'32px 20px 64px'}}>
                 <div className="fade-up" style={{display:'flex',flexDirection:'column',gap:16}}>
                     <PageHeader title="SOC Investigation Reports" sub="Interactive viewer for cybersecurity incident analysis and threat intelligence" />
-                    
+
                     <div style={{display:'flex',flexDirection:'column',gap:12}}>
                         {SOC_REPORTS.map((report,i)=>(
                             <Card key={i} style={{padding:22, cursor:'pointer'}} onClick={()=>report.external ? window.open(report.file, '_blank') : setSelectedReport(report)}>
                                 <div style={{display:'flex',alignItems:'center',gap:16}}>
                                     <div style={{width:48,height:48,borderRadius:12,background:'var(--surface2)',border:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
-                                        <Icon name="FileText" className="w-5 h-5" style={{color:'var(--accent-emerald)'}}/>
+                                        <Icon name="FileText" size={20} style={{color:'var(--accent-emerald)'}}/>
                                     </div>
                                     <div style={{flex:1,minWidth:0}}>
                                         <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:4,flexWrap:'wrap'}}>
@@ -254,7 +243,7 @@ const App = () => {
                                         <div style={{display:'flex',flexWrap:'wrap',gap:4,justifyContent:'flex-end'}}>
                                             {report.tags.map((tag,j)=><Badge key={j} color="primary">{tag}</Badge>)}
                                         </div>
-                                        <Icon name="ChevronRight" className="w-5 h-5" style={{color:'var(--muted)'}}/>
+                                        <Icon name="ChevronRight" size={20} style={{color:'var(--muted)'}}/>
                                     </div>
                                 </div>
                             </Card>
@@ -262,13 +251,13 @@ const App = () => {
                     </div>
                 </div>
             </main>
-            
+
             <footer style={{textAlign:'center',padding:'20px',borderTop:'1px solid var(--border)'}}>
                 <p className="mono" style={{fontSize:'0.65rem',color:'var(--muted)'}}>
                     © 2026 Johann Weingertner · SOC Investigation Reports
                 </p>
             </footer>
-            
+
             {selectedReport && <PDFViewer pdfUrl={selectedReport.file} onClose={() => setSelectedReport(null)} />}
         </div>
     );
@@ -276,5 +265,6 @@ const App = () => {
 
 ReactDOM.render(<App />, document.getElementById('root'));
 </script>
+<script src="/assets/soc-reports.js?v=20260814"></script>
 </body>
 </html>

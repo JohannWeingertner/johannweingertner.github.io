@@ -1,0 +1,12 @@
+{
+  "name": "johannweingertner.github.io",
+  "private": true,
+  "description": "Personal site — edit JSX in index.html / soc-reports.html, then npm run build",
+  "scripts": {
+    "build": "node scripts/build-app.mjs"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.10",
+    "@babel/preset-react": "^7.26.3"
+  }
+}

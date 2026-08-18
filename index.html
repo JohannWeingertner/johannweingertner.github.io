@@ -412,13 +412,16 @@
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.imageSmoothingEnabled = false;
 
-        scale = Math.max(22, Math.min(w, h) / 22);
+        // Cube size that tiles nicely; expand the grid until the isometric
+        // diamond covers the full viewport (diamond ≠ AABB).
+        scale = Math.max(18, Math.min(w, h) / 26);
         originX = w * 0.5;
         originY = h * 0.45;
-        const halfW = w * 0.5 + 80;
-        const halfH = Math.max(originY, h - originY) + 80;
+        const halfW = w * 0.5 + 100;
+        const halfH = Math.max(originY, h - originY) + 100;
         const nFromDiamond = Math.ceil(halfW / (scale * 0.866) + halfH / (scale * 0.5));
-        COLS = Math.min(staticOnly ? 18 : 24, Math.max(16, nFromDiamond));
+        // Cover the whole screen; idle-freeze + 30fps keep this cheap.
+        COLS = Math.min(staticOnly ? 36 : 56, Math.max(30, nFromDiamond));
         ROWS = COLS;
         seed();
         paint(true);
@@ -525,8 +528,8 @@
 </script>
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
-<script type="text/babel">
+<!-- Edit this JSX, then run: npm run build  (writes assets/app.js) -->
+<script type="text/jsx" id="app-source">
 const { useState, useEffect } = React;
 
 const ICONS = {
@@ -1102,5 +1105,6 @@ const App = () => {
 
 ReactDOM.render(<App />, document.getElementById('root'));
 </script>
+<script src="/assets/app.js?v=20260814c"></script>
 </body>
 </html>
