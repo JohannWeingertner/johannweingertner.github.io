@@ -126,46 +126,65 @@ const PAGE_PATHS = {
   experience: '/experience'
 };
 const pathForWriteup = id => `/writeup/writeup-${id}`;
+const pathForCert = slug => `/certs/${slug}`;
+const certSlug = cert => String(cert?.slug || cert?.short || cert?.name || '').toLowerCase().replace(/\+/g, '-plus').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+const emptyRoute = () => ({
+  page: 'home',
+  writeupId: null,
+  certSlug: null
+});
 const normalizePath = pathname => {
   const trimmed = (pathname || '/').replace(/\/+$/, '');
   return trimmed === '' ? '/' : trimmed;
 };
 const parsePath = pathname => {
   const path = normalizePath(pathname);
-  if (path === '/') return {
-    page: 'home',
-    writeupId: null
-  };
+  if (path === '/') return emptyRoute();
   const writeupMatch = path.match(/^\/writeup\/writeup-(\d+)$/);
   if (writeupMatch) return {
     page: 'writeup-detail',
-    writeupId: Number(writeupMatch[1])
+    writeupId: Number(writeupMatch[1]),
+    certSlug: null
   };
   if (path === '/writeup') return {
     page: 'writeups',
-    writeupId: null
+    writeupId: null,
+    certSlug: null
   };
+  const certMatch = path.match(/^\/certs\/([a-z0-9-]+)$/);
+  if (certMatch) return {
+    page: 'cert-detail',
+    writeupId: null,
+    certSlug: certMatch[1]
+  };
+  if (path === '/certs') return {
+    page: 'certs',
+    writeupId: null,
+    certSlug: null
+  };
+
   // Legacy alias from earlier /projects URLs
   if (path === '/projects') return {
     page: 'labs',
-    writeupId: null
+    writeupId: null,
+    certSlug: null
   };
   for (const [page, pagePath] of Object.entries(PAGE_PATHS)) {
     if (page !== 'home' && pagePath === path) return {
       page,
-      writeupId: null
+      writeupId: null,
+      certSlug: null
     };
   }
-  return {
-    page: 'home',
-    writeupId: null
-  };
+  return emptyRoute();
 };
 const pathForRoute = ({
   page,
-  writeupId
+  writeupId,
+  certSlug: slug
 }) => {
   if (page === 'writeup-detail' && writeupId != null) return pathForWriteup(writeupId);
+  if (page === 'cert-detail' && slug) return pathForCert(slug);
   return PAGE_PATHS[page] || '/';
 };
 const SITE_ORIGIN = 'https://johannweingertner.github.io';
@@ -331,128 +350,112 @@ const CertBadgeImg = ({
     fontWeight: 600
   }
 }, fallback));
-const CertModal = ({
+const CertPage = ({
   cert,
-  onClose
+  onBack
 }) => {
-  const boxRef = React.useRef(null);
-  const titleId = `cert-title-${cert.short || cert.name}`.replace(/\s+/g, '-').toLowerCase();
-  useEffect(() => {
-    const previouslyFocused = document.activeElement;
-    const box = boxRef.current;
-    const focusables = box ? Array.from(box.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')).filter(el => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true') : [];
-    const first = focusables[0];
-    const last = focusables[focusables.length - 1];
-    (first || box)?.focus?.();
-    document.body.style.overflow = 'hidden';
-    const onKey = e => {
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        onClose();
-        return;
-      }
-      if (e.key !== 'Tab' || focusables.length === 0) return;
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    };
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = '';
-      if (previouslyFocused && typeof previouslyFocused.focus === 'function') previouslyFocused.focus();
-    };
-  }, [onClose]);
-  return /*#__PURE__*/React.createElement("div", {
-    className: "modal-overlay",
-    onClick: onClose
-  }, /*#__PURE__*/React.createElement("div", {
-    ref: boxRef,
-    className: "modal-box cert-modal-box",
-    role: "dialog",
-    "aria-modal": "true",
-    "aria-labelledby": titleId,
-    tabIndex: -1,
-    onClick: e => e.stopPropagation()
-  }, /*#__PURE__*/React.createElement("div", {
+  const isImage = cert.credential && /\.(png|svg|webp|jpe?g)$/i.test(cert.credential);
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("button", {
+    onClick: onBack,
     style: {
-      padding: '22px 22px 18px',
-      borderBottom: '1px solid var(--border)'
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: 6,
+      background: 'none',
+      border: 'none',
+      cursor: 'pointer',
+      color: 'var(--muted)',
+      fontSize: '0.78rem',
+      fontWeight: 500,
+      padding: 0,
+      marginBottom: 20,
+      fontFamily: 'Inter,sans-serif'
     }
-  }, /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "ChevronRight",
+    size: 14,
+    style: {
+      transform: 'rotate(180deg)'
+    }
+  }), "Back to Certs"), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       alignItems: 'flex-start',
-      gap: 14
+      gap: 16,
+      marginBottom: 18
     }
   }, /*#__PURE__*/React.createElement(CertBadgeImg, {
     src: cert.badge,
     alt: cert.short,
     fallback: cert.short,
-    size: 48
+    size: 56
   }), /*#__PURE__*/React.createElement("div", {
     style: {
-      flex: 1,
-      minWidth: 0
+      minWidth: 0,
+      flex: 1
     }
-  }, /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("h1", {
     style: {
-      display: 'flex',
-      alignItems: 'flex-start',
-      justifyContent: 'space-between',
-      gap: 8
-    }
-  }, /*#__PURE__*/React.createElement("p", {
-    id: titleId,
-    style: {
-      fontSize: '0.94rem',
+      fontSize: '1.25rem',
       fontWeight: 600,
       color: 'var(--text)',
-      lineHeight: 1.3
+      lineHeight: 1.35,
+      marginBottom: 8
     }
-  }, cert.name), /*#__PURE__*/React.createElement("button", {
-    className: "modal-close",
-    onClick: onClose,
+  }, cert.name), /*#__PURE__*/React.createElement("div", {
     style: {
-      flexShrink: 0
-    },
-    "aria-label": "Close certification details"
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "X",
-    size: 14
-  }))), /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontSize: '0.76rem',
-      color: 'var(--muted)',
-      marginTop: 4
+      display: 'flex',
+      gap: 12,
+      alignItems: 'center',
+      flexWrap: 'wrap'
     }
-  }, cert.issuer, " \xB7 ", cert.year))), cert.description && /*#__PURE__*/React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("span", {
     style: {
-      marginTop: 14,
-      fontSize: '0.84rem',
+      fontSize: '0.72rem',
+      color: 'var(--muted)'
+    }
+  }, cert.issuer), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: '0.72rem',
+      color: 'var(--muted)'
+    }
+  }, cert.year), cert.status && /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: '0.72rem',
+      color: 'var(--accent-text)'
+    }
+  }, cert.status), cert.short && /*#__PURE__*/React.createElement("span", {
+    className: "mono",
+    style: {
+      fontSize: '0.72rem',
+      color: 'var(--muted)'
+    }
+  }, cert.short)))), cert.description && /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: '0.86rem',
+      color: 'var(--text2)',
       lineHeight: 1.7,
-      color: 'var(--text2)'
+      marginBottom: 20,
+      paddingBottom: 20,
+      borderBottom: '1px solid var(--border)'
     }
-  }, cert.description), cert.credential && /\.(png|svg|webp|jpe?g)$/i.test(cert.credential) && /*#__PURE__*/React.createElement("img", {
+  }, cert.description), isImage && /*#__PURE__*/React.createElement("img", {
     className: "credential-image",
     src: cert.credential,
     alt: `${cert.name} certificate`,
-    loading: "lazy",
+    loading: "eager",
     decoding: "async",
+    fetchPriority: "high",
     style: {
-      marginTop: 16
+      marginBottom: 22
     }
-  }), cert.credential && !/\.(png|svg|webp|jpe?g)$/i.test(cert.credential) && /*#__PURE__*/React.createElement("a", {
+  }), !isImage && cert.credential && /*#__PURE__*/React.createElement("a", {
     href: cert.credential,
     target: "_blank",
     rel: "noopener noreferrer",
     className: "cta-btn",
     style: {
-      marginTop: 14,
+      marginBottom: 22,
       fontSize: '0.78rem',
       padding: '7px 12px',
       animation: 'none'
@@ -460,14 +463,14 @@ const CertModal = ({
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "FileBadge",
     size: 13
-  }), " View certificate")), cert.learned && cert.learned.length > 0 && /*#__PURE__*/React.createElement("div", {
+  }), " View certificate"), cert.learned && cert.learned.length > 0 && /*#__PURE__*/React.createElement("div", {
     style: {
-      padding: '16px 22px'
+      marginBottom: 22
     }
   }, /*#__PURE__*/React.createElement("p", {
     style: {
       ...ST,
-      marginBottom: 10
+      marginBottom: 12
     }
   }, "What I learned"), /*#__PURE__*/React.createElement("div", {
     style: {
@@ -477,12 +480,14 @@ const CertModal = ({
     }
   }, cert.learned.map((item, i) => /*#__PURE__*/React.createElement("div", {
     key: i,
+    className: "row-in",
     style: {
       display: 'flex',
       alignItems: 'flex-start',
       gap: 10,
       fontSize: '0.83rem',
-      color: 'var(--text2)'
+      color: 'var(--text2)',
+      animationDelay: `${Math.min(i, 8) * 0.04}s`
     }
   }, /*#__PURE__*/React.createElement("span", {
     style: {
@@ -490,12 +495,7 @@ const CertModal = ({
       flexShrink: 0
     },
     "aria-hidden": "true"
-  }, "\u2014"), item)))), cert.url && /*#__PURE__*/React.createElement("div", {
-    style: {
-      padding: '14px 22px 20px',
-      borderTop: '1px solid var(--border)'
-    }
-  }, /*#__PURE__*/React.createElement("a", {
+  }, "\u2014"), item)))), cert.url && /*#__PURE__*/React.createElement("a", {
     href: cert.url,
     target: "_blank",
     rel: "noopener noreferrer",
@@ -510,8 +510,42 @@ const CertModal = ({
   }, "View credential ", /*#__PURE__*/React.createElement(Icon, {
     name: "ExternalLink",
     size: 13
-  })))));
+  })));
 };
+const CertNotFound = ({
+  onBack
+}) => /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("button", {
+  onClick: onBack,
+  style: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 6,
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    color: 'var(--muted)',
+    fontSize: '0.78rem',
+    fontWeight: 500,
+    padding: 0,
+    marginBottom: 20,
+    fontFamily: 'Inter,sans-serif'
+  }
+}, /*#__PURE__*/React.createElement(Icon, {
+  name: "ChevronRight",
+  size: 14,
+  style: {
+    transform: 'rotate(180deg)'
+  }
+}), "Back to Certs"), /*#__PURE__*/React.createElement("p", {
+  style: {
+    ...ST
+  }
+}, "Certification"), /*#__PURE__*/React.createElement("p", {
+  style: {
+    fontSize: '0.9rem',
+    color: 'var(--text2)'
+  }
+}, "This certification could not be found."));
 
 // ── Pages ─────────────────────────────────────────────────────
 const HomePage = () => {
@@ -637,8 +671,9 @@ const HomePage = () => {
     }
   }, group.items.join(' · ')))))));
 };
-const CertsPage = () => {
-  const [sel, setSel] = useState(null);
+const CertsPage = ({
+  onOpenCert
+}) => {
   const all = React.useMemo(() => {
     const list = window.CERTIFICATIONS || [];
     return [...list].sort((a, b) => {
@@ -661,8 +696,8 @@ const CertsPage = () => {
   }, all.length, " active certifications"), /*#__PURE__*/React.createElement("div", {
     style: ROW
   }, all.map((c, i) => /*#__PURE__*/React.createElement("button", {
-    key: i,
-    onClick: () => setSel(c),
+    key: certSlug(c),
+    onClick: () => onOpenCert(certSlug(c)),
     className: "list-row row-in",
     style: {
       ...rowItem,
@@ -704,10 +739,7 @@ const CertsPage = () => {
       color: 'var(--muted)',
       flexShrink: 0
     }
-  })))), sel && /*#__PURE__*/React.createElement(CertModal, {
-    cert: sel,
-    onClose: () => setSel(null)
-  }));
+  })))));
 };
 const LabsPage = () => {
   const [sortBy, setSortBy] = useState('date');
@@ -1345,30 +1377,45 @@ const App = () => {
   const initialRoute = parsePath(window.location.pathname);
   const [page, setPage] = useState(initialRoute.page);
   const [writeupId, setWriteupId] = useState(initialRoute.writeupId);
+  const [activeCertSlug, setActiveCertSlug] = useState(initialRoute.certSlug);
   const applyRoute = (route, {
     replace = false
   } = {}) => {
-    const nextPath = pathForRoute(route);
+    const next = {
+      page: route.page,
+      writeupId: route.writeupId ?? null,
+      certSlug: route.certSlug ?? null
+    };
+    const nextPath = pathForRoute(next);
     const currentPath = normalizePath(window.location.pathname);
     if (nextPath !== currentPath || window.location.pathname !== nextPath) {
-      if (replace) history.replaceState(route, '', nextPath);else history.pushState(route, '', nextPath);
+      if (replace) history.replaceState(next, '', nextPath);else history.pushState(next, '', nextPath);
     }
-    setPage(route.page);
-    setWriteupId(route.writeupId ?? null);
+    setPage(next.page);
+    setWriteupId(next.writeupId);
+    setActiveCertSlug(next.certSlug);
   };
   const navigate = nextPage => applyRoute({
     page: nextPage,
-    writeupId: null
+    writeupId: null,
+    certSlug: null
   });
   const openWriteup = id => applyRoute({
     page: 'writeup-detail',
-    writeupId: id
+    writeupId: id,
+    certSlug: null
+  });
+  const openCert = slug => applyRoute({
+    page: 'cert-detail',
+    writeupId: null,
+    certSlug: slug
   });
   useEffect(() => {
     const onPop = () => {
       const route = parsePath(window.location.pathname);
       setPage(route.page);
       setWriteupId(route.writeupId);
+      setActiveCertSlug(route.certSlug);
     };
     window.addEventListener('popstate', onPop);
     const normalized = pathForRoute(initialRoute);
@@ -1379,9 +1426,11 @@ const App = () => {
   }, []);
   useEffect(() => {
     const writeups = window.WRITEUPS || [];
+    const certs = window.CERTIFICATIONS || [];
     const path = pathForRoute({
       page,
-      writeupId
+      writeupId,
+      certSlug: activeCertSlug
     });
     if (page === 'writeup-detail') {
       const w = writeups.find(item => item.id === writeupId);
@@ -1402,6 +1451,24 @@ const App = () => {
       }
       return;
     }
+    if (page === 'cert-detail') {
+      const c = certs.find(item => certSlug(item) === activeCertSlug);
+      if (c) {
+        applyDocumentMeta({
+          title: `${c.name} · johann.`,
+          description: c.description || `${c.name} — ${c.issuer} (${c.year}).`,
+          path,
+          image: absoluteUrl(c.badge || '/assets/profile-avatar.png')
+        });
+      } else {
+        applyDocumentMeta({
+          title: 'Certification not found · johann.',
+          description: 'The requested certification could not be found.',
+          path
+        });
+      }
+      return;
+    }
     const labels = {
       home: 'johannweingertner.github.io',
       certs: 'Certs · johann.',
@@ -1415,15 +1482,23 @@ const App = () => {
       description: PAGE_DESCRIPTIONS[page] || DEFAULT_DESCRIPTION,
       path
     });
-  }, [page, writeupId]);
+  }, [page, writeupId, activeCertSlug]);
   const writeup = writeupId != null ? (window.WRITEUPS || []).find(w => w.id === writeupId) : null;
-  const navActive = page === 'writeup-detail' ? 'writeups' : page;
+  const cert = activeCertSlug ? (window.CERTIFICATIONS || []).find(c => certSlug(c) === activeCertSlug) : null;
+  const navActive = page === 'writeup-detail' ? 'writeups' : page === 'cert-detail' ? 'certs' : page;
   const view = page === 'writeup-detail' ? writeup ? /*#__PURE__*/React.createElement(WriteupPage, {
     writeup: writeup,
     onBack: () => navigate('writeups')
   }) : /*#__PURE__*/React.createElement(WriteupNotFound, {
     onBack: () => navigate('writeups')
-  }) : page === 'certs' ? /*#__PURE__*/React.createElement(CertsPage, null) : page === 'labs' ? /*#__PURE__*/React.createElement(LabsPage, null) : page === 'writeups' ? /*#__PURE__*/React.createElement(WriteupsPage, {
+  }) : page === 'cert-detail' ? cert ? /*#__PURE__*/React.createElement(CertPage, {
+    cert: cert,
+    onBack: () => navigate('certs')
+  }) : /*#__PURE__*/React.createElement(CertNotFound, {
+    onBack: () => navigate('certs')
+  }) : page === 'certs' ? /*#__PURE__*/React.createElement(CertsPage, {
+    onOpenCert: openCert
+  }) : page === 'labs' ? /*#__PURE__*/React.createElement(LabsPage, null) : page === 'writeups' ? /*#__PURE__*/React.createElement(WriteupsPage, {
     onOpenWriteup: openWriteup
   }) : page === 'competitions' ? /*#__PURE__*/React.createElement(CompetitionsPage, null) : page === 'experience' ? /*#__PURE__*/React.createElement(ExperiencePage, null) : /*#__PURE__*/React.createElement(HomePage, null);
   return /*#__PURE__*/React.createElement("div", {
@@ -1474,7 +1549,7 @@ const App = () => {
     className: `nav-pill ${navActive === item.id ? 'active' : ''}`
   }, item.label))))), /*#__PURE__*/React.createElement("main", {
     id: "main",
-    key: `${page}-${writeupId ?? 'none'}`,
+    key: `${page}-${writeupId ?? 'none'}-${activeCertSlug ?? 'none'}`,
     className: "content-scrim page-enter",
     style: {
       maxWidth: 720,
@@ -1503,12 +1578,12 @@ const App = () => {
       color: 'var(--muted)'
     }
   }, "\xA9 2026 Johann Weingertner"), /*#__PURE__*/React.createElement("a", {
-    href: "/feed.xml",
+    href: "/feed",
     style: {
       fontSize: '0.72rem',
       color: 'var(--muted)',
       textDecoration: 'none'
     }
-  }, "Writeups RSS"))));
+  }, "Writeups feed"))));
 };
 ReactDOM.render(/*#__PURE__*/React.createElement(App, null), document.getElementById('root'));

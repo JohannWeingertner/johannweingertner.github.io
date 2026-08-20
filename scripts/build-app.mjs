@@ -61,6 +61,21 @@ function loadWriteups() {
   return ctx.window.WRITEUPS || [];
 }
 
+function loadCertifications() {
+  const src = fs.readFileSync(path.join(root, 'data/certifications.js'), 'utf8');
+  const ctx = { window: {} };
+  vm.runInNewContext(src, ctx, { filename: 'certifications.js' });
+  return ctx.window.CERTIFICATIONS || [];
+}
+
+function certSlug(cert) {
+  return String(cert?.slug || cert?.short || cert?.name || '')
+    .toLowerCase()
+    .replace(/\+/g, '-plus')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 function escapeHtml(value) {
   return String(value ?? '')
     .replace(/&/g, '&amp;')
@@ -169,7 +184,7 @@ function writeGeneratedPage(relPath, html) {
   console.log(`build-app: wrote ${relPath}`);
 }
 
-function buildFeed(writeups) {
+function buildFeedXml(writeups) {
   const items = [...writeups]
     .sort((a, b) => parseWriteupDate(b.date) - parseWriteupDate(a.date))
     .map((w) => {
@@ -200,7 +215,156 @@ ${items}
   writeGeneratedPage('feed.xml', xml);
 }
 
-function buildPrerenders(indexHtml, writeups) {
+function buildFeedPage(writeups) {
+  const sorted = [...writeups].sort((a, b) => parseWriteupDate(b.date) - parseWriteupDate(a.date));
+  const items = sorted
+    .map(
+      (w) => `      <a class="item" href="/writeup/writeup-${w.id}">
+        <div>
+          <p class="item-title">${escapeHtml(w.title)}</p>
+          <p class="item-summary">${escapeHtml(w.summary || '')}</p>
+        </div>
+        <div class="item-meta">
+          <span>${escapeHtml(w.category || '')}</span>
+          <span>${escapeHtml(w.date || '')}</span>
+        </div>
+      </a>`
+    )
+    .join('\n');
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Writeups feed · johann.</title>
+  <meta name="description" content="DFIR and cloud investigation writeups by Johann Weingertner. Subscribe via RSS.">
+  <link rel="canonical" href="${SITE_ORIGIN}/feed">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta property="og:title" content="Writeups feed · johann.">
+  <meta property="og:description" content="DFIR and cloud investigation writeups by Johann Weingertner. Subscribe via RSS.">
+  <meta property="og:url" content="${SITE_ORIGIN}/feed">
+  <meta property="og:type" content="website">
+  <link rel="alternate" type="application/rss+xml" title="Writeups · johann." href="${SITE_ORIGIN}/feed.xml">
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/tokens.css?v=20260820">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans, Inter, system-ui, sans-serif);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    a { color: inherit; }
+    .wrap { max-width: var(--content-max, 720px); margin: 0 auto; padding: 0 24px; }
+    header {
+      position: sticky; top: 0; z-index: 10;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav {
+      height: 50px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .brand {
+      font-size: 0.9rem; font-weight: 600; letter-spacing: -0.01em; text-decoration: none; color: var(--text);
+    }
+    .nav-links { display: flex; gap: 4px; align-items: center; }
+    .nav-links a {
+      font-size: 0.82rem; color: var(--muted); text-decoration: none; padding: 5px 8px;
+      transition: color 0.2s ease;
+    }
+    .nav-links a:hover { color: var(--text2); }
+    .nav-links a.active { color: var(--text); position: relative; }
+    .nav-links a.active::after {
+      content: ''; position: absolute; left: 10px; right: 10px; bottom: -1px; height: 1px; background: var(--accent);
+    }
+    main { padding: 48px 0 100px; }
+    .eyebrow {
+      font-size: 0.7rem; font-weight: 600; color: var(--muted);
+      letter-spacing: 0.09em; text-transform: uppercase; margin-bottom: 10px;
+    }
+    h1 {
+      font-size: 1.35rem; font-weight: 600; line-height: 1.35; margin-bottom: 10px;
+    }
+    .lede {
+      font-size: 0.86rem; color: var(--text2); line-height: 1.7; max-width: 540px; margin-bottom: 22px;
+    }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 36px; }
+    .cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 17px; border-radius: 8px; font-size: 0.85rem; font-weight: 500;
+      text-decoration: none; border: 1px solid transparent; transition: 0.18s ease;
+    }
+    .cta.primary { background: var(--accent); color: #fafafa; }
+    .cta.primary:hover { background: #ef4444; }
+    .cta.ghost { color: var(--text2); background: transparent; }
+    .cta.ghost:hover { color: var(--accent-text); background: var(--accent-soft); }
+    .list { border-top: 1px solid var(--border); }
+    .item {
+      display: flex; justify-content: space-between; gap: 16px; align-items: flex-start;
+      padding: 16px 0; border-bottom: 1px solid var(--border); text-decoration: none;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .item:hover { background: var(--accent-soft); transform: translateX(2px); }
+    .item-title { font-size: 0.9rem; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+    .item-summary { font-size: 0.78rem; color: var(--muted); line-height: 1.6; }
+    .item-meta {
+      display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
+      flex-shrink: 0; font-size: 0.72rem; color: var(--muted); padding-top: 2px;
+    }
+    footer {
+      border-top: 1px solid var(--border); padding: 20px 24px; text-align: center;
+      font-size: 0.72rem; color: var(--muted);
+    }
+    code {
+      font-family: var(--font-mono, 'DM Mono', monospace);
+      font-size: 0.78rem; color: var(--text2);
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      border-radius: 6px; padding: 2px 7px;
+    }
+    @media (max-width: 640px) {
+      .item { flex-direction: column; gap: 10px; }
+      .item-meta { align-items: flex-start; flex-direction: row; gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="/">johann.</a>
+      <div class="nav-links">
+        <a href="/writeup">Writeups</a>
+        <a class="active" href="/feed">Feed</a>
+      </div>
+    </div>
+  </header>
+  <main>
+    <div class="wrap">
+      <p class="eyebrow">Feed</p>
+      <h1>Writeups RSS</h1>
+      <p class="lede">Subscribe for new DFIR and cloud investigation writeups. The machine-readable feed stays at <code>/feed.xml</code>; this page is the human view.</p>
+      <div class="actions">
+        <a class="cta primary" href="/feed.xml">Subscribe · feed.xml</a>
+        <a class="cta ghost" href="/writeup">Browse writeups</a>
+      </div>
+      <div class="list">
+${items || '      <p class="lede">No writeups yet.</p>'}
+      </div>
+    </div>
+  </main>
+  <footer>© 2026 Johann Weingertner</footer>
+</body>
+</html>
+`;
+  writeGeneratedPage('feed/index.html', html);
+}
+
+function buildPrerenders(indexHtml, writeups, certifications) {
   const cleaned = stripAppSource(indexHtml);
 
   const listHtml = applyHeadMeta(cleaned, {
@@ -218,7 +382,7 @@ function buildPrerenders(indexHtml, writeups) {
       )
       .join('\n    ')}
   </ul>
-  <p><a href="/feed.xml">RSS feed</a></p>
+  <p><a href="/feed">Writeups feed</a> · <a href="/feed.xml">RSS</a></p>
 </article>`;
   writeGeneratedPage('writeup/index.html', injectNoscript(listHtml, listNoscript));
 
@@ -240,6 +404,47 @@ function buildPrerenders(indexHtml, writeups) {
 </article>`;
     writeGeneratedPage(`writeup/writeup-${w.id}/index.html`, injectNoscript(pageHtml, article));
   }
+
+  const certListHtml = applyHeadMeta(cleaned, {
+    title: 'Certs · johann.',
+    description: 'Industry certifications earned by Johann Weingertner, including CompTIA, CCNA, Azure, ISC2, and Splunk.',
+    path: '/certs',
+  });
+  const certListNoscript = `<article>
+  <h1>Certifications</h1>
+  <ul>
+    ${certifications
+      .map((c) => {
+        const slug = certSlug(c);
+        return `<li><a href="/certs/${slug}">${escapeHtml(c.name)}</a> — ${escapeHtml(c.issuer)} · ${escapeHtml(c.year)}</li>`;
+      })
+      .join('\n    ')}
+  </ul>
+</article>`;
+  writeGeneratedPage('certs/index.html', injectNoscript(certListHtml, certListNoscript));
+
+  for (const c of certifications) {
+    const slug = certSlug(c);
+    const pagePath = `/certs/${slug}`;
+    const pageHtml = applyHeadMeta(cleaned, {
+      title: `${c.name} · johann.`,
+      description: c.description || `${c.name} — ${c.issuer} (${c.year}).`,
+      path: pagePath,
+      image: absoluteUrl(c.badge || '/assets/profile-avatar.png'),
+    });
+    const isImage = c.credential && /\.(png|svg|webp|jpe?g)$/i.test(c.credential);
+    const learned = (c.learned || []).map((item) => `<li>${escapeHtml(item)}</li>`).join('');
+    const article = `<article>
+  <p><a href="/certs">Back to Certs</a></p>
+  <h1>${escapeHtml(c.name)}</h1>
+  <p>${escapeHtml(c.issuer)} · ${escapeHtml(c.year)}${c.status ? ` · ${escapeHtml(c.status)}` : ''}</p>
+  ${c.description ? `<p>${escapeHtml(c.description)}</p>` : ''}
+  ${isImage ? `<p><img src="${escapeHtml(c.credential)}" alt="${escapeHtml(c.name)} certificate" /></p>` : ''}
+  ${!isImage && c.credential ? `<p><a href="${escapeHtml(c.credential)}">View certificate</a></p>` : ''}
+  ${learned ? `<h2>What I learned</h2><ul>${learned}</ul>` : ''}
+</article>`;
+    writeGeneratedPage(`certs/${slug}/index.html`, injectNoscript(pageHtml, article));
+  }
 }
 
 let failed = false;
@@ -256,12 +461,14 @@ if (!failed) {
   try {
     const indexHtml = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
     const writeups = loadWriteups();
+    const certifications = loadCertifications();
 
     // SPA deep-link fallback without shipping the editable JSX source
     writeGeneratedPage('404.html', stripAppSource(indexHtml));
 
-    buildPrerenders(indexHtml, writeups);
-    buildFeed(writeups);
+    buildPrerenders(indexHtml, writeups, certifications);
+    buildFeedXml(writeups);
+    buildFeedPage(writeups);
 
     // Legacy /projects → /labs redirect for old links
     writeGeneratedPage(
