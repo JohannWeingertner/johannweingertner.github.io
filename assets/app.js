@@ -105,7 +105,7 @@ const NAV = [{
   id: 'certs',
   label: 'Certs'
 }, {
-  id: 'projects',
+  id: 'labs',
   label: 'Labs'
 }, {
   id: 'writeups',
@@ -120,7 +120,7 @@ const NAV = [{
 const PAGE_PATHS = {
   home: '/',
   certs: '/certs',
-  projects: '/projects',
+  labs: '/labs',
   writeups: '/writeup',
   competitions: '/competitions',
   experience: '/experience'
@@ -143,6 +143,11 @@ const parsePath = pathname => {
   };
   if (path === '/writeup') return {
     page: 'writeups',
+    writeupId: null
+  };
+  // Legacy alias from earlier /projects URLs
+  if (path === '/projects') return {
+    page: 'labs',
     writeupId: null
   };
   for (const [page, pagePath] of Object.entries(PAGE_PATHS)) {
@@ -168,7 +173,7 @@ const DEFAULT_DESCRIPTION = 'Johann Weingertner — networking and cybersecurity
 const PAGE_DESCRIPTIONS = {
   home: DEFAULT_DESCRIPTION,
   certs: 'Industry certifications earned by Johann Weingertner, including CompTIA, CCNA, Azure, ISC2, and Splunk.',
-  projects: 'CyberDefenders labs completed by Johann Weingertner — searchable by category and difficulty.',
+  labs: 'CyberDefenders labs completed by Johann Weingertner — searchable by category and difficulty.',
   writeups: 'DFIR and cloud investigation writeups by Johann Weingertner.',
   competitions: 'CTF and cybersecurity competition experience — NCL, CyberPatriot, Null404, and more.',
   experience: 'Cybersecurity internship and volunteer network technician experience.'
@@ -532,8 +537,7 @@ const HomePage = () => {
   return /*#__PURE__*/React.createElement("div", {
     style: {
       paddingTop: 16
-    },
-    className: "fade-up"
+    }
   }, /*#__PURE__*/React.createElement("div", {
     className: "hero-row"
   }, /*#__PURE__*/React.createElement("img", {
@@ -544,7 +548,9 @@ const HomePage = () => {
     height: "88",
     decoding: "async",
     fetchPriority: "high"
-  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", {
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "fade-up-1"
+  }, /*#__PURE__*/React.createElement("h1", {
     className: "hero-name",
     style: {
       fontSize: 'clamp(1.85rem,5vw,2.6rem)',
@@ -563,13 +569,17 @@ const HomePage = () => {
   }, displayed, !done && /*#__PURE__*/React.createElement("span", {
     className: "type-cursor"
   })))), /*#__PURE__*/React.createElement("p", {
-    className: "hero-bio"
+    className: "hero-bio fade-up-2"
   }, "I began pursuing technology at age 16 and earned eight industry-recognized certifications, including CCNA, CompTIA Trifecta and others, by age 18. Since then, I have focused on building practical, real-world skills through lab environments and independent projects."), /*#__PURE__*/React.createElement("div", {
-    className: "stat-chips"
+    className: "stat-chips fade-up-2"
   }, stats.map((s, i) => /*#__PURE__*/React.createElement("span", {
     key: i,
-    className: `stat-chip${s.accent ? ' accent' : ''}`
+    className: `stat-chip${s.accent ? ' accent' : ''}`,
+    style: {
+      animationDelay: `${0.18 + i * 0.06}s`
+    }
   }, s.label))), /*#__PURE__*/React.createElement("div", {
+    className: "fade-up-3",
     style: {
       display: 'flex',
       flexWrap: 'wrap',
@@ -582,14 +592,16 @@ const HomePage = () => {
     rel: "noopener noreferrer",
     className: `cta-btn${b.primary ? ' primary' : ''}`,
     style: {
-      animationDelay: `${i * 0.08}s`
+      animationDelay: `${0.24 + i * 0.07}s`
     }
   }, /*#__PURE__*/React.createElement(Icon, {
     name: b.icon,
     size: 14
   }), b.label))), /*#__PURE__*/React.createElement("div", {
+    className: "fade-up-3",
     style: {
-      marginTop: 48
+      marginTop: 48,
+      animationDelay: '0.32s'
     }
   }, /*#__PURE__*/React.createElement("p", {
     style: {
@@ -599,12 +611,14 @@ const HomePage = () => {
     style: ROW
   }, SKILLS.map((group, i) => /*#__PURE__*/React.createElement("div", {
     key: i,
+    className: "row-in",
     style: {
       display: 'flex',
       gap: 20,
       padding: '14px 0',
       borderBottom: '1px solid var(--border)',
-      flexWrap: 'wrap'
+      flexWrap: 'wrap',
+      animationDelay: `${0.36 + i * 0.05}s`
     }
   }, /*#__PURE__*/React.createElement("span", {
     style: {
@@ -649,11 +663,11 @@ const CertsPage = () => {
   }, all.map((c, i) => /*#__PURE__*/React.createElement("button", {
     key: i,
     onClick: () => setSel(c),
-    className: "list-row",
+    className: "list-row row-in",
     style: {
       ...rowItem,
       justifyContent: 'space-between',
-      animationDelay: `${i * 0.04}s`
+      animationDelay: `${Math.min(i, 10) * 0.04}s`
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -685,17 +699,17 @@ const CertsPage = () => {
   }, c.issuer, " \xB7 ", c.year))), /*#__PURE__*/React.createElement(Icon, {
     name: "ChevronRight",
     size: 14,
+    className: "list-chevron",
     style: {
       color: 'var(--muted)',
-      flexShrink: 0,
-      transition: 'transform 0.15s'
+      flexShrink: 0
     }
   })))), sel && /*#__PURE__*/React.createElement(CertModal, {
     cert: sel,
     onClose: () => setSel(null)
   }));
 };
-const ProjectsPage = () => {
+const LabsPage = () => {
   const [sortBy, setSortBy] = useState('date');
   const [category, setCategory] = useState('All');
   const [query, setQuery] = useState('');
@@ -811,14 +825,15 @@ const ProjectsPage = () => {
     href: lab.url,
     target: "_blank",
     rel: "noopener noreferrer",
-    className: "list-row",
+    className: "list-row row-in",
     style: {
       display: 'flex',
       alignItems: 'center',
       padding: '11px 0',
       borderBottom: '1px solid var(--border)',
       textDecoration: 'none',
-      gap: 12
+      gap: 12,
+      animationDelay: `${Math.min(i, 12) * 0.025}s`
     }
   }, /*#__PURE__*/React.createElement("span", {
     style: {
@@ -863,9 +878,11 @@ const CompetitionsPage = () => /*#__PURE__*/React.createElement("div", null, /*#
   style: ROW
 }, COMPETITIONS.map((c, i) => /*#__PURE__*/React.createElement("div", {
   key: i,
+  className: "row-in",
   style: {
     padding: '16px 0',
-    borderBottom: '1px solid var(--border)'
+    borderBottom: '1px solid var(--border)',
+    animationDelay: `${i * 0.06}s`
   }
 }, /*#__PURE__*/React.createElement("div", {
   style: {
@@ -902,9 +919,11 @@ const ExperiencePage = () => /*#__PURE__*/React.createElement("div", null, /*#__
   style: ROW
 }, EXPERIENCE.map((job, i) => /*#__PURE__*/React.createElement("div", {
   key: i,
+  className: "row-in",
   style: {
     padding: '18px 0',
-    borderBottom: '1px solid var(--border)'
+    borderBottom: '1px solid var(--border)',
+    animationDelay: `${i * 0.07}s`
   }
 }, /*#__PURE__*/React.createElement("div", {
   style: {
@@ -952,7 +971,8 @@ const ExperiencePage = () => /*#__PURE__*/React.createElement("div", null, /*#__
   style: {
     color: 'var(--border2)',
     flexShrink: 0
-  }
+  },
+  "aria-hidden": "true"
 }, "\u2014"), b)))))));
 const renderWriteupBlock = (block, i, figureIndex = -1) => {
   switch (block.type) {
@@ -1271,7 +1291,7 @@ const WriteupsPage = ({
 }, (window.WRITEUPS || []).map((w, i) => /*#__PURE__*/React.createElement("button", {
   key: w.id ?? i,
   onClick: () => onOpenWriteup(w.id),
-  className: "list-row",
+  className: "list-row row-in",
   style: {
     ...rowItem,
     justifyContent: 'space-between',
@@ -1385,7 +1405,7 @@ const App = () => {
     const labels = {
       home: 'johannweingertner.github.io',
       certs: 'Certs · johann.',
-      projects: 'Labs · johann.',
+      labs: 'Labs · johann.',
       writeups: 'Writeups · johann.',
       competitions: 'CTFs · johann.',
       experience: 'Experience · johann.'
@@ -1403,7 +1423,7 @@ const App = () => {
     onBack: () => navigate('writeups')
   }) : /*#__PURE__*/React.createElement(WriteupNotFound, {
     onBack: () => navigate('writeups')
-  }) : page === 'certs' ? /*#__PURE__*/React.createElement(CertsPage, null) : page === 'projects' ? /*#__PURE__*/React.createElement(ProjectsPage, null) : page === 'writeups' ? /*#__PURE__*/React.createElement(WriteupsPage, {
+  }) : page === 'certs' ? /*#__PURE__*/React.createElement(CertsPage, null) : page === 'labs' ? /*#__PURE__*/React.createElement(LabsPage, null) : page === 'writeups' ? /*#__PURE__*/React.createElement(WriteupsPage, {
     onOpenWriteup: openWriteup
   }) : page === 'competitions' ? /*#__PURE__*/React.createElement(CompetitionsPage, null) : page === 'experience' ? /*#__PURE__*/React.createElement(ExperiencePage, null) : /*#__PURE__*/React.createElement(HomePage, null);
   return /*#__PURE__*/React.createElement("div", {
@@ -1454,7 +1474,8 @@ const App = () => {
     className: `nav-pill ${navActive === item.id ? 'active' : ''}`
   }, item.label))))), /*#__PURE__*/React.createElement("main", {
     id: "main",
-    className: "content-scrim",
+    key: `${page}-${writeupId ?? 'none'}`,
+    className: "content-scrim page-enter",
     style: {
       maxWidth: 720,
       margin: '0 auto',

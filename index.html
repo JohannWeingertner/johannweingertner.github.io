@@ -24,7 +24,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://unpkg.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/tokens.css?v=20260819">
+    <link rel="stylesheet" href="/assets/tokens.css?v=20260820">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: var(--bg); color: var(--text); font-family: var(--font-sans, 'Inter', sans-serif); -webkit-font-smoothing: antialiased; font-feature-settings: 'cv11', 'ss01'; }
@@ -82,28 +82,33 @@
         ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 4px; }
 
         /* Animations */
-        @keyframes fadeUp   { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes fadeUp   { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
         @keyframes fadeIn   { from { opacity:0; } to { opacity:1; } }
         @keyframes typeBlink { 0%,100%{opacity:1;} 50%{opacity:0;} }
-        @keyframes modalIn  { from{opacity:0;transform:scale(0.93) translateY(10px);} to{opacity:1;transform:scale(1) translateY(0);} }
+        @keyframes modalIn  { from{opacity:0;transform:scale(0.97) translateY(8px);} to{opacity:1;transform:scale(1) translateY(0);} }
         @keyframes slideDown { from{opacity:0;transform:translateY(-6px);} to{opacity:1;transform:translateY(0);} }
         @keyframes nameGlow { 0%,100%{text-shadow:none;} 50%{text-shadow:0 0 48px rgba(220,38,38,0.18);} }
-        @keyframes rowSlide { from{opacity:0;transform:translateX(-10px);} to{opacity:1;transform:translateX(0);} }
-        @keyframes ctaPop   { 0%{opacity:0;transform:scale(0.9) translateY(6px);} 100%{opacity:1;transform:scale(1) translateY(0);} }
+        @keyframes rowSlide { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+        @keyframes ctaPop   { 0%{opacity:0;transform:translateY(8px);} 100%{opacity:1;transform:translateY(0);} }
+        @keyframes pageEnter { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+        @keyframes avatarIn { from{opacity:0;transform:scale(0.92);} to{opacity:1;transform:scale(1);} }
+        @keyframes chipIn { from{opacity:0;transform:translateY(6px);} to{opacity:1;transform:translateY(0);} }
 
-        .fade-up   { animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) both; }
-        .fade-up-1 { animation: fadeUp 0.5s 0.08s cubic-bezier(0.22,1,0.36,1) both; }
-        .fade-up-2 { animation: fadeUp 0.5s 0.16s cubic-bezier(0.22,1,0.36,1) both; }
-        .fade-up-3 { animation: fadeUp 0.5s 0.24s cubic-bezier(0.22,1,0.36,1) both; }
-        .slide-down { animation: slideDown 0.15s ease both; }
+        .fade-up   { animation: fadeUp var(--dur-enter, 380ms) var(--ease-out-quint, cubic-bezier(0.22,1,0.36,1)) both; }
+        .fade-up-1 { animation: fadeUp var(--dur-enter, 380ms) 0.07s var(--ease-out-quint, cubic-bezier(0.22,1,0.36,1)) both; }
+        .fade-up-2 { animation: fadeUp var(--dur-enter, 380ms) 0.14s var(--ease-out-quint, cubic-bezier(0.22,1,0.36,1)) both; }
+        .fade-up-3 { animation: fadeUp var(--dur-enter, 380ms) 0.21s var(--ease-out-quint, cubic-bezier(0.22,1,0.36,1)) both; }
+        .page-enter { animation: pageEnter var(--dur-enter, 380ms) var(--ease-out-quint, cubic-bezier(0.22,1,0.36,1)) both; }
+        .slide-down { animation: slideDown var(--dur-fast, 150ms) var(--ease-out-quint, cubic-bezier(0.22,1,0.36,1)) both; }
         .type-cursor { display:inline-block; width:2px; height:1em; background:var(--accent); margin-left:2px; vertical-align:text-bottom; animation:typeBlink 0.75s step-end infinite; }
         .flex-shrink-0 { flex-shrink: 0; }
-        .modal-overlay { position:fixed; inset:0; background:radial-gradient(circle at 50% 32%, var(--overlay-glow), transparent 52%), var(--overlay-backdrop); z-index:10000; display:flex; align-items:center; justify-content:center; padding:1rem; animation:fadeIn 0.18s ease both; }
-        .modal-box { background:var(--bg); border:none; border-radius:10px; max-width:520px; width:100%; max-height:85vh; overflow-y:auto; animation:modalIn 0.25s cubic-bezier(0.34,1.2,0.64,1) both; box-shadow:0 24px 60px rgba(0,0,0,0.65); }
+        .modal-overlay { position:fixed; inset:0; background:radial-gradient(circle at 50% 32%, var(--overlay-glow), transparent 52%), var(--overlay-backdrop); z-index:10000; display:flex; align-items:center; justify-content:center; padding:1rem; animation:fadeIn var(--dur-med, 220ms) var(--ease-out-quint, cubic-bezier(0.22,1,0.36,1)) both; }
+        .modal-box { background:var(--bg); border:none; border-radius:10px; max-width:520px; width:100%; max-height:85vh; overflow-y:auto; animation:modalIn 0.28s var(--ease-out-quint, cubic-bezier(0.22,1,0.36,1)) both; box-shadow:0 24px 60px rgba(0,0,0,0.65); }
         .modal-box::-webkit-scrollbar { width:3px; }
         .modal-box::-webkit-scrollbar-thumb { background:var(--accent-border); border-radius:2px; }
-        .modal-close { color:var(--muted); background:transparent; border:1px solid transparent; border-radius:5px; cursor:pointer; padding:4px; transition:color 0.15s, border-color 0.15s, background 0.15s; }
+        .modal-close { color:var(--muted); background:transparent; border:1px solid transparent; border-radius:5px; cursor:pointer; padding:4px; transition:color var(--dur-fast, 150ms), border-color var(--dur-fast, 150ms), background var(--dur-fast, 150ms), transform var(--dur-fast, 150ms); }
         .modal-close:hover { color:var(--accent-text); border-color:var(--accent-border); background:var(--accent-soft); }
+        .modal-close:active { transform: scale(0.94); }
         .modal-note { margin:0 0 14px; padding:11px 14px; background:var(--accent-soft); border:1px solid var(--accent-border); border-radius:6px; font-size:0.83rem; color:var(--text2); line-height:1.7; }
         .cert-modal-box { max-width:820px; }
         .credential-image { width:100%; max-height:620px; object-fit:contain; display:block; border-radius:6px; background:var(--surface); }
@@ -112,23 +117,28 @@
         .hero-name { animation: nameGlow 5s ease-in-out infinite; }
 
         /* List row hover highlight */
-        .list-row { position: relative; transition: background 0.15s; cursor: pointer; }
-        .list-row::before { content:''; position:absolute; left:-12px; top:0; bottom:0; width:2px; background:var(--accent); border-radius:2px; opacity:0; transition: opacity 0.15s; }
-        .list-row:hover { background: var(--accent-soft); }
-        .list-row:hover::before { opacity: 1; }
+        .list-row { position: relative; transition: background var(--dur-med, 220ms) var(--ease-out-quint, cubic-bezier(0.22,1,0.36,1)), transform var(--dur-med, 220ms) var(--ease-out-quint, cubic-bezier(0.22,1,0.36,1)); cursor: pointer; }
+        .list-row::before { content:''; position:absolute; left:-12px; top:0; bottom:0; width:2px; background:var(--accent); border-radius:2px; opacity:0; transform: scaleY(0.4); transition: opacity var(--dur-med, 220ms) var(--ease-out-quint, cubic-bezier(0.22,1,0.36,1)), transform var(--dur-med, 220ms) var(--ease-out-quint, cubic-bezier(0.22,1,0.36,1)); }
+        .list-row:hover { background: var(--accent-soft); transform: translateX(2px); }
+        .list-row:hover::before { opacity: 1; transform: scaleY(1); }
+        .list-row:active { transform: translateX(1px) scale(0.995); }
+        .list-chevron { transition: transform var(--dur-med, 220ms) var(--ease-out-quint, cubic-bezier(0.22,1,0.36,1)), color var(--dur-med, 220ms); }
+        .list-row:hover .list-chevron { transform: translateX(3px); color: var(--accent-text); }
 
         /* Row enter animation */
-        .row-in { animation: rowSlide 0.4s cubic-bezier(0.22,1,0.36,1) both; }
+        .row-in { animation: rowSlide 0.36s var(--ease-out-quint, cubic-bezier(0.22,1,0.36,1)) both; }
 
         /* CTA buttons */
-        .cta-btn { display:inline-flex; align-items:center; gap:8px; padding:9px 17px; border-radius:8px; font-size:0.85rem; font-weight:500; text-decoration:none; transition:all 0.18s; border:1px solid transparent; color:var(--text2); background:transparent; cursor:pointer; font-family:'Inter',sans-serif; animation: ctaPop 0.4s cubic-bezier(0.22,1,0.36,1) both; }
+        .cta-btn { display:inline-flex; align-items:center; gap:8px; padding:9px 17px; border-radius:8px; font-size:0.85rem; font-weight:500; text-decoration:none; transition:color var(--dur-med, 220ms), background var(--dur-med, 220ms), transform var(--dur-fast, 150ms), border-color var(--dur-med, 220ms); border:1px solid transparent; color:var(--text2); background:transparent; cursor:pointer; font-family:'Inter',sans-serif; animation: ctaPop 0.4s var(--ease-out-quint, cubic-bezier(0.22,1,0.36,1)) both; }
         .cta-btn:hover { border-color:transparent; color:var(--accent-text); background:var(--accent-soft); transform:translateY(-1px); }
+        .cta-btn:active { transform: translateY(0) scale(0.97); }
         .cta-btn.primary { background:var(--accent); color:#fafafa; border-color:transparent; }
         .cta-btn.primary:hover { background:#ef4444; transform:translateY(-1px); }
 
         /* Nav active underline */
-        .nav-pill { position:relative; }
-        .nav-pill.active::after { content:''; position:absolute; bottom:-1px; left:10px; right:10px; height:1px; background:var(--accent); border-radius:1px; }
+        .nav-pill { position:relative; transition: color var(--dur-med, 220ms) var(--ease-out-quint, cubic-bezier(0.22,1,0.36,1)); }
+        .nav-pill::after { content:''; position:absolute; bottom:-1px; left:10px; right:10px; height:1px; background:var(--accent); border-radius:1px; transform: scaleX(0); transform-origin: center; transition: transform var(--dur-med, 220ms) var(--ease-out-quint, cubic-bezier(0.22,1,0.36,1)); }
+        .nav-pill.active::after { transform: scaleX(1); }
         .nav-pill.active { color: var(--text); }
 
         /* Diff bar */
@@ -175,6 +185,7 @@
             flex-shrink: 0;
             margin-bottom: 0;
             display: block;
+            animation: avatarIn 0.45s var(--ease-out-quint, cubic-bezier(0.22,1,0.36,1)) both;
         }
 
         .hero-bio {
@@ -200,6 +211,7 @@
             border: 1px solid var(--border);
             color: var(--text2);
             background: rgba(255, 255, 255, 0.02);
+            animation: chipIn 0.34s var(--ease-out-quint, cubic-bezier(0.22,1,0.36,1)) both;
         }
 
         .stat-chip.accent {
@@ -255,8 +267,14 @@
         }
 
         @media (prefers-reduced-motion: reduce) {
-            .fade-up, .fade-up-1, .fade-up-2, .fade-up-3, .row-in, .hero-name, .cta-btn {
+            .fade-up, .fade-up-1, .fade-up-2, .fade-up-3, .page-enter, .row-in, .hero-name, .cta-btn, .profile-avatar, .stat-chip, .modal-overlay, .modal-box {
                 animation: none !important;
+            }
+            .list-row, .list-row::before, .nav-pill, .nav-pill::after, .cta-btn, .modal-close {
+                transition: none !important;
+            }
+            .list-row:hover, .list-row:active, .cta-btn:hover, .cta-btn:active {
+                transform: none !important;
             }
             .type-cursor { animation: none; opacity: 1; }
         }
@@ -611,7 +629,7 @@ const COMPETITIONS = [
 const NAV = [
     { id:'home',         label:'Home'       },
     { id:'certs',        label:'Certs'      },
-    { id:'projects',     label:'Labs'       },
+    { id:'labs',         label:'Labs'       },
     { id:'writeups',     label:'Writeup'    },
     { id:'competitions', label:'CTFs'       },
     { id:'experience',   label:'Experience' },
@@ -620,7 +638,7 @@ const NAV = [
 const PAGE_PATHS = {
     home: '/',
     certs: '/certs',
-    projects: '/projects',
+    labs: '/labs',
     writeups: '/writeup',
     competitions: '/competitions',
     experience: '/experience',
@@ -640,6 +658,8 @@ const parsePath = (pathname) => {
     const writeupMatch = path.match(/^\/writeup\/writeup-(\d+)$/);
     if (writeupMatch) return { page: 'writeup-detail', writeupId: Number(writeupMatch[1]) };
     if (path === '/writeup') return { page: 'writeups', writeupId: null };
+    // Legacy alias from earlier /projects URLs
+    if (path === '/projects') return { page: 'labs', writeupId: null };
 
     for (const [page, pagePath] of Object.entries(PAGE_PATHS)) {
         if (page !== 'home' && pagePath === path) return { page, writeupId: null };
@@ -657,7 +677,7 @@ const DEFAULT_DESCRIPTION = 'Johann Weingertner — networking and cybersecurity
 const PAGE_DESCRIPTIONS = {
     home: DEFAULT_DESCRIPTION,
     certs: 'Industry certifications earned by Johann Weingertner, including CompTIA, CCNA, Azure, ISC2, and Splunk.',
-    projects: 'CyberDefenders labs completed by Johann Weingertner — searchable by category and difficulty.',
+    labs: 'CyberDefenders labs completed by Johann Weingertner — searchable by category and difficulty.',
     writeups: 'DFIR and cloud investigation writeups by Johann Weingertner.',
     competitions: 'CTF and cybersecurity competition experience — NCL, CyberPatriot, Null404, and more.',
     experience: 'Cybersecurity internship and volunteer network technician experience.',
@@ -850,10 +870,10 @@ const HomePage = () => {
         {label:'CyberDefenders CyberRange Top 100'},
     ];
     return (
-    <div style={{paddingTop:16}} className="fade-up">
+    <div style={{paddingTop:16}}>
         <div className="hero-row">
             <img src="/assets/profile-avatar.png" alt="Johann Weingertner" className="profile-avatar" width="88" height="88" decoding="async" fetchPriority="high" />
-            <div>
+            <div className="fade-up-1">
                 <h1 className="hero-name" style={{fontSize:'clamp(1.85rem,5vw,2.6rem)',fontWeight:700,color:'var(--text)',letterSpacing:'-0.03em',lineHeight:1.1,marginBottom:8}}>
                     Johann
                 </h1>
@@ -862,28 +882,28 @@ const HomePage = () => {
                 </p>
             </div>
         </div>
-        <p className="hero-bio">
+        <p className="hero-bio fade-up-2">
             I began pursuing technology at age 16 and earned eight industry-recognized certifications, including CCNA, CompTIA Trifecta and others, by age 18. Since then, I have focused on building practical, real-world skills through lab environments and independent projects.
         </p>
-        <div className="stat-chips">
+        <div className="stat-chips fade-up-2">
             {stats.map((s,i)=>(
-                <span key={i} className={`stat-chip${s.accent?' accent':''}`}>{s.label}</span>
+                <span key={i} className={`stat-chip${s.accent?' accent':''}`} style={{animationDelay:`${0.18 + i*0.06}s`}}>{s.label}</span>
             ))}
         </div>
-        <div style={{display:'flex',flexWrap:'wrap',gap:10}}>
+        <div className="fade-up-3" style={{display:'flex',flexWrap:'wrap',gap:10}}>
             {ctaLinks.map((b,i)=>(
                 <a key={i} href={b.href} target="_blank" rel="noopener noreferrer"
                    className={`cta-btn${b.primary?' primary':''}`}
-                   style={{animationDelay:`${i*0.08}s`}}>
+                   style={{animationDelay:`${0.24 + i*0.07}s`}}>
                     <Icon name={b.icon} size={14}/>{b.label}
                 </a>
             ))}
         </div>
-        <div style={{marginTop:48}}>
+        <div className="fade-up-3" style={{marginTop:48,animationDelay:'0.32s'}}>
             <p style={{...ST}}>Skills & Tools</p>
             <div style={ROW}>
                 {SKILLS.map((group,i)=>(
-                    <div key={i} style={{display:'flex',gap:20,padding:'14px 0',borderBottom:'1px solid var(--border)',flexWrap:'wrap'}}>
+                    <div key={i} className="row-in" style={{display:'flex',gap:20,padding:'14px 0',borderBottom:'1px solid var(--border)',flexWrap:'wrap',animationDelay:`${0.36 + i*0.05}s`}}>
                         <span style={{fontSize:'0.78rem',color:'var(--text2)',width:170,flexShrink:0,paddingTop:1}}>{group.category}</span>
                         <p style={{fontSize:'0.82rem',color:'var(--muted)',lineHeight:1.8,flex:1}}>{group.items.join(' · ')}</p>
                     </div>
@@ -910,8 +930,8 @@ const CertsPage = () => {
         <p style={{fontSize:'0.78rem',color:'var(--muted)',marginTop:-16,marginBottom:18}}>{all.length} active certifications</p>
         <div style={ROW}>
             {all.map((c,i)=>(
-                <button key={i} onClick={()=>setSel(c)} className="list-row"
-                    style={{...rowItem,justifyContent:'space-between',animationDelay:`${i*0.04}s`}}>
+                <button key={i} onClick={()=>setSel(c)} className="list-row row-in"
+                    style={{...rowItem,justifyContent:'space-between',animationDelay:`${Math.min(i,10)*0.04}s`}}>
                     <div style={{display:'flex',alignItems:'center',gap:14}}>
                         <CertBadgeImg src={c.badge} alt={c.short} fallback={c.short} size={38}/>
                         <div style={{textAlign:'left'}}>
@@ -919,7 +939,7 @@ const CertsPage = () => {
                             <p style={{fontSize:'0.74rem',color:'var(--muted)'}}>{c.issuer} · {c.year}</p>
                         </div>
                     </div>
-                    <Icon name="ChevronRight" size={14} style={{color:'var(--muted)',flexShrink:0,transition:'transform 0.15s'}}/>
+                    <Icon name="ChevronRight" size={14} className="list-chevron" style={{color:'var(--muted)',flexShrink:0}}/>
                 </button>
             ))}
         </div>
@@ -928,7 +948,7 @@ const CertsPage = () => {
     );
 };
 
-const ProjectsPage = () => {
+const LabsPage = () => {
     const [sortBy, setSortBy] = useState('date');
     const [category, setCategory] = useState('All');
     const [query, setQuery] = useState('');
@@ -995,8 +1015,8 @@ const ProjectsPage = () => {
                 <p className="labs-empty">No labs match your filters.</p>
             ) : filteredLabs.map((lab,i)=>(
                 <a key={`${lab.name}-${i}`} href={lab.url} target="_blank" rel="noopener noreferrer"
-                   className="list-row"
-                   style={{display:'flex',alignItems:'center',padding:'11px 0',borderBottom:'1px solid var(--border)',textDecoration:'none',gap:12}}>
+                   className="list-row row-in"
+                   style={{display:'flex',alignItems:'center',padding:'11px 0',borderBottom:'1px solid var(--border)',textDecoration:'none',gap:12,animationDelay:`${Math.min(i,12)*0.025}s`}}>
                     <span style={{fontSize:'0.86rem',color:'var(--text)',flex:1,minWidth:0,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{lab.name}</span>
                     <div style={{display:'flex',alignItems:'center',gap:10,flexShrink:0}}>
                         <span style={{fontSize:'0.72rem',color:'var(--muted)'}}>{shortCategory(lab.category)}</span>
@@ -1015,7 +1035,7 @@ const CompetitionsPage = () => (
         <p style={{...ST}}>Competitions</p>
         <div style={ROW}>
             {COMPETITIONS.map((c,i)=>(
-                <div key={i} style={{padding:'16px 0',borderBottom:'1px solid var(--border)'}}>
+                <div key={i} className="row-in" style={{padding:'16px 0',borderBottom:'1px solid var(--border)',animationDelay:`${i*0.06}s`}}>
                     <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:5}}>
                         <p style={{fontSize:'0.9rem',fontWeight:500,color:'var(--text)'}}>{c.name}</p>
                         <span style={{fontSize:'0.74rem',color:'var(--muted)',flexShrink:0,marginLeft:16}}>{c.period}</span>
@@ -1032,7 +1052,7 @@ const ExperiencePage = () => (
         <p style={{...ST}}>Work Experience</p>
         <div style={ROW}>
             {EXPERIENCE.map((job,i)=>(
-                <div key={i} style={{padding:'18px 0',borderBottom:'1px solid var(--border)'}}>
+                <div key={i} className="row-in" style={{padding:'18px 0',borderBottom:'1px solid var(--border)',animationDelay:`${i*0.07}s`}}>
                     <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:8}}>
                         <div>
                             <p style={{fontSize:'0.9rem',fontWeight:600,color:'var(--text)'}}>{job.role}</p>
@@ -1043,7 +1063,7 @@ const ExperiencePage = () => (
                     <div style={{display:'flex',flexDirection:'column',gap:7,marginTop:10}}>
                         {job.bullets.map((b,j)=>(
                             <div key={j} style={{display:'flex',alignItems:'flex-start',gap:10,fontSize:'0.83rem',color:'var(--muted)'}}>
-                                <span style={{color:'var(--border2)',flexShrink:0}}>—</span>{b}
+                                <span style={{color:'var(--border2)',flexShrink:0}} aria-hidden="true">—</span>{b}
                             </div>
                         ))}
                     </div>
@@ -1187,7 +1207,7 @@ const WriteupsPage = ({ onOpenWriteup }) => (
         <p style={{...ST}}>Writeups</p>
         <div style={ROW}>
             {(window.WRITEUPS || []).map((w,i)=>(
-                <button key={w.id ?? i} onClick={()=>onOpenWriteup(w.id)} className="list-row"
+                <button key={w.id ?? i} onClick={()=>onOpenWriteup(w.id)} className="list-row row-in"
                     style={{...rowItem,justifyContent:'space-between',animationDelay:`${i*0.05}s`}}>
                     <div style={{textAlign:'left',flex:1,minWidth:0}}>
                         <p style={{fontSize:'0.9rem',fontWeight:500,color:'var(--text)',marginBottom:4}}>{w.title}</p>
@@ -1263,7 +1283,7 @@ const App = () => {
         const labels = {
             home: 'johannweingertner.github.io',
             certs: 'Certs · johann.',
-            projects: 'Labs · johann.',
+            labs: 'Labs · johann.',
             writeups: 'Writeups · johann.',
             competitions: 'CTFs · johann.',
             experience: 'Experience · johann.',
@@ -1285,7 +1305,7 @@ const App = () => {
             ? <WriteupPage writeup={writeup} onBack={() => navigate('writeups')} />
             : <WriteupNotFound onBack={() => navigate('writeups')} />)
         : page === 'certs' ? <CertsPage/>
-        : page === 'projects' ? <ProjectsPage/>
+        : page === 'labs' ? <LabsPage/>
         : page === 'writeups' ? <WriteupsPage onOpenWriteup={openWriteup}/>
         : page === 'competitions' ? <CompetitionsPage/>
         : page === 'experience' ? <ExperiencePage/>
@@ -1307,7 +1327,7 @@ const App = () => {
                 </div>
             </div>
         </nav>
-        <main id="main" className="content-scrim" style={{maxWidth:720,margin:'0 auto',padding:'48px 24px 100px'}} tabIndex={-1}>
+        <main id="main" key={`${page}-${writeupId ?? 'none'}`} className="content-scrim page-enter" style={{maxWidth:720,margin:'0 auto',padding:'48px 24px 100px'}} tabIndex={-1}>
             {view}
         </main>
         <footer style={{borderTop:'1px solid var(--border)',padding:'20px 24px'}}>
@@ -1322,6 +1342,6 @@ const App = () => {
 
 ReactDOM.render(<App />, document.getElementById('root'));
 </script>
-<script src="/assets/app.js?v=20260819b"></script>
+<script src="/assets/app.js?v=20260820"></script>
 </body>
 </html>

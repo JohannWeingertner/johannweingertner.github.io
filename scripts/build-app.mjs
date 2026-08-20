@@ -262,6 +262,25 @@ if (!failed) {
 
     buildPrerenders(indexHtml, writeups);
     buildFeed(writeups);
+
+    // Legacy /projects → /labs redirect for old links
+    writeGeneratedPage(
+      'projects/index.html',
+      `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="refresh" content="0;url=/labs">
+  <link rel="canonical" href="${SITE_ORIGIN}/labs">
+  <title>Redirecting to Labs…</title>
+  <script>location.replace('/labs');</script>
+</head>
+<body>
+  <p><a href="/labs">Continue to Labs</a></p>
+</body>
+</html>
+`
+    );
   } catch (err) {
     console.error(`build-app: site extras: ${err.message}`);
     failed = true;

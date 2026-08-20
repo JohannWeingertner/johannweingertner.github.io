@@ -34,4 +34,6 @@ Interactive elements use `:focus-visible` with `--focus-ring` / `--focus-offset`
 
 ## Motion
 
-Honor `prefers-reduced-motion`. Prefer opacity/transform; avoid layout animation.
+Tokens: `--ease-out-quint`, `--ease-out-expo`, `--dur-fast` / `--dur-med` / `--dur-enter`.
+
+Use motion for route changes (`.page-enter`), list reveals (`.row-in`), nav underline scale, and hover feedback. Honor `prefers-reduced-motion`. Prefer opacity/transform; avoid layout animation and bounce/elastic easing.

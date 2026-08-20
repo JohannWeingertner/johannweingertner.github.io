@@ -56,4 +56,11 @@
   --content-max: 720px;
   --focus-ring: 2px solid var(--accent-text);
   --focus-offset: 2px;
+
+  /* Motion */
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 150ms;
+  --dur-med: 220ms;
+  --dur-enter: 380ms;
 }
