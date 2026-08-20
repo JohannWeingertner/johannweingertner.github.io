@@ -117,6 +117,110 @@ const NAV = [{
   id: 'experience',
   label: 'Experience'
 }];
+const PAGE_PATHS = {
+  home: '/',
+  certs: '/certs',
+  projects: '/projects',
+  writeups: '/writeup',
+  competitions: '/competitions',
+  experience: '/experience'
+};
+const pathForWriteup = id => `/writeup/writeup-${id}`;
+const normalizePath = pathname => {
+  const trimmed = (pathname || '/').replace(/\/+$/, '');
+  return trimmed === '' ? '/' : trimmed;
+};
+const parsePath = pathname => {
+  const path = normalizePath(pathname);
+  if (path === '/') return {
+    page: 'home',
+    writeupId: null
+  };
+  const writeupMatch = path.match(/^\/writeup\/writeup-(\d+)$/);
+  if (writeupMatch) return {
+    page: 'writeup-detail',
+    writeupId: Number(writeupMatch[1])
+  };
+  if (path === '/writeup') return {
+    page: 'writeups',
+    writeupId: null
+  };
+  for (const [page, pagePath] of Object.entries(PAGE_PATHS)) {
+    if (page !== 'home' && pagePath === path) return {
+      page,
+      writeupId: null
+    };
+  }
+  return {
+    page: 'home',
+    writeupId: null
+  };
+};
+const pathForRoute = ({
+  page,
+  writeupId
+}) => {
+  if (page === 'writeup-detail' && writeupId != null) return pathForWriteup(writeupId);
+  return PAGE_PATHS[page] || '/';
+};
+const SITE_ORIGIN = 'https://johannweingertner.github.io';
+const DEFAULT_DESCRIPTION = 'Johann Weingertner — networking and cybersecurity portfolio: certifications, CyberDefenders labs, DFIR writeups, and CTF experience.';
+const PAGE_DESCRIPTIONS = {
+  home: DEFAULT_DESCRIPTION,
+  certs: 'Industry certifications earned by Johann Weingertner, including CompTIA, CCNA, Azure, ISC2, and Splunk.',
+  projects: 'CyberDefenders labs completed by Johann Weingertner — searchable by category and difficulty.',
+  writeups: 'DFIR and cloud investigation writeups by Johann Weingertner.',
+  competitions: 'CTF and cybersecurity competition experience — NCL, CyberPatriot, Null404, and more.',
+  experience: 'Cybersecurity internship and volunteer network technician experience.'
+};
+const absoluteUrl = path => {
+  if (!path) return SITE_ORIGIN + '/';
+  if (/^https?:\/\//i.test(path)) return path;
+  return SITE_ORIGIN + (path.startsWith('/') ? path : `/${path}`);
+};
+const upsertMeta = (attr, key, content) => {
+  if (content == null) return;
+  let el = document.head.querySelector(`meta[${attr}="${key}"]`);
+  if (!el) {
+    el = document.createElement('meta');
+    el.setAttribute(attr, key);
+    document.head.appendChild(el);
+  }
+  el.setAttribute('content', content);
+};
+const setCanonical = path => {
+  const href = absoluteUrl(path);
+  let el = document.head.querySelector('link[rel="canonical"]');
+  if (!el) {
+    el = document.createElement('link');
+    el.setAttribute('rel', 'canonical');
+    document.head.appendChild(el);
+  }
+  el.setAttribute('href', href);
+};
+const firstWriteupImage = writeup => {
+  const fig = (writeup?.content || []).find(b => b.type === 'figure' && b.src);
+  return fig ? absoluteUrl(fig.src) : absoluteUrl('/assets/profile-avatar.png');
+};
+const applyDocumentMeta = ({
+  title,
+  description,
+  path,
+  image,
+  type = 'website'
+}) => {
+  document.title = title;
+  upsertMeta('name', 'description', description);
+  upsertMeta('property', 'og:title', title);
+  upsertMeta('property', 'og:description', description);
+  upsertMeta('property', 'og:url', absoluteUrl(path));
+  upsertMeta('property', 'og:image', image || absoluteUrl('/assets/profile-avatar.png'));
+  upsertMeta('property', 'og:type', type);
+  upsertMeta('name', 'twitter:title', title);
+  upsertMeta('name', 'twitter:description', description);
+  upsertMeta('name', 'twitter:image', image || absoluteUrl('/assets/profile-avatar.png'));
+  setCanonical(path);
+};
 const DIFF_COLOR = {
   Easy: 'emerald',
   Medium: 'amber',
@@ -226,18 +330,48 @@ const CertModal = ({
   cert,
   onClose
 }) => {
+  const boxRef = React.useRef(null);
+  const titleId = `cert-title-${cert.short || cert.name}`.replace(/\s+/g, '-').toLowerCase();
   useEffect(() => {
-    const h = e => {
-      if (e.key === 'Escape') onClose();
+    const previouslyFocused = document.activeElement;
+    const box = boxRef.current;
+    const focusables = box ? Array.from(box.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')).filter(el => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true') : [];
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    (first || box)?.focus?.();
+    document.body.style.overflow = 'hidden';
+    const onKey = e => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onClose();
+        return;
+      }
+      if (e.key !== 'Tab' || focusables.length === 0) return;
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     };
-    document.addEventListener('keydown', h);
-    return () => document.removeEventListener('keydown', h);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+      if (previouslyFocused && typeof previouslyFocused.focus === 'function') previouslyFocused.focus();
+    };
   }, [onClose]);
   return /*#__PURE__*/React.createElement("div", {
     className: "modal-overlay",
     onClick: onClose
   }, /*#__PURE__*/React.createElement("div", {
+    ref: boxRef,
     className: "modal-box cert-modal-box",
+    role: "dialog",
+    "aria-modal": "true",
+    "aria-labelledby": titleId,
+    tabIndex: -1,
     onClick: e => e.stopPropagation()
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -268,6 +402,7 @@ const CertModal = ({
       gap: 8
     }
   }, /*#__PURE__*/React.createElement("p", {
+    id: titleId,
     style: {
       fontSize: '0.94rem',
       fontWeight: 600,
@@ -279,7 +414,8 @@ const CertModal = ({
     onClick: onClose,
     style: {
       flexShrink: 0
-    }
+    },
+    "aria-label": "Close certification details"
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "X",
     size: 14
@@ -300,6 +436,7 @@ const CertModal = ({
     className: "credential-image",
     src: cert.credential,
     alt: `${cert.name} certificate`,
+    loading: "lazy",
     decoding: "async",
     style: {
       marginTop: 16
@@ -346,7 +483,8 @@ const CertModal = ({
     style: {
       color: 'var(--border2)',
       flexShrink: 0
-    }
+    },
+    "aria-hidden": "true"
   }, "\u2014"), item)))), cert.url && /*#__PURE__*/React.createElement("div", {
     style: {
       padding: '14px 22px 20px',
@@ -400,11 +538,12 @@ const HomePage = () => {
     className: "hero-row"
   }, /*#__PURE__*/React.createElement("img", {
     src: "/assets/profile-avatar.png",
-    alt: "Johann profile",
+    alt: "Johann Weingertner",
     className: "profile-avatar",
     width: "88",
     height: "88",
-    decoding: "async"
+    decoding: "async",
+    fetchPriority: "high"
   }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", {
     className: "hero-name",
     style: {
@@ -815,190 +954,177 @@ const ExperiencePage = () => /*#__PURE__*/React.createElement("div", null, /*#__
     flexShrink: 0
   }
 }, "\u2014"), b)))))));
-const WriteupModal = ({
-  writeup,
-  onClose
-}) => {
-  useEffect(() => {
-    const h = e => {
-      if (e.key === 'Escape') onClose();
-    };
-    document.addEventListener('keydown', h);
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.removeEventListener('keydown', h);
-      document.body.style.overflow = '';
-    };
-  }, [onClose]);
-  const renderBlock = (block, i) => {
-    switch (block.type) {
-      case 'h2':
-        return /*#__PURE__*/React.createElement("p", {
-          key: i,
-          style: {
-            fontSize: '0.7rem',
-            fontWeight: 600,
-            color: 'var(--muted)',
-            letterSpacing: '0.09em',
-            textTransform: 'uppercase',
-            marginTop: 28,
-            marginBottom: 10
-          }
-        }, block.text);
-      case 'h3':
-        return /*#__PURE__*/React.createElement("p", {
-          key: i,
-          style: {
-            fontSize: '0.84rem',
-            fontWeight: 600,
-            color: 'var(--text)',
-            marginTop: 16,
-            marginBottom: 8
-          }
-        }, block.text);
-      case 'p':
-        return /*#__PURE__*/React.createElement("p", {
-          key: i,
-          style: {
-            fontSize: '0.87rem',
-            lineHeight: 1.8,
-            color: 'var(--text2)',
-            marginBottom: 10
-          }
-        }, block.text);
-      case 'ul':
-        return /*#__PURE__*/React.createElement("ul", {
-          key: i,
-          style: {
-            listStyle: 'none',
-            padding: 0,
-            margin: '0 0 12px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 6
-          }
-        }, block.items.map((item, j) => /*#__PURE__*/React.createElement("li", {
-          key: j,
-          style: {
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: 10,
-            fontSize: '0.86rem',
-            color: 'var(--text2)'
-          }
-        }, /*#__PURE__*/React.createElement("span", {
-          style: {
-            color: 'var(--muted)',
-            flexShrink: 0
-          }
-        }, "\u2014"), item)));
-      case 'ol':
-        return /*#__PURE__*/React.createElement("ol", {
-          key: i,
-          style: {
-            listStyle: 'none',
-            padding: 0,
-            margin: '0 0 12px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 6,
-            counterReset: 'ol-counter'
-          }
-        }, block.items.map((item, j) => /*#__PURE__*/React.createElement("li", {
-          key: j,
-          style: {
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: 10,
-            fontSize: '0.86rem',
-            color: 'var(--text2)'
-          }
-        }, /*#__PURE__*/React.createElement("span", {
-          style: {
-            color: 'var(--muted)',
-            flexShrink: 0,
-            minWidth: 16,
-            fontVariantNumeric: 'tabular-nums'
-          }
-        }, j + 1, "."), item)));
-      case 'code':
-        return /*#__PURE__*/React.createElement("pre", {
-          key: i,
-          style: {
-            margin: '0 0 14px',
-            padding: '11px 14px',
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid var(--border)',
-            borderRadius: 6,
-            fontSize: '0.78rem',
-            color: 'var(--text2)',
-            fontFamily: "'DM Mono',monospace",
-            overflowX: 'auto',
-            lineHeight: 1.7,
-            whiteSpace: 'pre-wrap',
-            wordBreak: 'break-all'
-          }
-        }, block.text);
-      case 'note':
-        return /*#__PURE__*/React.createElement("div", {
-          key: i,
-          className: "modal-note"
-        }, /*#__PURE__*/React.createElement("span", {
-          style: {
-            color: 'var(--muted)',
-            fontWeight: 600,
-            fontSize: '0.7rem',
-            letterSpacing: '0.06em',
-            textTransform: 'uppercase',
-            display: 'block',
-            marginBottom: 4
-          }
-        }, "Note"), block.text);
-      case 'table':
-        return /*#__PURE__*/React.createElement("div", {
-          key: i,
-          style: {
-            margin: '0 0 16px',
-            overflowX: 'auto'
-          }
-        }, /*#__PURE__*/React.createElement("table", {
-          style: {
-            width: '100%',
-            borderCollapse: 'collapse',
-            fontSize: '0.82rem'
-          }
-        }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", {
-          style: {
-            borderBottom: '1px solid var(--border2)'
-          }
-        }, block.headers.map((h, j) => /*#__PURE__*/React.createElement("th", {
-          key: j,
-          style: {
-            textAlign: 'left',
-            padding: '7px 12px',
-            color: 'var(--muted)',
-            fontWeight: 600,
-            fontSize: '0.7rem',
-            letterSpacing: '0.07em',
-            textTransform: 'uppercase',
-            whiteSpace: 'nowrap'
-          }
-        }, h)))), /*#__PURE__*/React.createElement("tbody", null, block.rows.map((row, j) => /*#__PURE__*/React.createElement("tr", {
-          key: j,
-          style: {
-            borderBottom: '1px solid var(--border)'
-          }
-        }, row.map((cell, k) => /*#__PURE__*/React.createElement("td", {
-          key: k,
-          style: {
-            padding: '8px 12px',
-            color: 'var(--text2)',
-            verticalAlign: 'top',
-            fontFamily: k === 0 ? "'DM Mono',monospace" : 'inherit',
-            fontSize: k === 0 ? '0.78rem' : '0.82rem'
-          }
-        }, cell)))))));
-      case 'figure':
+const renderWriteupBlock = (block, i, figureIndex = -1) => {
+  switch (block.type) {
+    case 'h2':
+      return /*#__PURE__*/React.createElement("p", {
+        key: i,
+        style: {
+          fontSize: '0.7rem',
+          fontWeight: 600,
+          color: 'var(--muted)',
+          letterSpacing: '0.09em',
+          textTransform: 'uppercase',
+          marginTop: 28,
+          marginBottom: 10
+        }
+      }, block.text);
+    case 'h3':
+      return /*#__PURE__*/React.createElement("p", {
+        key: i,
+        style: {
+          fontSize: '0.84rem',
+          fontWeight: 600,
+          color: 'var(--text)',
+          marginTop: 16,
+          marginBottom: 8
+        }
+      }, block.text);
+    case 'p':
+      return /*#__PURE__*/React.createElement("p", {
+        key: i,
+        style: {
+          fontSize: '0.87rem',
+          lineHeight: 1.8,
+          color: 'var(--text2)',
+          marginBottom: 10
+        }
+      }, block.text);
+    case 'ul':
+      return /*#__PURE__*/React.createElement("ul", {
+        key: i,
+        style: {
+          listStyle: 'none',
+          padding: 0,
+          margin: '0 0 12px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 6
+        }
+      }, block.items.map((item, j) => /*#__PURE__*/React.createElement("li", {
+        key: j,
+        style: {
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: 10,
+          fontSize: '0.86rem',
+          color: 'var(--text2)'
+        }
+      }, /*#__PURE__*/React.createElement("span", {
+        style: {
+          color: 'var(--muted)',
+          flexShrink: 0
+        }
+      }, "\u2014"), item)));
+    case 'ol':
+      return /*#__PURE__*/React.createElement("ol", {
+        key: i,
+        style: {
+          listStyle: 'none',
+          padding: 0,
+          margin: '0 0 12px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 6,
+          counterReset: 'ol-counter'
+        }
+      }, block.items.map((item, j) => /*#__PURE__*/React.createElement("li", {
+        key: j,
+        style: {
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: 10,
+          fontSize: '0.86rem',
+          color: 'var(--text2)'
+        }
+      }, /*#__PURE__*/React.createElement("span", {
+        style: {
+          color: 'var(--muted)',
+          flexShrink: 0,
+          minWidth: 16,
+          fontVariantNumeric: 'tabular-nums'
+        }
+      }, j + 1, "."), item)));
+    case 'code':
+      return /*#__PURE__*/React.createElement("pre", {
+        key: i,
+        style: {
+          margin: '0 0 14px',
+          padding: '11px 14px',
+          background: 'rgba(255,255,255,0.04)',
+          border: '1px solid var(--border)',
+          borderRadius: 6,
+          fontSize: '0.78rem',
+          color: 'var(--text2)',
+          fontFamily: "'DM Mono',monospace",
+          overflowX: 'auto',
+          lineHeight: 1.7,
+          whiteSpace: 'pre-wrap',
+          wordBreak: 'break-all'
+        }
+      }, block.text);
+    case 'note':
+      return /*#__PURE__*/React.createElement("div", {
+        key: i,
+        className: "modal-note"
+      }, /*#__PURE__*/React.createElement("span", {
+        style: {
+          color: 'var(--muted)',
+          fontWeight: 600,
+          fontSize: '0.7rem',
+          letterSpacing: '0.06em',
+          textTransform: 'uppercase',
+          display: 'block',
+          marginBottom: 4
+        }
+      }, "Note"), block.text);
+    case 'table':
+      return /*#__PURE__*/React.createElement("div", {
+        key: i,
+        style: {
+          margin: '0 0 16px',
+          overflowX: 'auto'
+        }
+      }, /*#__PURE__*/React.createElement("table", {
+        style: {
+          width: '100%',
+          borderCollapse: 'collapse',
+          fontSize: '0.82rem'
+        }
+      }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", {
+        style: {
+          borderBottom: '1px solid var(--border2)'
+        }
+      }, block.headers.map((h, j) => /*#__PURE__*/React.createElement("th", {
+        key: j,
+        style: {
+          textAlign: 'left',
+          padding: '7px 12px',
+          color: 'var(--muted)',
+          fontWeight: 600,
+          fontSize: '0.7rem',
+          letterSpacing: '0.07em',
+          textTransform: 'uppercase',
+          whiteSpace: 'nowrap'
+        }
+      }, h)))), /*#__PURE__*/React.createElement("tbody", null, block.rows.map((row, j) => /*#__PURE__*/React.createElement("tr", {
+        key: j,
+        style: {
+          borderBottom: '1px solid var(--border)'
+        }
+      }, row.map((cell, k) => /*#__PURE__*/React.createElement("td", {
+        key: k,
+        style: {
+          padding: '8px 12px',
+          color: 'var(--text2)',
+          verticalAlign: 'top',
+          fontFamily: k === 0 ? "'DM Mono',monospace" : 'inherit',
+          fontSize: k === 0 ? '0.78rem' : '0.82rem'
+        }
+      }, cell)))))));
+    case 'figure':
+      {
+        const eager = figureIndex === 0;
         return /*#__PURE__*/React.createElement("figure", {
           key: i,
           style: {
@@ -1008,8 +1134,9 @@ const WriteupModal = ({
         }, /*#__PURE__*/React.createElement("img", {
           src: block.src,
           alt: block.caption || '',
-          loading: "lazy",
+          loading: eager ? 'eager' : 'lazy',
           decoding: "async",
+          fetchPriority: eager ? 'high' : 'low',
           style: {
             width: '100%',
             borderRadius: 6,
@@ -1025,147 +1152,260 @@ const WriteupModal = ({
             fontStyle: 'italic'
           }
         }, block.caption));
-      default:
-        return null;
-    }
-  };
-  return /*#__PURE__*/React.createElement("div", {
-    className: "modal-overlay",
-    onClick: onClose
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "modal-box",
-    onClick: e => e.stopPropagation(),
-    style: {
-      maxWidth: 600
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      padding: '22px 22px 18px',
-      borderBottom: '1px solid var(--border)',
-      position: 'sticky',
-      top: 0,
-      background: 'var(--bg)',
-      zIndex: 1
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      alignItems: 'flex-start',
-      justifyContent: 'space-between',
-      gap: 12
-    }
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontSize: '0.96rem',
-      fontWeight: 600,
-      color: 'var(--text)',
-      lineHeight: 1.3,
-      marginBottom: 6
-    }
-  }, writeup.title), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      gap: 12,
-      alignItems: 'center'
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: '0.72rem',
-      color: 'var(--muted)'
-    }
-  }, writeup.category), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: '0.72rem',
-      color: DIFF_HEX[writeup.difficulty] || 'var(--muted)'
-    }
-  }, writeup.difficulty), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: '0.72rem',
-      color: 'var(--muted)'
-    }
-  }, writeup.date))), /*#__PURE__*/React.createElement("button", {
-    className: "modal-close",
-    onClick: onClose,
-    style: {
-      flexShrink: 0
-    }
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "X",
-    size: 14
-  })))), /*#__PURE__*/React.createElement("div", {
-    style: {
-      padding: '4px 22px 28px'
-    }
-  }, writeup.content.map(renderBlock))));
+      }
+    default:
+      return null;
+  }
 };
-const WriteupsPage = () => {
-  const [sel, setSel] = useState(null);
-  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
-    style: {
-      ...ST
-    }
-  }, "Writeups"), /*#__PURE__*/React.createElement("div", {
-    style: ROW
-  }, (window.WRITEUPS || []).map((w, i) => /*#__PURE__*/React.createElement("button", {
-    key: i,
-    onClick: () => setSel(w),
-    className: "list-row",
-    style: {
-      ...rowItem,
-      justifyContent: 'space-between',
-      animationDelay: `${i * 0.05}s`
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      textAlign: 'left',
-      flex: 1,
-      minWidth: 0
-    }
-  }, /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontSize: '0.9rem',
-      fontWeight: 500,
-      color: 'var(--text)',
-      marginBottom: 4
-    }
-  }, w.title), /*#__PURE__*/React.createElement("p", {
-    style: {
-      fontSize: '0.78rem',
-      color: 'var(--muted)'
-    }
-  }, w.summary)), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: 10,
-      flexShrink: 0,
-      marginLeft: 16
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: '0.72rem',
-      color: 'var(--muted)'
-    }
-  }, w.category), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: '0.72rem',
-      color: DIFF_HEX[w.difficulty] || 'var(--muted)'
-    }
-  }, w.difficulty), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: '0.72rem',
-      color: 'var(--muted)'
-    }
-  }, w.date))))), sel && /*#__PURE__*/React.createElement(WriteupModal, {
-    writeup: sel,
-    onClose: () => setSel(null)
-  }));
-};
+const WriteupPage = ({
+  writeup,
+  onBack
+}) => /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("button", {
+  onClick: onBack,
+  style: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 6,
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    color: 'var(--muted)',
+    fontSize: '0.78rem',
+    fontWeight: 500,
+    padding: 0,
+    marginBottom: 20,
+    fontFamily: 'Inter,sans-serif'
+  }
+}, /*#__PURE__*/React.createElement(Icon, {
+  name: "ChevronRight",
+  size: 14,
+  style: {
+    transform: 'rotate(180deg)'
+  }
+}), "Back to Writeups"), /*#__PURE__*/React.createElement("h1", {
+  style: {
+    fontSize: '1.35rem',
+    fontWeight: 600,
+    color: 'var(--text)',
+    lineHeight: 1.35,
+    marginBottom: 10
+  }
+}, writeup.title), /*#__PURE__*/React.createElement("div", {
+  style: {
+    display: 'flex',
+    gap: 12,
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    marginBottom: 8
+  }
+}, /*#__PURE__*/React.createElement("span", {
+  style: {
+    fontSize: '0.72rem',
+    color: 'var(--muted)'
+  }
+}, writeup.category), /*#__PURE__*/React.createElement("span", {
+  style: {
+    fontSize: '0.72rem',
+    color: DIFF_HEX[writeup.difficulty] || 'var(--muted)'
+  }
+}, writeup.difficulty), /*#__PURE__*/React.createElement("span", {
+  style: {
+    fontSize: '0.72rem',
+    color: 'var(--muted)'
+  }
+}, writeup.date)), /*#__PURE__*/React.createElement("p", {
+  style: {
+    fontSize: '0.86rem',
+    color: 'var(--text2)',
+    lineHeight: 1.7,
+    marginBottom: 8,
+    paddingBottom: 24,
+    borderBottom: '1px solid var(--border)'
+  }
+}, writeup.summary), /*#__PURE__*/React.createElement("div", null, writeup.content.map((block, i) => {
+  const figureIndex = block.type === 'figure' ? writeup.content.slice(0, i).filter(b => b.type === 'figure').length : -1;
+  return renderWriteupBlock(block, i, figureIndex);
+})));
+const WriteupNotFound = ({
+  onBack
+}) => /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("button", {
+  onClick: onBack,
+  style: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 6,
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    color: 'var(--muted)',
+    fontSize: '0.78rem',
+    fontWeight: 500,
+    padding: 0,
+    marginBottom: 20,
+    fontFamily: 'Inter,sans-serif'
+  }
+}, /*#__PURE__*/React.createElement(Icon, {
+  name: "ChevronRight",
+  size: 14,
+  style: {
+    transform: 'rotate(180deg)'
+  }
+}), "Back to Writeups"), /*#__PURE__*/React.createElement("p", {
+  style: {
+    ...ST
+  }
+}, "Writeup"), /*#__PURE__*/React.createElement("p", {
+  style: {
+    fontSize: '0.9rem',
+    color: 'var(--text2)'
+  }
+}, "This writeup could not be found."));
+const WriteupsPage = ({
+  onOpenWriteup
+}) => /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+  style: {
+    ...ST
+  }
+}, "Writeups"), /*#__PURE__*/React.createElement("div", {
+  style: ROW
+}, (window.WRITEUPS || []).map((w, i) => /*#__PURE__*/React.createElement("button", {
+  key: w.id ?? i,
+  onClick: () => onOpenWriteup(w.id),
+  className: "list-row",
+  style: {
+    ...rowItem,
+    justifyContent: 'space-between',
+    animationDelay: `${i * 0.05}s`
+  }
+}, /*#__PURE__*/React.createElement("div", {
+  style: {
+    textAlign: 'left',
+    flex: 1,
+    minWidth: 0
+  }
+}, /*#__PURE__*/React.createElement("p", {
+  style: {
+    fontSize: '0.9rem',
+    fontWeight: 500,
+    color: 'var(--text)',
+    marginBottom: 4
+  }
+}, w.title), /*#__PURE__*/React.createElement("p", {
+  style: {
+    fontSize: '0.78rem',
+    color: 'var(--muted)'
+  }
+}, w.summary)), /*#__PURE__*/React.createElement("div", {
+  style: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
+    flexShrink: 0,
+    marginLeft: 16
+  }
+}, /*#__PURE__*/React.createElement("span", {
+  style: {
+    fontSize: '0.72rem',
+    color: 'var(--muted)'
+  }
+}, w.category), /*#__PURE__*/React.createElement("span", {
+  style: {
+    fontSize: '0.72rem',
+    color: DIFF_HEX[w.difficulty] || 'var(--muted)'
+  }
+}, w.difficulty), /*#__PURE__*/React.createElement("span", {
+  style: {
+    fontSize: '0.72rem',
+    color: 'var(--muted)'
+  }
+}, w.date))))));
 
 // ── App ───────────────────────────────────────────────────────
 const App = () => {
-  const [page, setPage] = useState('home');
-  const view = page === 'certs' ? /*#__PURE__*/React.createElement(CertsPage, null) : page === 'projects' ? /*#__PURE__*/React.createElement(ProjectsPage, null) : page === 'writeups' ? /*#__PURE__*/React.createElement(WriteupsPage, null) : page === 'competitions' ? /*#__PURE__*/React.createElement(CompetitionsPage, null) : page === 'experience' ? /*#__PURE__*/React.createElement(ExperiencePage, null) : /*#__PURE__*/React.createElement(HomePage, null);
+  const initialRoute = parsePath(window.location.pathname);
+  const [page, setPage] = useState(initialRoute.page);
+  const [writeupId, setWriteupId] = useState(initialRoute.writeupId);
+  const applyRoute = (route, {
+    replace = false
+  } = {}) => {
+    const nextPath = pathForRoute(route);
+    const currentPath = normalizePath(window.location.pathname);
+    if (nextPath !== currentPath || window.location.pathname !== nextPath) {
+      if (replace) history.replaceState(route, '', nextPath);else history.pushState(route, '', nextPath);
+    }
+    setPage(route.page);
+    setWriteupId(route.writeupId ?? null);
+  };
+  const navigate = nextPage => applyRoute({
+    page: nextPage,
+    writeupId: null
+  });
+  const openWriteup = id => applyRoute({
+    page: 'writeup-detail',
+    writeupId: id
+  });
+  useEffect(() => {
+    const onPop = () => {
+      const route = parsePath(window.location.pathname);
+      setPage(route.page);
+      setWriteupId(route.writeupId);
+    };
+    window.addEventListener('popstate', onPop);
+    const normalized = pathForRoute(initialRoute);
+    if (window.location.pathname !== normalized) {
+      history.replaceState(initialRoute, '', normalized);
+    }
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
+  useEffect(() => {
+    const writeups = window.WRITEUPS || [];
+    const path = pathForRoute({
+      page,
+      writeupId
+    });
+    if (page === 'writeup-detail') {
+      const w = writeups.find(item => item.id === writeupId);
+      if (w) {
+        applyDocumentMeta({
+          title: `${w.title} · johann.`,
+          description: w.summary || DEFAULT_DESCRIPTION,
+          path,
+          image: firstWriteupImage(w),
+          type: 'article'
+        });
+      } else {
+        applyDocumentMeta({
+          title: 'Writeup not found · johann.',
+          description: 'The requested investigation writeup could not be found.',
+          path
+        });
+      }
+      return;
+    }
+    const labels = {
+      home: 'johannweingertner.github.io',
+      certs: 'Certs · johann.',
+      projects: 'Labs · johann.',
+      writeups: 'Writeups · johann.',
+      competitions: 'CTFs · johann.',
+      experience: 'Experience · johann.'
+    };
+    applyDocumentMeta({
+      title: labels[page] || 'johannweingertner.github.io',
+      description: PAGE_DESCRIPTIONS[page] || DEFAULT_DESCRIPTION,
+      path
+    });
+  }, [page, writeupId]);
+  const writeup = writeupId != null ? (window.WRITEUPS || []).find(w => w.id === writeupId) : null;
+  const navActive = page === 'writeup-detail' ? 'writeups' : page;
+  const view = page === 'writeup-detail' ? writeup ? /*#__PURE__*/React.createElement(WriteupPage, {
+    writeup: writeup,
+    onBack: () => navigate('writeups')
+  }) : /*#__PURE__*/React.createElement(WriteupNotFound, {
+    onBack: () => navigate('writeups')
+  }) : page === 'certs' ? /*#__PURE__*/React.createElement(CertsPage, null) : page === 'projects' ? /*#__PURE__*/React.createElement(ProjectsPage, null) : page === 'writeups' ? /*#__PURE__*/React.createElement(WriteupsPage, {
+    onOpenWriteup: openWriteup
+  }) : page === 'competitions' ? /*#__PURE__*/React.createElement(CompetitionsPage, null) : page === 'experience' ? /*#__PURE__*/React.createElement(ExperiencePage, null) : /*#__PURE__*/React.createElement(HomePage, null);
   return /*#__PURE__*/React.createElement("div", {
     style: {
       minHeight: '100vh'
@@ -1190,7 +1430,7 @@ const App = () => {
       gap: 8
     }
   }, /*#__PURE__*/React.createElement("button", {
-    onClick: () => setPage('home'),
+    onClick: () => navigate('home'),
     style: {
       background: 'none',
       border: 'none',
@@ -1210,15 +1450,17 @@ const App = () => {
     }
   }, NAV.map(item => /*#__PURE__*/React.createElement("button", {
     key: item.id,
-    onClick: () => setPage(item.id),
-    className: `nav-pill ${page === item.id ? 'active' : ''}`
+    onClick: () => navigate(item.id),
+    className: `nav-pill ${navActive === item.id ? 'active' : ''}`
   }, item.label))))), /*#__PURE__*/React.createElement("main", {
+    id: "main",
     className: "content-scrim",
     style: {
       maxWidth: 720,
       margin: '0 auto',
       padding: '48px 24px 100px'
-    }
+    },
+    tabIndex: -1
   }, view), /*#__PURE__*/React.createElement("footer", {
     style: {
       borderTop: '1px solid var(--border)',
@@ -1228,13 +1470,24 @@ const App = () => {
     style: {
       maxWidth: 720,
       margin: '0 auto',
-      textAlign: 'center'
+      textAlign: 'center',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 8,
+      alignItems: 'center'
     }
   }, /*#__PURE__*/React.createElement("span", {
     style: {
       fontSize: '0.72rem',
       color: 'var(--muted)'
     }
-  }, "\xA9 2026 Johann Weingertner"))));
+  }, "\xA9 2026 Johann Weingertner"), /*#__PURE__*/React.createElement("a", {
+    href: "/feed.xml",
+    style: {
+      fontSize: '0.72rem',
+      color: 'var(--muted)',
+      textDecoration: 'none'
+    }
+  }, "Writeups RSS"))));
 };
 ReactDOM.render(/*#__PURE__*/React.createElement(App, null), document.getElementById('root'));

@@ -4,40 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>johannweingertner.github.io</title>
+    <meta name="description" content="Johann Weingertner — networking and cybersecurity portfolio: certifications, CyberDefenders labs, DFIR writeups, and CTF experience.">
+    <link rel="canonical" href="https://johannweingertner.github.io/">
+    <meta name="author" content="Johann Weingertner">
+    <meta name="theme-color" content="#0a0a0a">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="johann.">
+    <meta property="og:title" content="johannweingertner.github.io">
+    <meta property="og:description" content="Johann Weingertner — networking and cybersecurity portfolio: certifications, CyberDefenders labs, DFIR writeups, and CTF experience.">
+    <meta property="og:url" content="https://johannweingertner.github.io/">
+    <meta property="og:image" content="https://johannweingertner.github.io/assets/profile-avatar.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="johannweingertner.github.io">
+    <meta name="twitter:description" content="Johann Weingertner — networking and cybersecurity portfolio: certifications, CyberDefenders labs, DFIR writeups, and CTF experience.">
+    <meta name="twitter:image" content="https://johannweingertner.github.io/assets/profile-avatar.png">
+    <link rel="alternate" type="application/rss+xml" title="Writeups · johann." href="https://johannweingertner.github.io/feed.xml">
     <link rel="icon" type="image/png" href="/assets/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://unpkg.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
-    <link rel="preload" as="image" href="/assets/profile-avatar.png">
+    <link rel="stylesheet" href="/assets/tokens.css?v=20260819">
     <style>
-        :root {
-            --bg:        #0a0a0a;
-            --surface:   #111111;
-            --surface2:  #161616;
-            --surface3:  #1c1c1c;
-            --primary:   #d4d4d4;
-            --primary-light: #e5e5e5;
-            --primary-dim: #404040;
-            --accent:    #dc2626;
-            --accent-soft: rgba(220, 38, 38, 0.10);
-            --accent-border: rgba(220, 38, 38, 0.32);
-            --accent-text: #fca5a5;
-            --accent-cyan:    #a3a3a3;
-            --accent-emerald: #a3a3a3;
-            --accent-amber:   #a3a3a3;
-            --accent-slate:   #737373;
-            --text:      #e5e5e5;
-            --text2:     #a3a3a3;
-            --muted:     #525252;
-            --border:    rgba(255,255,255,0.05);
-            --border2:   rgba(255,255,255,0.09);
-            --overlay-backdrop: rgba(10, 10, 10, 0.94);
-            --overlay-glow: rgba(220, 38, 38, 0.05);
-        }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; font-feature-settings: 'cv11', 'ss01'; }
-        .mono { font-family: 'DM Mono', monospace; }
+        body { background: var(--bg); color: var(--text); font-family: var(--font-sans, 'Inter', sans-serif); -webkit-font-smoothing: antialiased; font-feature-settings: 'cv11', 'ss01'; }
+        .mono { font-family: var(--font-mono, 'DM Mono', monospace); }
+
+        .skip-link {
+            position: absolute;
+            left: -9999px;
+            top: 0;
+            z-index: 100000;
+            padding: 10px 14px;
+            background: var(--surface3);
+            color: var(--text);
+            border: 1px solid var(--accent-border);
+            border-radius: var(--radius-sm, 6px);
+            font-size: 0.84rem;
+            font-weight: 500;
+            text-decoration: none;
+        }
+        .skip-link:focus {
+            left: 16px;
+            top: 16px;
+        }
+
+        :focus { outline: none; }
+        :focus-visible {
+            outline: var(--focus-ring, 2px solid var(--accent-text));
+            outline-offset: var(--focus-offset, 2px);
+        }
 
         /* Cards */
         .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; position: relative; overflow: hidden; transition: border-color 0.2s; }
@@ -164,7 +180,7 @@
         .hero-bio {
             font-size: 0.9rem;
             line-height: 1.75;
-            color: var(--muted);
+            color: var(--text2);
             max-width: 520px;
             margin-bottom: 22px;
         }
@@ -247,7 +263,8 @@
     </style>
 </head>
 <body>
-<canvas id="bg-canvas"></canvas>
+<a class="skip-link" href="#main">Skip to content</a>
+<canvas id="bg-canvas" aria-hidden="true"></canvas>
 <div id="root"></div>
 <script>
 (function () {
@@ -507,25 +524,7 @@
 </script>
 <script src="/data/certifications.js?v=20260814"></script>
 <script src="/data/labs.js?v=20260714"></script>
-<script src="/data/writeups.js?v=20260814"></script>
-<script>
-    if (window.WRITEUPS && !window.WRITEUPS.some(w => w.id === 2)) {
-        window.WRITEUPS.push({
-            id: 2,
-            title: 'CursorJack — Malicious MCP Integration to AWS Cryptomining',
-            category: 'Cloud / DFIR',
-            difficulty: 'Hard',
-            date: 'Jul 2026',
-            summary: 'Fraudulent Cursor MCP integration leading to AWS credential theft, 16 unauthorized GPU instances, and XMRig cryptomining.',
-            content: [
-                { type: 'h2', text: 'CursorJack Investigation' },
-                { type: 'p', text: 'A malicious Cursor MCP integration downloaded and executed s.exe, staged local AWS credentials, and enabled abuse of an admin IAM user. The actor launched 16 p3.2xlarge instances across four regions and deployed an XMRig miner through unMineable.' },
-                { type: 'h2', text: 'Key Findings' },
-                { type: 'ul', items: ['awesomeawsmcp.com supplied the fraudulent MCP integration', 'Payload downloaded from 3.72.63.40 and executed via cmd.exe', 'AWS credentials copied to C:\\Users\\Administrator\\.exfil\\', '16 p3.2xlarge instances launched across four AWS regions', 'Solana payout wallet labeled Drift Exploiter 1'] }
-            ]
-        });
-    }
-</script>
+<script src="/data/writeups.js?v=20260819"></script>
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <!-- Edit this JSX, then run: npm run build  (writes assets/app.js) -->
@@ -618,6 +617,99 @@ const NAV = [
     { id:'experience',   label:'Experience' },
 ];
 
+const PAGE_PATHS = {
+    home: '/',
+    certs: '/certs',
+    projects: '/projects',
+    writeups: '/writeup',
+    competitions: '/competitions',
+    experience: '/experience',
+};
+
+const pathForWriteup = (id) => `/writeup/writeup-${id}`;
+
+const normalizePath = (pathname) => {
+    const trimmed = (pathname || '/').replace(/\/+$/, '');
+    return trimmed === '' ? '/' : trimmed;
+};
+
+const parsePath = (pathname) => {
+    const path = normalizePath(pathname);
+    if (path === '/') return { page: 'home', writeupId: null };
+
+    const writeupMatch = path.match(/^\/writeup\/writeup-(\d+)$/);
+    if (writeupMatch) return { page: 'writeup-detail', writeupId: Number(writeupMatch[1]) };
+    if (path === '/writeup') return { page: 'writeups', writeupId: null };
+
+    for (const [page, pagePath] of Object.entries(PAGE_PATHS)) {
+        if (page !== 'home' && pagePath === path) return { page, writeupId: null };
+    }
+    return { page: 'home', writeupId: null };
+};
+
+const pathForRoute = ({ page, writeupId }) => {
+    if (page === 'writeup-detail' && writeupId != null) return pathForWriteup(writeupId);
+    return PAGE_PATHS[page] || '/';
+};
+
+const SITE_ORIGIN = 'https://johannweingertner.github.io';
+const DEFAULT_DESCRIPTION = 'Johann Weingertner — networking and cybersecurity portfolio: certifications, CyberDefenders labs, DFIR writeups, and CTF experience.';
+const PAGE_DESCRIPTIONS = {
+    home: DEFAULT_DESCRIPTION,
+    certs: 'Industry certifications earned by Johann Weingertner, including CompTIA, CCNA, Azure, ISC2, and Splunk.',
+    projects: 'CyberDefenders labs completed by Johann Weingertner — searchable by category and difficulty.',
+    writeups: 'DFIR and cloud investigation writeups by Johann Weingertner.',
+    competitions: 'CTF and cybersecurity competition experience — NCL, CyberPatriot, Null404, and more.',
+    experience: 'Cybersecurity internship and volunteer network technician experience.',
+};
+
+const absoluteUrl = (path) => {
+    if (!path) return SITE_ORIGIN + '/';
+    if (/^https?:\/\//i.test(path)) return path;
+    return SITE_ORIGIN + (path.startsWith('/') ? path : `/${path}`);
+};
+
+const upsertMeta = (attr, key, content) => {
+    if (content == null) return;
+    let el = document.head.querySelector(`meta[${attr}="${key}"]`);
+    if (!el) {
+        el = document.createElement('meta');
+        el.setAttribute(attr, key);
+        document.head.appendChild(el);
+    }
+    el.setAttribute('content', content);
+};
+
+const setCanonical = (path) => {
+    const href = absoluteUrl(path);
+    let el = document.head.querySelector('link[rel="canonical"]');
+    if (!el) {
+        el = document.createElement('link');
+        el.setAttribute('rel', 'canonical');
+        document.head.appendChild(el);
+    }
+    el.setAttribute('href', href);
+};
+
+const firstWriteupImage = (writeup) => {
+    const fig = (writeup?.content || []).find(b => b.type === 'figure' && b.src);
+    return fig ? absoluteUrl(fig.src) : absoluteUrl('/assets/profile-avatar.png');
+};
+
+const applyDocumentMeta = ({ title, description, path, image, type = 'website' }) => {
+    document.title = title;
+    upsertMeta('name', 'description', description);
+    upsertMeta('property', 'og:title', title);
+    upsertMeta('property', 'og:description', description);
+    upsertMeta('property', 'og:url', absoluteUrl(path));
+    upsertMeta('property', 'og:image', image || absoluteUrl('/assets/profile-avatar.png'));
+    upsertMeta('property', 'og:type', type);
+    upsertMeta('name', 'twitter:title', title);
+    upsertMeta('name', 'twitter:description', description);
+    upsertMeta('name', 'twitter:image', image || absoluteUrl('/assets/profile-avatar.png'));
+    setCanonical(path);
+};
+
 const DIFF_COLOR = { Easy:'emerald', Medium:'amber', Hard:'amber', Extreme:'slate' };
 const DIFF_HEX   = { Easy:'#a3a3a3', Medium:'#a3a3a3', Hard:'#fca5a5', Extreme:'#fca5a5' };
 const LAB_CATEGORIES = ['All','Network Forensics','Endpoint Forensics','Cloud Forensics','Threat Hunting','Threat Intel','Detection Engineering'];
@@ -650,21 +742,62 @@ const CertBadgeImg = ({ src, alt, fallback, size=44 }) => (
 );
 
 const CertModal = ({ cert, onClose }) => {
+    const boxRef = React.useRef(null);
+    const titleId = `cert-title-${cert.short || cert.name}`.replace(/\s+/g, '-').toLowerCase();
+
     useEffect(() => {
-        const h = (e) => { if (e.key === 'Escape') onClose(); };
-        document.addEventListener('keydown', h);
-        return () => document.removeEventListener('keydown', h);
+        const previouslyFocused = document.activeElement;
+        const box = boxRef.current;
+        const focusables = box
+            ? Array.from(box.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'))
+                .filter(el => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true')
+            : [];
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        (first || box)?.focus?.();
+        document.body.style.overflow = 'hidden';
+
+        const onKey = (e) => {
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                onClose();
+                return;
+            }
+            if (e.key !== 'Tab' || focusables.length === 0) return;
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        };
+        document.addEventListener('keydown', onKey);
+        return () => {
+            document.removeEventListener('keydown', onKey);
+            document.body.style.overflow = '';
+            if (previouslyFocused && typeof previouslyFocused.focus === 'function') previouslyFocused.focus();
+        };
     }, [onClose]);
+
     return (
         <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-box cert-modal-box" onClick={e=>e.stopPropagation()}>
+            <div
+                ref={boxRef}
+                className="modal-box cert-modal-box"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby={titleId}
+                tabIndex={-1}
+                onClick={e=>e.stopPropagation()}
+            >
                 <div style={{padding:'22px 22px 18px',borderBottom:'1px solid var(--border)'}}>
                     <div style={{display:'flex',alignItems:'flex-start',gap:14}}>
                         <CertBadgeImg src={cert.badge} alt={cert.short} fallback={cert.short} size={48}/>
                         <div style={{flex:1,minWidth:0}}>
                             <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:8}}>
-                                <p style={{fontSize:'0.94rem',fontWeight:600,color:'var(--text)',lineHeight:1.3}}>{cert.name}</p>
-                                <button className="modal-close" onClick={onClose} style={{flexShrink:0}}>
+                                <p id={titleId} style={{fontSize:'0.94rem',fontWeight:600,color:'var(--text)',lineHeight:1.3}}>{cert.name}</p>
+                                <button className="modal-close" onClick={onClose} style={{flexShrink:0}} aria-label="Close certification details">
                                     <Icon name="X" size={14}/>
                                 </button>
                             </div>
@@ -673,7 +806,7 @@ const CertModal = ({ cert, onClose }) => {
                     </div>
                     {cert.description && <p style={{marginTop:14,fontSize:'0.84rem',lineHeight:1.7,color:'var(--text2)'}}>{cert.description}</p>}
                     {cert.credential && /\.(png|svg|webp|jpe?g)$/i.test(cert.credential) && (
-                        <img className="credential-image" src={cert.credential} alt={`${cert.name} certificate`} decoding="async" style={{marginTop:16}} />
+                        <img className="credential-image" src={cert.credential} alt={`${cert.name} certificate`} loading="lazy" decoding="async" style={{marginTop:16}} />
                     )}
                 {cert.credential && !/\.(png|svg|webp|jpe?g)$/i.test(cert.credential) && (
                     <a href={cert.credential} target="_blank" rel="noopener noreferrer" className="cta-btn" style={{marginTop:14,fontSize:'0.78rem',padding:'7px 12px',animation:'none'}}>
@@ -687,7 +820,7 @@ const CertModal = ({ cert, onClose }) => {
                         <div style={{display:'flex',flexDirection:'column',gap:8}}>
                             {cert.learned.map((item,i)=>(
                                 <div key={i} style={{display:'flex',alignItems:'flex-start',gap:10,fontSize:'0.83rem',color:'var(--text2)'}}>
-                                    <span style={{color:'var(--border2)',flexShrink:0}}>—</span>{item}
+                                    <span style={{color:'var(--border2)',flexShrink:0}} aria-hidden="true">—</span>{item}
                                 </div>
                             ))}
                         </div>
@@ -719,7 +852,7 @@ const HomePage = () => {
     return (
     <div style={{paddingTop:16}} className="fade-up">
         <div className="hero-row">
-            <img src="/assets/profile-avatar.png" alt="Johann profile" className="profile-avatar" width="88" height="88" decoding="async" />
+            <img src="/assets/profile-avatar.png" alt="Johann Weingertner" className="profile-avatar" width="88" height="88" decoding="async" fetchPriority="high" />
             <div>
                 <h1 className="hero-name" style={{fontSize:'clamp(1.85rem,5vw,2.6rem)',fontWeight:700,color:'var(--text)',letterSpacing:'-0.03em',lineHeight:1.1,marginBottom:8}}>
                     Johann
@@ -920,134 +1053,141 @@ const ExperiencePage = () => (
     </div>
 );
 
-const WriteupModal = ({ writeup, onClose }) => {
-    useEffect(() => {
-        const h = (e) => { if (e.key === 'Escape') onClose(); };
-        document.addEventListener('keydown', h);
-        document.body.style.overflow = 'hidden';
-        return () => { document.removeEventListener('keydown', h); document.body.style.overflow = ''; };
-    }, [onClose]);
-
-    const renderBlock = (block, i) => {
-        switch (block.type) {
-            case 'h2': return (
-                <p key={i} style={{fontSize:'0.7rem',fontWeight:600,color:'var(--muted)',letterSpacing:'0.09em',textTransform:'uppercase',marginTop:28,marginBottom:10}}>
-                    {block.text}
-                </p>
-            );
-            case 'h3': return (
-                <p key={i} style={{fontSize:'0.84rem',fontWeight:600,color:'var(--text)',marginTop:16,marginBottom:8}}>
-                    {block.text}
-                </p>
-            );
-            case 'p': return (
-                <p key={i} style={{fontSize:'0.87rem',lineHeight:1.8,color:'var(--text2)',marginBottom:10}}>
-                    {block.text}
-                </p>
-            );
-            case 'ul': return (
-                <ul key={i} style={{listStyle:'none',padding:0,margin:'0 0 12px',display:'flex',flexDirection:'column',gap:6}}>
-                    {block.items.map((item,j)=>(
-                        <li key={j} style={{display:'flex',alignItems:'flex-start',gap:10,fontSize:'0.86rem',color:'var(--text2)'}}>
-                            <span style={{color:'var(--muted)',flexShrink:0}}>—</span>{item}
-                        </li>
-                    ))}
-                </ul>
-            );
-            case 'ol': return (
-                <ol key={i} style={{listStyle:'none',padding:0,margin:'0 0 12px',display:'flex',flexDirection:'column',gap:6,counterReset:'ol-counter'}}>
-                    {block.items.map((item,j)=>(
-                        <li key={j} style={{display:'flex',alignItems:'flex-start',gap:10,fontSize:'0.86rem',color:'var(--text2)'}}>
-                            <span style={{color:'var(--muted)',flexShrink:0,minWidth:16,fontVariantNumeric:'tabular-nums'}}>{j+1}.</span>{item}
-                        </li>
-                    ))}
-                </ol>
-            );
-            case 'code': return (
-                <pre key={i} style={{margin:'0 0 14px',padding:'11px 14px',background:'rgba(255,255,255,0.04)',border:'1px solid var(--border)',borderRadius:6,fontSize:'0.78rem',color:'var(--text2)',fontFamily:"'DM Mono',monospace",overflowX:'auto',lineHeight:1.7,whiteSpace:'pre-wrap',wordBreak:'break-all'}}>
-                    {block.text}
-                </pre>
-            );
-            case 'note': return (
-                <div key={i} className="modal-note">
-                    <span style={{color:'var(--muted)',fontWeight:600,fontSize:'0.7rem',letterSpacing:'0.06em',textTransform:'uppercase',display:'block',marginBottom:4}}>Note</span>
-                    {block.text}
-                </div>
-            );
-            case 'table': return (
-                <div key={i} style={{margin:'0 0 16px',overflowX:'auto'}}>
-                    <table style={{width:'100%',borderCollapse:'collapse',fontSize:'0.82rem'}}>
-                        <thead>
-                            <tr style={{borderBottom:'1px solid var(--border2)'}}>
-                                {block.headers.map((h,j)=>(
-                                    <th key={j} style={{textAlign:'left',padding:'7px 12px',color:'var(--muted)',fontWeight:600,fontSize:'0.7rem',letterSpacing:'0.07em',textTransform:'uppercase',whiteSpace:'nowrap'}}>
-                                        {h}
-                                    </th>
+const renderWriteupBlock = (block, i, figureIndex = -1) => {
+    switch (block.type) {
+        case 'h2': return (
+            <p key={i} style={{fontSize:'0.7rem',fontWeight:600,color:'var(--muted)',letterSpacing:'0.09em',textTransform:'uppercase',marginTop:28,marginBottom:10}}>
+                {block.text}
+            </p>
+        );
+        case 'h3': return (
+            <p key={i} style={{fontSize:'0.84rem',fontWeight:600,color:'var(--text)',marginTop:16,marginBottom:8}}>
+                {block.text}
+            </p>
+        );
+        case 'p': return (
+            <p key={i} style={{fontSize:'0.87rem',lineHeight:1.8,color:'var(--text2)',marginBottom:10}}>
+                {block.text}
+            </p>
+        );
+        case 'ul': return (
+            <ul key={i} style={{listStyle:'none',padding:0,margin:'0 0 12px',display:'flex',flexDirection:'column',gap:6}}>
+                {block.items.map((item,j)=>(
+                    <li key={j} style={{display:'flex',alignItems:'flex-start',gap:10,fontSize:'0.86rem',color:'var(--text2)'}}>
+                        <span style={{color:'var(--muted)',flexShrink:0}}>—</span>{item}
+                    </li>
+                ))}
+            </ul>
+        );
+        case 'ol': return (
+            <ol key={i} style={{listStyle:'none',padding:0,margin:'0 0 12px',display:'flex',flexDirection:'column',gap:6,counterReset:'ol-counter'}}>
+                {block.items.map((item,j)=>(
+                    <li key={j} style={{display:'flex',alignItems:'flex-start',gap:10,fontSize:'0.86rem',color:'var(--text2)'}}>
+                        <span style={{color:'var(--muted)',flexShrink:0,minWidth:16,fontVariantNumeric:'tabular-nums'}}>{j+1}.</span>{item}
+                    </li>
+                ))}
+            </ol>
+        );
+        case 'code': return (
+            <pre key={i} style={{margin:'0 0 14px',padding:'11px 14px',background:'rgba(255,255,255,0.04)',border:'1px solid var(--border)',borderRadius:6,fontSize:'0.78rem',color:'var(--text2)',fontFamily:"'DM Mono',monospace",overflowX:'auto',lineHeight:1.7,whiteSpace:'pre-wrap',wordBreak:'break-all'}}>
+                {block.text}
+            </pre>
+        );
+        case 'note': return (
+            <div key={i} className="modal-note">
+                <span style={{color:'var(--muted)',fontWeight:600,fontSize:'0.7rem',letterSpacing:'0.06em',textTransform:'uppercase',display:'block',marginBottom:4}}>Note</span>
+                {block.text}
+            </div>
+        );
+        case 'table': return (
+            <div key={i} style={{margin:'0 0 16px',overflowX:'auto'}}>
+                <table style={{width:'100%',borderCollapse:'collapse',fontSize:'0.82rem'}}>
+                    <thead>
+                        <tr style={{borderBottom:'1px solid var(--border2)'}}>
+                            {block.headers.map((h,j)=>(
+                                <th key={j} style={{textAlign:'left',padding:'7px 12px',color:'var(--muted)',fontWeight:600,fontSize:'0.7rem',letterSpacing:'0.07em',textTransform:'uppercase',whiteSpace:'nowrap'}}>
+                                    {h}
+                                </th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {block.rows.map((row,j)=>(
+                            <tr key={j} style={{borderBottom:'1px solid var(--border)'}}>
+                                {row.map((cell,k)=>(
+                                    <td key={k} style={{padding:'8px 12px',color:'var(--text2)',verticalAlign:'top',fontFamily:k===0?"'DM Mono',monospace":'inherit',fontSize:k===0?'0.78rem':'0.82rem'}}>
+                                        {cell}
+                                    </td>
                                 ))}
                             </tr>
-                        </thead>
-                        <tbody>
-                            {block.rows.map((row,j)=>(
-                                <tr key={j} style={{borderBottom:'1px solid var(--border)'}}>
-                                    {row.map((cell,k)=>(
-                                        <td key={k} style={{padding:'8px 12px',color:'var(--text2)',verticalAlign:'top',fontFamily:k===0?"'DM Mono',monospace":'inherit',fontSize:k===0?'0.78rem':'0.82rem'}}>
-                                            {cell}
-                                        </td>
-                                    ))}
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            );
-            case 'figure': return (
-                <figure key={i} style={{margin:'20px 0',padding:0}}>
-                    <img src={block.src} alt={block.caption||''} loading="lazy" decoding="async" style={{width:'100%',borderRadius:6,border:'1px solid var(--border)',display:'block'}}/>
-                    {block.caption && (
-                        <figcaption style={{fontSize:'0.75rem',color:'var(--muted)',textAlign:'center',marginTop:6,fontStyle:'italic'}}>
-                            {block.caption}
-                        </figcaption>
-                    )}
-                </figure>
-            );
-            default: return null;
-        }
-    };
-
-    return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-box" onClick={e=>e.stopPropagation()} style={{maxWidth:600}}>
-                <div style={{padding:'22px 22px 18px',borderBottom:'1px solid var(--border)',position:'sticky',top:0,background:'var(--bg)',zIndex:1}}>
-                    <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:12}}>
-                        <div>
-                            <p style={{fontSize:'0.96rem',fontWeight:600,color:'var(--text)',lineHeight:1.3,marginBottom:6}}>{writeup.title}</p>
-                            <div style={{display:'flex',gap:12,alignItems:'center'}}>
-                                <span style={{fontSize:'0.72rem',color:'var(--muted)'}}>{writeup.category}</span>
-                                <span style={{fontSize:'0.72rem',color:DIFF_HEX[writeup.difficulty]||'var(--muted)'}}>{writeup.difficulty}</span>
-                                <span style={{fontSize:'0.72rem',color:'var(--muted)'}}>{writeup.date}</span>
-                            </div>
-                        </div>
-                        <button className="modal-close" onClick={onClose} style={{flexShrink:0}}>
-                            <Icon name="X" size={14}/>
-                        </button>
-                    </div>
-                </div>
-                <div style={{padding:'4px 22px 28px'}}>
-                    {writeup.content.map(renderBlock)}
-                </div>
+                        ))}
+                    </tbody>
+                </table>
             </div>
-        </div>
-    );
+        );
+        case 'figure': {
+            const eager = figureIndex === 0;
+            return (
+            <figure key={i} style={{margin:'20px 0',padding:0}}>
+                <img
+                    src={block.src}
+                    alt={block.caption||''}
+                    loading={eager ? 'eager' : 'lazy'}
+                    decoding="async"
+                    fetchPriority={eager ? 'high' : 'low'}
+                    style={{width:'100%',borderRadius:6,border:'1px solid var(--border)',display:'block'}}
+                />
+                {block.caption && (
+                    <figcaption style={{fontSize:'0.75rem',color:'var(--muted)',textAlign:'center',marginTop:6,fontStyle:'italic'}}>
+                        {block.caption}
+                    </figcaption>
+                )}
+            </figure>
+            );
+        }
+        default: return null;
+    }
 };
 
-const WriteupsPage = () => {
-    const [sel, setSel] = useState(null);
-    return (
+const WriteupPage = ({ writeup, onBack }) => (
+    <div>
+        <button onClick={onBack} style={{display:'inline-flex',alignItems:'center',gap:6,background:'none',border:'none',cursor:'pointer',color:'var(--muted)',fontSize:'0.78rem',fontWeight:500,padding:0,marginBottom:20,fontFamily:'Inter,sans-serif'}}>
+            <Icon name="ChevronRight" size={14} style={{transform:'rotate(180deg)'}}/>
+            Back to Writeups
+        </button>
+        <h1 style={{fontSize:'1.35rem',fontWeight:600,color:'var(--text)',lineHeight:1.35,marginBottom:10}}>{writeup.title}</h1>
+        <div style={{display:'flex',gap:12,alignItems:'center',flexWrap:'wrap',marginBottom:8}}>
+            <span style={{fontSize:'0.72rem',color:'var(--muted)'}}>{writeup.category}</span>
+            <span style={{fontSize:'0.72rem',color:DIFF_HEX[writeup.difficulty]||'var(--muted)'}}>{writeup.difficulty}</span>
+            <span style={{fontSize:'0.72rem',color:'var(--muted)'}}>{writeup.date}</span>
+        </div>
+        <p style={{fontSize:'0.86rem',color:'var(--text2)',lineHeight:1.7,marginBottom:8,paddingBottom:24,borderBottom:'1px solid var(--border)'}}>{writeup.summary}</p>
+        <div>{writeup.content.map((block, i) => {
+            const figureIndex = block.type === 'figure'
+                ? writeup.content.slice(0, i).filter(b => b.type === 'figure').length
+                : -1;
+            return renderWriteupBlock(block, i, figureIndex);
+        })}</div>
+    </div>
+);
+
+const WriteupNotFound = ({ onBack }) => (
+    <div>
+        <button onClick={onBack} style={{display:'inline-flex',alignItems:'center',gap:6,background:'none',border:'none',cursor:'pointer',color:'var(--muted)',fontSize:'0.78rem',fontWeight:500,padding:0,marginBottom:20,fontFamily:'Inter,sans-serif'}}>
+            <Icon name="ChevronRight" size={14} style={{transform:'rotate(180deg)'}}/>
+            Back to Writeups
+        </button>
+        <p style={{...ST}}>Writeup</p>
+        <p style={{fontSize:'0.9rem',color:'var(--text2)'}}>This writeup could not be found.</p>
+    </div>
+);
+
+const WriteupsPage = ({ onOpenWriteup }) => (
     <div>
         <p style={{...ST}}>Writeups</p>
         <div style={ROW}>
             {(window.WRITEUPS || []).map((w,i)=>(
-                <button key={i} onClick={()=>setSel(w)} className="list-row"
+                <button key={w.id ?? i} onClick={()=>onOpenWriteup(w.id)} className="list-row"
                     style={{...rowItem,justifyContent:'space-between',animationDelay:`${i*0.05}s`}}>
                     <div style={{textAlign:'left',flex:1,minWidth:0}}>
                         <p style={{fontSize:'0.9rem',fontWeight:500,color:'var(--text)',marginBottom:4}}>{w.title}</p>
@@ -1061,42 +1201,119 @@ const WriteupsPage = () => {
                 </button>
             ))}
         </div>
-        {sel && <WriteupModal writeup={sel} onClose={()=>setSel(null)}/>}
     </div>
-    );
-};
+);
 
 // ── App ───────────────────────────────────────────────────────
 const App = () => {
-    const [page, setPage] = useState('home');
-    const view = page === 'certs' ? <CertsPage/>
+    const initialRoute = parsePath(window.location.pathname);
+    const [page, setPage] = useState(initialRoute.page);
+    const [writeupId, setWriteupId] = useState(initialRoute.writeupId);
+
+    const applyRoute = (route, { replace = false } = {}) => {
+        const nextPath = pathForRoute(route);
+        const currentPath = normalizePath(window.location.pathname);
+        if (nextPath !== currentPath || window.location.pathname !== nextPath) {
+            if (replace) history.replaceState(route, '', nextPath);
+            else history.pushState(route, '', nextPath);
+        }
+        setPage(route.page);
+        setWriteupId(route.writeupId ?? null);
+    };
+
+    const navigate = (nextPage) => applyRoute({ page: nextPage, writeupId: null });
+    const openWriteup = (id) => applyRoute({ page: 'writeup-detail', writeupId: id });
+
+    useEffect(() => {
+        const onPop = () => {
+            const route = parsePath(window.location.pathname);
+            setPage(route.page);
+            setWriteupId(route.writeupId);
+        };
+        window.addEventListener('popstate', onPop);
+        const normalized = pathForRoute(initialRoute);
+        if (window.location.pathname !== normalized) {
+            history.replaceState(initialRoute, '', normalized);
+        }
+        return () => window.removeEventListener('popstate', onPop);
+    }, []);
+
+    useEffect(() => {
+        const writeups = window.WRITEUPS || [];
+        const path = pathForRoute({ page, writeupId });
+        if (page === 'writeup-detail') {
+            const w = writeups.find(item => item.id === writeupId);
+            if (w) {
+                applyDocumentMeta({
+                    title: `${w.title} · johann.`,
+                    description: w.summary || DEFAULT_DESCRIPTION,
+                    path,
+                    image: firstWriteupImage(w),
+                    type: 'article',
+                });
+            } else {
+                applyDocumentMeta({
+                    title: 'Writeup not found · johann.',
+                    description: 'The requested investigation writeup could not be found.',
+                    path,
+                });
+            }
+            return;
+        }
+        const labels = {
+            home: 'johannweingertner.github.io',
+            certs: 'Certs · johann.',
+            projects: 'Labs · johann.',
+            writeups: 'Writeups · johann.',
+            competitions: 'CTFs · johann.',
+            experience: 'Experience · johann.',
+        };
+        applyDocumentMeta({
+            title: labels[page] || 'johannweingertner.github.io',
+            description: PAGE_DESCRIPTIONS[page] || DEFAULT_DESCRIPTION,
+            path,
+        });
+    }, [page, writeupId]);
+
+    const writeup = writeupId != null
+        ? (window.WRITEUPS || []).find(w => w.id === writeupId)
+        : null;
+    const navActive = page === 'writeup-detail' ? 'writeups' : page;
+
+    const view = page === 'writeup-detail'
+        ? (writeup
+            ? <WriteupPage writeup={writeup} onBack={() => navigate('writeups')} />
+            : <WriteupNotFound onBack={() => navigate('writeups')} />)
+        : page === 'certs' ? <CertsPage/>
         : page === 'projects' ? <ProjectsPage/>
-        : page === 'writeups' ? <WriteupsPage/>
+        : page === 'writeups' ? <WriteupsPage onOpenWriteup={openWriteup}/>
         : page === 'competitions' ? <CompetitionsPage/>
         : page === 'experience' ? <ExperiencePage/>
         : <HomePage/>;
+
     return (
     <div style={{minHeight:'100vh'}}>
         <nav style={{position:'sticky',top:0,zIndex:50,background:'var(--bg)',borderBottom:'1px solid var(--border)'}}>
             <div style={{maxWidth:720,margin:'0 auto',padding:'0 24px',display:'flex',alignItems:'center',justifyContent:'space-between',height:50,gap:8}}>
-                <button onClick={()=>setPage('home')} style={{background:'none',border:'none',cursor:'pointer',fontSize:'0.9rem',fontWeight:600,color:'var(--text)',letterSpacing:'-0.01em'}}>
+                <button onClick={()=>navigate('home')} style={{background:'none',border:'none',cursor:'pointer',fontSize:'0.9rem',fontWeight:600,color:'var(--text)',letterSpacing:'-0.01em'}}>
                     johann.
                 </button>
                 <div style={{display:'flex',gap:0,flexWrap:'nowrap',justifyContent:'flex-end',alignItems:'center'}}>
                     {NAV.map(item=>(
-                        <button key={item.id} onClick={()=>setPage(item.id)} className={`nav-pill ${page===item.id?'active':''}`}>
+                        <button key={item.id} onClick={()=>navigate(item.id)} className={`nav-pill ${navActive===item.id?'active':''}`}>
                             {item.label}
                         </button>
                     ))}
                 </div>
             </div>
         </nav>
-        <main className="content-scrim" style={{maxWidth:720,margin:'0 auto',padding:'48px 24px 100px'}}>
+        <main id="main" className="content-scrim" style={{maxWidth:720,margin:'0 auto',padding:'48px 24px 100px'}} tabIndex={-1}>
             {view}
         </main>
         <footer style={{borderTop:'1px solid var(--border)',padding:'20px 24px'}}>
-            <div style={{maxWidth:720,margin:'0 auto',textAlign:'center'}}>
+            <div style={{maxWidth:720,margin:'0 auto',textAlign:'center',display:'flex',flexDirection:'column',gap:8,alignItems:'center'}}>
                 <span style={{fontSize:'0.72rem',color:'var(--muted)'}}>© 2026 Johann Weingertner</span>
+                <a href="/feed.xml" style={{fontSize:'0.72rem',color:'var(--muted)',textDecoration:'none'}}>Writeups RSS</a>
             </div>
         </footer>
     </div>
@@ -1105,6 +1322,6 @@ const App = () => {
 
 ReactDOM.render(<App />, document.getElementById('root'));
 </script>
-<script src="/assets/app.js?v=20260814c"></script>
+<script src="/assets/app.js?v=20260819b"></script>
 </body>
 </html>

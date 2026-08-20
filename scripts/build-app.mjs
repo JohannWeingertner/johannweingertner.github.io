@@ -1,17 +1,21 @@
 #!/usr/bin/env node
 /**
- * Extracts editable JSX from HTML pages (#app-source) and writes
- * precompiled assets/*.js so visitors never download Babel.
+ * Builds precompiled assets/*.js from editable JSX in HTML (#app-source),
+ * then generates SEO/prerender pages, 404 fallback, and writeups RSS.
  *
  * Edit the <script type="text/jsx" id="app-source"> block in the HTML,
  * then run: npm run build
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import babel from '@babel/core';
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
+const SITE_ORIGIN = 'https://johannweingertner.github.io';
+const DEFAULT_DESCRIPTION =
+  'Johann Weingertner — networking and cybersecurity portfolio: certifications, CyberDefenders labs, DFIR writeups, and CTF experience.';
 
 const targets = [
   { html: 'index.html', out: 'assets/app.js' },
@@ -50,6 +54,194 @@ function buildOne({ html, out }) {
   console.log(`build-app: wrote ${path.relative(root, outPath)} (${kb} KB)`);
 }
 
+function loadWriteups() {
+  const src = fs.readFileSync(path.join(root, 'data/writeups.js'), 'utf8');
+  const ctx = { window: {} };
+  vm.runInNewContext(src, ctx, { filename: 'writeups.js' });
+  return ctx.window.WRITEUPS || [];
+}
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function escapeXml(value) {
+  return escapeHtml(value).replace(/'/g, '&apos;');
+}
+
+function absoluteUrl(assetPath) {
+  if (!assetPath) return `${SITE_ORIGIN}/`;
+  if (/^https?:\/\//i.test(assetPath)) return assetPath;
+  return SITE_ORIGIN + (assetPath.startsWith('/') ? assetPath : `/${assetPath}`);
+}
+
+function parseWriteupDate(dateStr) {
+  const parsed = Date.parse(`${dateStr} 1`);
+  if (!Number.isNaN(parsed)) return new Date(parsed);
+  return new Date();
+}
+
+function firstFigure(writeup) {
+  const fig = (writeup.content || []).find((b) => b.type === 'figure' && b.src);
+  return fig ? absoluteUrl(fig.src) : absoluteUrl('/assets/profile-avatar.png');
+}
+
+function blocksToHtml(content = []) {
+  return content
+    .map((block) => {
+      switch (block.type) {
+        case 'h2':
+          return `<h2>${escapeHtml(block.text)}</h2>`;
+        case 'h3':
+          return `<h3>${escapeHtml(block.text)}</h3>`;
+        case 'p':
+          return `<p>${escapeHtml(block.text)}</p>`;
+        case 'note':
+          return `<p><strong>Note:</strong> ${escapeHtml(block.text)}</p>`;
+        case 'code':
+          return `<pre><code>${escapeHtml(block.text)}</code></pre>`;
+        case 'ul':
+          return `<ul>${(block.items || []).map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`;
+        case 'ol':
+          return `<ol>${(block.items || []).map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ol>`;
+        case 'table': {
+          const head = `<tr>${(block.headers || []).map((h) => `<th>${escapeHtml(h)}</th>`).join('')}</tr>`;
+          const rows = (block.rows || [])
+            .map((row) => `<tr>${row.map((cell) => `<td>${escapeHtml(cell)}</td>`).join('')}</tr>`)
+            .join('');
+          return `<table><thead>${head}</thead><tbody>${rows}</tbody></table>`;
+        }
+        case 'figure':
+          return `<figure><img src="${escapeHtml(block.src)}" alt="${escapeHtml(block.caption || '')}" loading="lazy" decoding="async" />${
+            block.caption ? `<figcaption>${escapeHtml(block.caption)}</figcaption>` : ''
+          }</figure>`;
+        default:
+          return '';
+      }
+    })
+    .join('\n');
+}
+
+function stripAppSource(html) {
+  return html.replace(
+    /<script\b(?=[^>]*\bid=["']app-source["'])(?=[^>]*\btype=["']text\/jsx["'])[^>]*>[\s\S]*?<\/script>\s*/i,
+    '<!-- app-source omitted from generated page; see index.html -->\n'
+  );
+}
+
+function applyHeadMeta(html, { title, description, path: pagePath, image, type = 'website' }) {
+  const url = absoluteUrl(pagePath);
+  const img = image || absoluteUrl('/assets/profile-avatar.png');
+  let out = html;
+  out = out.replace(/<title>[\s\S]*?<\/title>/i, `<title>${escapeHtml(title)}</title>`);
+  const replacements = [
+    [/name="description"\s+content="[^"]*"/i, `name="description" content="${escapeHtml(description)}"`],
+    [/rel="canonical"\s+href="[^"]*"/i, `rel="canonical" href="${escapeHtml(url)}"`],
+    [/property="og:title"\s+content="[^"]*"/i, `property="og:title" content="${escapeHtml(title)}"`],
+    [/property="og:description"\s+content="[^"]*"/i, `property="og:description" content="${escapeHtml(description)}"`],
+    [/property="og:url"\s+content="[^"]*"/i, `property="og:url" content="${escapeHtml(url)}"`],
+    [/property="og:image"\s+content="[^"]*"/i, `property="og:image" content="${escapeHtml(img)}"`],
+    [/property="og:type"\s+content="[^"]*"/i, `property="og:type" content="${escapeHtml(type)}"`],
+    [/name="twitter:title"\s+content="[^"]*"/i, `name="twitter:title" content="${escapeHtml(title)}"`],
+    [/name="twitter:description"\s+content="[^"]*"/i, `name="twitter:description" content="${escapeHtml(description)}"`],
+    [/name="twitter:image"\s+content="[^"]*"/i, `name="twitter:image" content="${escapeHtml(img)}"`],
+  ];
+  for (const [re, value] of replacements) out = out.replace(re, value);
+  return out;
+}
+
+function injectNoscript(html, inner) {
+  const block = `<noscript>\n${inner}\n</noscript>\n`;
+  if (html.includes('id="root"')) {
+    return html.replace(/<div id="root"><\/div>/i, `<div id="root"></div>\n${block}`);
+  }
+  return html + block;
+}
+
+function writeGeneratedPage(relPath, html) {
+  const outPath = path.join(root, relPath);
+  fs.mkdirSync(path.dirname(outPath), { recursive: true });
+  fs.writeFileSync(outPath, html, 'utf8');
+  console.log(`build-app: wrote ${relPath}`);
+}
+
+function buildFeed(writeups) {
+  const items = [...writeups]
+    .sort((a, b) => parseWriteupDate(b.date) - parseWriteupDate(a.date))
+    .map((w) => {
+      const link = absoluteUrl(`/writeup/writeup-${w.id}`);
+      const pubDate = parseWriteupDate(w.date).toUTCString();
+      return `  <item>
+    <title>${escapeXml(w.title)}</title>
+    <link>${escapeXml(link)}</link>
+    <guid isPermaLink="true">${escapeXml(link)}</guid>
+    <pubDate>${escapeXml(pubDate)}</pubDate>
+    <description>${escapeXml(w.summary || '')}</description>
+  </item>`;
+    })
+    .join('\n');
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Writeups · johann.</title>
+    <link>${SITE_ORIGIN}/writeup</link>
+    <description>DFIR and cloud investigation writeups by Johann Weingertner.</description>
+    <language>en-us</language>
+    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+${items}
+  </channel>
+</rss>
+`;
+  writeGeneratedPage('feed.xml', xml);
+}
+
+function buildPrerenders(indexHtml, writeups) {
+  const cleaned = stripAppSource(indexHtml);
+
+  const listHtml = applyHeadMeta(cleaned, {
+    title: 'Writeups · johann.',
+    description: 'DFIR and cloud investigation writeups by Johann Weingertner.',
+    path: '/writeup',
+  });
+  const listNoscript = `<article>
+  <h1>Writeups</h1>
+  <ul>
+    ${writeups
+      .map(
+        (w) =>
+          `<li><a href="/writeup/writeup-${w.id}">${escapeHtml(w.title)}</a> — ${escapeHtml(w.summary || '')}</li>`
+      )
+      .join('\n    ')}
+  </ul>
+  <p><a href="/feed.xml">RSS feed</a></p>
+</article>`;
+  writeGeneratedPage('writeup/index.html', injectNoscript(listHtml, listNoscript));
+
+  for (const w of writeups) {
+    const pagePath = `/writeup/writeup-${w.id}`;
+    const pageHtml = applyHeadMeta(cleaned, {
+      title: `${w.title} · johann.`,
+      description: w.summary || DEFAULT_DESCRIPTION,
+      path: pagePath,
+      image: firstFigure(w),
+      type: 'article',
+    });
+    const article = `<article>
+  <p><a href="/writeup">Back to Writeups</a></p>
+  <h1>${escapeHtml(w.title)}</h1>
+  <p>${escapeHtml(w.category || '')} · ${escapeHtml(w.difficulty || '')} · ${escapeHtml(w.date || '')}</p>
+  <p>${escapeHtml(w.summary || '')}</p>
+  ${blocksToHtml(w.content)}
+</article>`;
+    writeGeneratedPage(`writeup/writeup-${w.id}/index.html`, injectNoscript(pageHtml, article));
+  }
+}
+
 let failed = false;
 for (const target of targets) {
   try {
@@ -59,4 +251,21 @@ for (const target of targets) {
     failed = true;
   }
 }
+
+if (!failed) {
+  try {
+    const indexHtml = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+    const writeups = loadWriteups();
+
+    // SPA deep-link fallback without shipping the editable JSX source
+    writeGeneratedPage('404.html', stripAppSource(indexHtml));
+
+    buildPrerenders(indexHtml, writeups);
+    buildFeed(writeups);
+  } catch (err) {
+    console.error(`build-app: site extras: ${err.message}`);
+    failed = true;
+  }
+}
+
 if (failed) process.exit(1);
