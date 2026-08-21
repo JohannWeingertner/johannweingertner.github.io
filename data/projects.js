@@ -6,8 +6,8 @@
 window.PROJECTS = [
     {
         name: 'Detection Rules',
-        summary: 'Custom Elastic SIEM detections — Windows query and EQL sequence rules (including Nightmare Eclipse ShieldBreak).',
-        tags: ['Elastic', 'Detection Engineering', 'EQL'],
+        summary: 'Custom SIEM Detection rules',
+        tags: [],
         url: 'https://github.com/JohannWeingertner/detection-rules',
         year: '2026',
     },
