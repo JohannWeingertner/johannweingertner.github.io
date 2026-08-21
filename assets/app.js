@@ -10,6 +10,7 @@ const ICONS = {
   ExternalLink: 'M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6',
   Shield: 'M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z',
   Linkedin: 'M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2zM4 4a2 2 0 1 1 0 4 2 2 0 0 1 0-4',
+  Github: 'M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4',
   FileBadge: 'M12 22h6a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v3M14 2v4a2 2 0 0 0 2 2h4M5 17a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM7 16.5 8 22l-3-1-3 1 1-5.5'
 };
 const Icon = ({
@@ -108,6 +109,9 @@ const NAV = [{
   id: 'labs',
   label: 'Labs'
 }, {
+  id: 'projects',
+  label: 'Projects'
+}, {
   id: 'writeups',
   label: 'Writeup'
 }, {
@@ -121,6 +125,7 @@ const PAGE_PATHS = {
   home: '/',
   certs: '/certs',
   labs: '/labs',
+  projects: '/projects',
   writeups: '/writeup',
   competitions: '/competitions',
   experience: '/experience'
@@ -162,13 +167,6 @@ const parsePath = pathname => {
     writeupId: null,
     certSlug: null
   };
-
-  // Legacy alias from earlier /projects URLs
-  if (path === '/projects') return {
-    page: 'labs',
-    writeupId: null,
-    certSlug: null
-  };
   for (const [page, pagePath] of Object.entries(PAGE_PATHS)) {
     if (page !== 'home' && pagePath === path) return {
       page,
@@ -193,6 +191,7 @@ const PAGE_DESCRIPTIONS = {
   home: DEFAULT_DESCRIPTION,
   certs: 'Industry certifications earned by Johann Weingertner, including CompTIA, CCNA, Azure, ISC2, and Splunk.',
   labs: 'CyberDefenders labs completed by Johann Weingertner — searchable by category and difficulty.',
+  projects: 'Open-source and personal cybersecurity projects by Johann Weingertner, including custom SIEM detection rules.',
   writeups: 'DFIR and cloud investigation writeups by Johann Weingertner.',
   competitions: 'CTF and cybersecurity competition experience — NCL, CyberPatriot, Null404, and more.',
   experience: 'Cybersecurity internship and volunteer network technician experience.'
@@ -557,6 +556,10 @@ const HomePage = () => {
     label: 'LinkedIn',
     icon: 'Linkedin',
     href: 'https://www.linkedin.com/in/johann-weingertner-61b884358/'
+  }, {
+    label: 'GitHub',
+    icon: 'Github',
+    href: 'https://github.com/JohannWeingertner'
   }, {
     label: 'CyberDefenders',
     icon: 'Shield',
@@ -943,6 +946,76 @@ const CompetitionsPage = () => /*#__PURE__*/React.createElement("div", null, /*#
     lineHeight: 1.7
   }
 }, c.detail)))));
+const ProjectsPage = () => {
+  const projects = window.PROJECTS || [];
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    style: {
+      ...ST
+    }
+  }, "Projects"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: '0.78rem',
+      color: 'var(--muted)',
+      marginTop: -16,
+      marginBottom: 18
+    }
+  }, projects.length, " project", projects.length === 1 ? '' : 's'), /*#__PURE__*/React.createElement("div", {
+    style: ROW
+  }, projects.map((p, i) => /*#__PURE__*/React.createElement("a", {
+    key: p.url || i,
+    href: p.url,
+    target: "_blank",
+    rel: "noopener noreferrer",
+    className: "list-row row-in",
+    style: {
+      ...rowItem,
+      justifyContent: 'space-between',
+      textDecoration: 'none',
+      animationDelay: `${i * 0.05}s`
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: 'left',
+      flex: 1,
+      minWidth: 0
+    }
+  }, /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: '0.9rem',
+      fontWeight: 500,
+      color: 'var(--text)',
+      marginBottom: 4,
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: 8
+    }
+  }, p.name, /*#__PURE__*/React.createElement(Icon, {
+    name: "ExternalLink",
+    size: 13,
+    style: {
+      color: 'var(--muted)'
+    }
+  })), /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: '0.78rem',
+      color: 'var(--muted)',
+      lineHeight: 1.6
+    }
+  }, p.summary), p.tags?.length > 0 && /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: '0.72rem',
+      color: 'var(--text2)',
+      marginTop: 8
+    }
+  }, p.tags.join(' · '))), p.year && /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: '0.72rem',
+      color: 'var(--muted)',
+      flexShrink: 0,
+      marginLeft: 16
+    }
+  }, p.year)))));
+};
 const ExperiencePage = () => /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
   style: {
     ...ST
@@ -1473,6 +1546,7 @@ const App = () => {
       home: 'johannweingertner.github.io',
       certs: 'Certs · johann.',
       labs: 'Labs · johann.',
+      projects: 'Projects · johann.',
       writeups: 'Writeups · johann.',
       competitions: 'CTFs · johann.',
       experience: 'Experience · johann.'
@@ -1498,7 +1572,7 @@ const App = () => {
     onBack: () => navigate('certs')
   }) : page === 'certs' ? /*#__PURE__*/React.createElement(CertsPage, {
     onOpenCert: openCert
-  }) : page === 'labs' ? /*#__PURE__*/React.createElement(LabsPage, null) : page === 'writeups' ? /*#__PURE__*/React.createElement(WriteupsPage, {
+  }) : page === 'labs' ? /*#__PURE__*/React.createElement(LabsPage, null) : page === 'projects' ? /*#__PURE__*/React.createElement(ProjectsPage, null) : page === 'writeups' ? /*#__PURE__*/React.createElement(WriteupsPage, {
     onOpenWriteup: openWriteup
   }) : page === 'competitions' ? /*#__PURE__*/React.createElement(CompetitionsPage, null) : page === 'experience' ? /*#__PURE__*/React.createElement(ExperiencePage, null) : /*#__PURE__*/React.createElement(HomePage, null);
   return /*#__PURE__*/React.createElement("div", {

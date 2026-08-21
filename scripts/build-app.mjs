@@ -68,6 +68,13 @@ function loadCertifications() {
   return ctx.window.CERTIFICATIONS || [];
 }
 
+function loadProjects() {
+  const src = fs.readFileSync(path.join(root, 'data/projects.js'), 'utf8');
+  const ctx = { window: {} };
+  vm.runInNewContext(src, ctx, { filename: 'projects.js' });
+  return ctx.window.PROJECTS || [];
+}
+
 function certSlug(cert) {
   return String(cert?.slug || cert?.short || cert?.name || '')
     .toLowerCase()
@@ -364,8 +371,28 @@ ${items || '      <p class="lede">No writeups yet.</p>'}
   writeGeneratedPage('feed/index.html', html);
 }
 
-function buildPrerenders(indexHtml, writeups, certifications) {
+function buildPrerenders(indexHtml, writeups, certifications, projects) {
   const cleaned = stripAppSource(indexHtml);
+
+  const projectsHtml = applyHeadMeta(cleaned, {
+    title: 'Projects · johann.',
+    description:
+      'Open-source and personal cybersecurity projects by Johann Weingertner, including custom SIEM detection rules.',
+    path: '/projects',
+  });
+  const projectsNoscript = `<article>
+  <h1>Projects</h1>
+  <ul>
+    ${projects
+      .map(
+        (p) =>
+          `<li><a href="${escapeHtml(p.url)}">${escapeHtml(p.name)}</a> — ${escapeHtml(p.summary || '')}</li>`
+      )
+      .join('\n    ')}
+  </ul>
+</article>`;
+  writeGeneratedPage('projects/index.html', injectNoscript(projectsHtml, projectsNoscript));
+
 
   const listHtml = applyHeadMeta(cleaned, {
     title: 'Writeups · johann.',
@@ -462,32 +489,14 @@ if (!failed) {
     const indexHtml = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
     const writeups = loadWriteups();
     const certifications = loadCertifications();
+    const projects = loadProjects();
 
     // SPA deep-link fallback without shipping the editable JSX source
     writeGeneratedPage('404.html', stripAppSource(indexHtml));
 
-    buildPrerenders(indexHtml, writeups, certifications);
+    buildPrerenders(indexHtml, writeups, certifications, projects);
     buildFeedXml(writeups);
     buildFeedPage(writeups);
-
-    // Legacy /projects → /labs redirect for old links
-    writeGeneratedPage(
-      'projects/index.html',
-      `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0;url=/labs">
-  <link rel="canonical" href="${SITE_ORIGIN}/labs">
-  <title>Redirecting to Labs…</title>
-  <script>location.replace('/labs');</script>
-</head>
-<body>
-  <p><a href="/labs">Continue to Labs</a></p>
-</body>
-</html>
-`
-    );
   } catch (err) {
     console.error(`build-app: site extras: ${err.message}`);
     failed = true;
