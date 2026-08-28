@@ -31,7 +31,7 @@
 window.WRITEUPS = [
     {
         id: 1,
-        title: 'Shadow Token Symphony — APT29 Azure Compromise',
+        title: 'APT29 Azure Compromise',
         category: 'Cloud / DFIR',
         difficulty: 'Hard',
         date: 'Apr 2026',
@@ -246,7 +246,7 @@ window.WRITEUPS = [
     },
     {
         id: 2,
-        title: 'CursorJack — Malicious MCP Integration to AWS Cryptomining',
+        title: 'Malicious MCP Integration to AWS Cryptomining',
         category: 'Cloud / DFIR',
         difficulty: 'Hard',
         date: 'Jul 2026',

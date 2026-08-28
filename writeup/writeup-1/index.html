@@ -3,31 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shadow Token Symphony — APT29 Azure Compromise · johann.</title>
+    <title>APT29 Azure Compromise · johann.</title>
     <meta name="description" content="Full attack-chain investigation of a multi-stage APT29-style Azure environment compromise — from on-premises brute force through Key Vault exfiltration — using Microsoft Sentinel.">
     <link rel="canonical" href="https://johannweingertner.github.io/writeup/writeup-1">
     <meta name="author" content="Johann Weingertner">
     <meta name="theme-color" content="#0a0a0a">
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="johann.">
-    <meta property="og:title" content="Shadow Token Symphony — APT29 Azure Compromise · johann.">
+    <meta property="og:title" content="APT29 Azure Compromise · johann.">
     <meta property="og:description" content="Full attack-chain investigation of a multi-stage APT29-style Azure environment compromise — from on-premises brute force through Key Vault exfiltration — using Microsoft Sentinel.">
     <meta property="og:url" content="https://johannweingertner.github.io/writeup/writeup-1">
     <meta property="og:image" content="https://johannweingertner.github.io/assets/writeups/soc-apt29/fig01-azure-topology.webp">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Shadow Token Symphony — APT29 Azure Compromise · johann.">
+    <meta name="twitter:title" content="APT29 Azure Compromise · johann.">
     <meta name="twitter:description" content="Full attack-chain investigation of a multi-stage APT29-style Azure environment compromise — from on-premises brute force through Key Vault exfiltration — using Microsoft Sentinel.">
     <meta name="twitter:image" content="https://johannweingertner.github.io/assets/writeups/soc-apt29/fig01-azure-topology.webp">
     <link rel="alternate" type="application/rss+xml" title="Writeups · johann." href="https://johannweingertner.github.io/feed.xml">
     <link rel="icon" type="image/png" href="/assets/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://unpkg.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/tokens.css?v=20260820">
+    <link rel="stylesheet" href="/assets/tokens.css?v=20260828">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: var(--bg); color: var(--text); font-family: var(--font-sans, 'Inter', sans-serif); -webkit-font-smoothing: antialiased; font-feature-settings: 'cv11', 'ss01'; }
+        html, body { background: var(--bg); min-height: 100%; }
+        body { color: var(--text); font-family: var(--font-sans, 'Inter', sans-serif); -webkit-font-smoothing: antialiased; font-feature-settings: 'cv11', 'ss01'; }
         .mono { font-family: var(--font-mono, 'DM Mono', monospace); }
 
         .skip-link {
@@ -135,11 +135,54 @@
         .cta-btn.primary { background:var(--accent); color:#fafafa; border-color:transparent; }
         .cta-btn.primary:hover { background:#ef4444; transform:translateY(-1px); }
 
-        /* Nav active underline */
+        /* Nav active underline — one sliding bar, not a pop per pill */
+        .site-nav { position: sticky; top: 0; z-index: 50; background: var(--bg); border-bottom: 1px solid var(--border); }
         .nav-pill { position:relative; transition: color var(--dur-med, 220ms) var(--ease-out-quint, cubic-bezier(0.22,1,0.36,1)); }
-        .nav-pill::after { content:''; position:absolute; bottom:-1px; left:10px; right:10px; height:1px; background:var(--accent); border-radius:1px; transform: scaleX(0); transform-origin: center; transition: transform var(--dur-med, 220ms) var(--ease-out-quint, cubic-bezier(0.22,1,0.36,1)); }
-        .nav-pill.active::after { transform: scaleX(1); }
         .nav-pill.active { color: var(--text); }
+        .nav-indicator {
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            height: 1px;
+            background: var(--accent);
+            border-radius: 1px;
+            pointer-events: none;
+            width: 0;
+            transform: translateX(0);
+            transition: transform var(--dur-med, 220ms) var(--ease-out-quint, cubic-bezier(0.22,1,0.36,1)),
+                        width var(--dur-med, 220ms) var(--ease-out-quint, cubic-bezier(0.22,1,0.36,1));
+        }
+
+        .writeup-fig {
+            opacity: 0;
+            transform: translateY(14px);
+        }
+        .writeup-fig.is-in {
+            opacity: 1;
+            transform: none;
+            transition: opacity 420ms var(--ease-out-quint, cubic-bezier(0.22,1,0.36,1)),
+                        transform 420ms var(--ease-out-quint, cubic-bezier(0.22,1,0.36,1));
+        }
+
+        .code-wrap { position: relative; margin: 0 0 14px; }
+        .code-wrap pre { margin: 0; }
+        .code-copy {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 0.68rem;
+            font-weight: 500;
+            font-family: Inter, sans-serif;
+            color: var(--muted);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            padding: 3px 8px;
+            cursor: pointer;
+            transition: color var(--dur-fast, 150ms), border-color var(--dur-fast, 150ms), background var(--dur-fast, 150ms);
+        }
+        .code-copy:hover { color: var(--text); border-color: var(--border2); }
+        .code-wrap.is-copied pre { box-shadow: inset 0 0 0 1px var(--accent-border); }
 
         /* Diff bar */
         .diff-bar-track { height:5px; background: var(--surface3); border-radius: 99px; overflow: hidden; }
@@ -151,8 +194,46 @@
         .toggle-btn.on { background: var(--surface3); color: var(--text); border: 1px solid var(--border); }
 
         /* Interactive 3D cube-grid background */
-        #bg-canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        #bg-canvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            width: 100dvw;
+            height: 100dvh;
+            z-index: 0;
+            pointer-events: none;
+        }
         #root { position: relative; z-index: 1; }
+
+        .nav-inner {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 50px;
+            gap: 8px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 0;
+            flex-wrap: nowrap;
+            justify-content: flex-end;
+            align-items: center;
+        }
+        @media (max-width: 860px) {
+            .nav-inner {
+                height: auto;
+                min-height: 50px;
+                flex-wrap: wrap;
+                padding: 8px 16px;
+                row-gap: 4px;
+            }
+            .nav-links { flex-wrap: wrap; justify-content: flex-start; }
+            .nav-pill { padding: 4px 6px; font-size: 0.76rem; }
+        }
         /* Soft radial scrim — readable center, cubes visible at edges */
         .content-scrim {
             position: relative;
@@ -270,12 +351,13 @@
             .fade-up, .fade-up-1, .fade-up-2, .fade-up-3, .page-enter, .row-in, .hero-name, .cta-btn, .profile-avatar, .stat-chip, .modal-overlay, .modal-box {
                 animation: none !important;
             }
-            .list-row, .list-row::before, .nav-pill, .nav-pill::after, .cta-btn, .modal-close {
+            .list-row, .list-row::before, .nav-pill, .nav-indicator, .cta-btn, .modal-close, .writeup-fig, .writeup-fig.is-in, .code-copy {
                 transition: none !important;
             }
             .list-row:hover, .list-row:active, .cta-btn:hover, .cta-btn:active {
                 transform: none !important;
             }
+            .writeup-fig { opacity: 1; transform: none; }
             .type-cursor { animation: none; opacity: 1; }
         }
     </style>
@@ -287,8 +369,8 @@
 <noscript>
 <article>
   <p><a href="/writeup">Back to Writeups</a></p>
-  <h1>Shadow Token Symphony — APT29 Azure Compromise</h1>
-  <p>Cloud / DFIR · Hard · Apr 2026</p>
+  <h1>APT29 Azure Compromise</h1>
+  <p>Apr 2026</p>
   <p>Full attack-chain investigation of a multi-stage APT29-style Azure environment compromise — from on-premises brute force through Key Vault exfiltration — using Microsoft Sentinel.</p>
   <h2>Overview</h2>
 <p>InfiniteTechSolutions experienced a sophisticated, multi-stage cyber attack against their Azure environment in July 2025. The attack was detected by Microsoft Sentinel through anomalous login patterns, unauthorized service installations, and suspicious API calls targeting the Microsoft Graph endpoint.</p>
@@ -374,32 +456,55 @@
 <script>
 (function () {
     const canvas = document.getElementById('bg-canvas');
-    const ctx = canvas.getContext('2d', { alpha: false });
+    const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true })
+        || canvas.getContext('2d', { alpha: false });
     let w, h, dpr, time = 0, scale = 36, originX = 0, originY = 0;
     let COLS = 20, ROWS = 20;
 
     // ── Full-screen isometric red cube grid (dark theme) ─────
-    // Soft ambient cubes; hover/click still lift. Frozen when idle.
+    // Smaller scale = farther camera. Count rises to still cover corners,
+    // then clamps so a 4K screen cannot spawn thousands of cubes.
     const CELL = 1;
-    const HALF = 0.40;
-    const BASE_H = 0.28;
-    const LIFT_MAX = 1.9;
+    const HALF = 0.36;
+    const BASE_H = 0.16;
+    const LIFT_MAX = 1.35;
+    const TARGET_SCALE = 30;
     const HOVER_PX = 150;
+    const HOVER_PX2 = HOVER_PX * HOVER_PX;
     const FRAME_MS = 1000 / 30;
-    const IDLE_MS = 1600;
+    const IDLE_BREATH_MS = 1000 / 12;
+    const IDLE_MS = 400;
+    const COVER_PAD = 120;
+    const AXIS_MIN = 22;
+    const AXIS_MAX = 48;
+    const AXIS_STATIC_MIN = 14;
+    const AXIS_STATIC_MAX = 24;
 
     const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const saveData = !!(navigator.connection && navigator.connection.saveData);
     const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-    const staticOnly = reduceMotion || saveData || (coarse && Math.min(window.innerWidth, window.innerHeight) < 700);
+    const lowMem = typeof navigator.deviceMemory === 'number' && navigator.deviceMemory > 0 && navigator.deviceMemory <= 2;
+    const lowCpu = typeof navigator.hardwareConcurrency === 'number' && navigator.hardwareConcurrency > 0 && navigator.hardwareConcurrency <= 2;
+    const staticOnly = reduceMotion || saveData || lowMem || lowCpu
+        || (coarse && Math.min(window.innerWidth, window.innerHeight) < 700);
 
     let cubes = [];
     let waves = [];
+    let breathers = [];
     const mouse = { x: -9999, y: -9999, active: false };
     let running = false;
     let raf = 0;
     let lastFrame = 0;
     let idleTimer = 0;
+    let contentRect = null;
+
+    function viewportSize() {
+        const vv = window.visualViewport;
+        return {
+            w: Math.max(window.innerWidth, vv ? Math.round(vv.width) : 0),
+            h: Math.max(window.innerHeight, vv ? Math.round(vv.height) : 0),
+        };
+    }
 
     function seed() {
         cubes = [];
@@ -415,6 +520,7 @@
                     vh: 0,
                     phase: (i * 0.35 + j * 0.41),
                     sx: 0, sy: 0,
+                    breathe: false,
                     depth: x + z,
                 });
             }
@@ -453,25 +559,51 @@
             ctx.strokeStyle = `rgba(255, 100, 80, ${0.26 + b * 0.48})`;
             ctx.lineWidth = 0.6;
         }
-        ctx.fillStyle = `rgba(130, 18, 18, ${0.11 + b * 0.28})`;
+        ctx.fillStyle = `rgba(130, 18, 18, ${0.07 + b * 0.18})`;
         face([c1, c2, t2, t1]);
         ctx.fill();
         if (stroke) ctx.stroke();
-        ctx.fillStyle = `rgba(200, 32, 32, ${0.15 + b * 0.34})`;
+        ctx.fillStyle = `rgba(200, 32, 32, ${0.10 + b * 0.22})`;
         face([c3, c2, t2, t3]);
         ctx.fill();
         if (stroke) ctx.stroke();
-        ctx.fillStyle = `rgba(255, 55, 55, ${0.22 + b * 0.44})`;
+        ctx.fillStyle = `rgba(255, 55, 55, ${0.14 + b * 0.28})`;
         face([t0, t1, t2, t3]);
         ctx.fill();
         if (stroke) ctx.stroke();
     }
 
+    function refreshContentRect() {
+        const main = document.getElementById('main');
+        if (!main) {
+            contentRect = null;
+            return;
+        }
+        const r = main.getBoundingClientRect();
+        if (r.width < 8 || r.height < 8) {
+            contentRect = null;
+            return;
+        }
+        contentRect = {
+            l: r.left,
+            r: r.right,
+            t: r.top,
+            b: r.bottom,
+        };
+    }
+
+    function underContent(sx, sy) {
+        const box = contentRect;
+        return !!(box && sx > box.l && sx < box.r && sy > box.t && sy < box.b);
+    }
+
     function spawnWave(clientX, clientY) {
         if (staticOnly) return;
+        refreshContentRect();
         let best = null, bestD = Infinity;
         for (let k = 0; k < cubes.length; k++) {
             const c = cubes[k];
+            if (underContent(c.sx, c.sy)) continue;
             const dx = c.sx - clientX, dy = c.sy - clientY;
             const d = dx * dx + dy * dy;
             if (d < bestD) { bestD = d; best = c; }
@@ -490,10 +622,7 @@
     function kick() {
         if (staticOnly) return;
         clearTimeout(idleTimer);
-        idleTimer = setTimeout(() => {
-            mouse.active = false;
-            if (!waves.length) stop();
-        }, IDLE_MS);
+        idleTimer = setTimeout(() => { mouse.active = false; }, IDLE_MS);
         if (!running && document.visibilityState !== 'hidden') start();
     }
 
@@ -521,12 +650,32 @@
     }, { passive: true });
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'hidden') stop();
+        else if (!staticOnly) start();
     });
+
+    // Tiny parallax: the painted field drifts a few pixels with scroll.
+    // CSS transform only — no cube repaint. Clamped so long pages do not
+    // walk the canvas off-screen.
+    let scrollTick = 0;
+    function applyParallax() {
+        scrollTick = 0;
+        if (staticOnly || reduceMotion) {
+            canvas.style.transform = '';
+            return;
+        }
+        const y = Math.max(-8, Math.min(8, -window.scrollY * 0.03));
+        canvas.style.transform = y ? 'translate3d(0,' + y.toFixed(1) + 'px,0)' : '';
+    }
+    window.addEventListener('scroll', () => {
+        if (scrollTick) return;
+        scrollTick = requestAnimationFrame(applyParallax);
+    }, { passive: true });
 
     function resize() {
         dpr = Math.min(window.devicePixelRatio || 1, staticOnly ? 1 : 1.25);
-        w = window.innerWidth;
-        h = window.innerHeight;
+        const vp = viewportSize();
+        w = vp.w;
+        h = vp.h;
         canvas.width = w * dpr;
         canvas.height = h * dpr;
         canvas.style.width = w + 'px';
@@ -534,19 +683,45 @@
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.imageSmoothingEnabled = false;
 
-        // Cube size that tiles nicely; expand the grid until the isometric
-        // diamond covers the full viewport (diamond ≠ AABB).
-        scale = Math.max(18, Math.min(w, h) / 26);
         originX = w * 0.5;
-        originY = h * 0.45;
-        const halfW = w * 0.5 + 100;
-        const halfH = Math.max(originY, h - originY) + 100;
-        const nFromDiamond = Math.ceil(halfW / (scale * 0.866) + halfH / (scale * 0.5));
-        // Cover the whole screen; idle-freeze + 30fps keep this cheap.
-        COLS = Math.min(staticOnly ? 36 : 56, Math.max(30, nFromDiamond));
+        originY = h * 0.52;
+        const halfW = w * 0.5 + COVER_PAD;
+        const halfH = Math.max(originY, h - originY) + COVER_PAD;
+        const coverSpan = halfW / 0.866 + halfH / 0.5;
+
+        const axisMin = staticOnly ? AXIS_STATIC_MIN : AXIS_MIN;
+        const axisMax = staticOnly ? AXIS_STATIC_MAX : AXIS_MAX;
+        const farScale = staticOnly ? TARGET_SCALE + 4 : TARGET_SCALE;
+        const needed = Math.ceil(coverSpan / farScale) + 1;
+        COLS = Math.max(axisMin, Math.min(axisMax, needed));
         ROWS = COLS;
+        scale = Math.max(farScale, coverSpan / (COLS - 1));
+
         seed();
+        pickBreathers();
         paint(true);
+        applyParallax();
+        if (!staticOnly) start();
+    }
+
+    function pickBreathers() {
+        breathers = [];
+        if (staticOnly) return;
+        const edge = [];
+        for (let k = 0; k < cubes.length; k++) {
+            const c = cubes[k];
+            c.breathe = false;
+            const p = project(c.x, BASE_H, c.z);
+            c.sx = p.x; c.sy = p.y;
+            if (c.sx < 8 || c.sx > w - 8 || c.sy < 8 || c.sy > h - 8) continue;
+            if (c.sx < 220 || c.sx > w - 220 || c.sy < 100 || c.sy > h - 120) edge.push(c);
+        }
+        const max = 10;
+        const stride = Math.max(1, Math.ceil(edge.length / Math.max(max, 1)));
+        for (let i = 0; i < edge.length && breathers.length < max; i += stride) {
+            edge[i].breathe = true;
+            breathers.push(edge[i]);
+        }
     }
 
     function paint(forceStatic) {
@@ -560,6 +735,8 @@
         ctx.fillStyle = glow;
         ctx.fillRect(0, 0, w, h);
 
+        refreshContentRect();
+
         const animate = !forceStatic && !staticOnly;
         if (animate) {
             waves = waves.filter(wv => wv.life > 0.02 && wv.r < COLS);
@@ -571,30 +748,50 @@
             }
         }
 
+        let anyMotion = waves.length > 0;
+
         for (let k = 0; k < cubes.length; k++) {
             const c = cubes[k];
             if (animate) {
-                const breathe = Math.sin(time * 1.15 + c.phase) * 0.05;
-                let target = BASE_H + breathe;
-                if (mouse.active) {
-                    const dx = c.sx - mouse.x, dy = c.sy - mouse.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < HOVER_PX) {
+                const hidden = underContent(c.sx, c.sy);
+                const dx = c.sx - mouse.x, dy = c.sy - mouse.y;
+                const nearMouse = !hidden && mouse.active && (dx * dx + dy * dy) < HOVER_PX2;
+                const unsettled = Math.abs(c.h - BASE_H) > 0.003 || Math.abs(c.vh) > 0.003;
+                let nearWave = false;
+                if (waves.length) {
+                    for (let wi = 0; wi < waves.length; wi++) {
+                        const wv = waves[wi];
+                        const ddx = c.x - wv.x, ddz = c.z - wv.z;
+                        const d = Math.sqrt(ddx * ddx + ddz * ddz);
+                        if (Math.abs(d - wv.r) < 1.6) { nearWave = true; break; }
+                    }
+                }
+                if (nearMouse || nearWave || unsettled || c.breathe) {
+                    anyMotion = true;
+                    const breathe = nearMouse
+                        ? Math.sin(time * 1.15 + c.phase) * 0.05
+                        : (c.breathe ? Math.sin(time * 0.7 + c.phase) * 0.16 : 0);
+                    let target = BASE_H + breathe;
+                    if (nearMouse) {
+                        const dist = Math.sqrt(dx * dx + dy * dy);
                         const t = 1 - dist / HOVER_PX;
                         target += LIFT_MAX * t * t;
                     }
+                    for (let wi = 0; wi < waves.length; wi++) {
+                        const wv = waves[wi];
+                        const ddx = c.x - wv.x, ddz = c.z - wv.z;
+                        const d = Math.sqrt(ddx * ddx + ddz * ddz);
+                        const band = Math.abs(d - wv.r);
+                        if (band < 1.4) target += (1 - band / 1.4) * wv.amp * wv.life;
+                    }
+                    const force = (target - c.h) * 0.16;
+                    c.vh = (c.vh + force) * 0.78;
+                    c.h += c.vh;
+                    if (c.h < 0.1) { c.h = 0.1; c.vh *= 0.5; }
+                } else if (c.h !== BASE_H) {
+                    c.h = BASE_H;
+                    c.vh = 0;
                 }
-                for (let wi = 0; wi < waves.length; wi++) {
-                    const wv = waves[wi];
-                    const dx = c.x - wv.x, dz = c.z - wv.z;
-                    const d = Math.sqrt(dx * dx + dz * dz);
-                    const band = Math.abs(d - wv.r);
-                    if (band < 1.4) target += (1 - band / 1.4) * wv.amp * wv.life;
-                }
-                const force = (target - c.h) * 0.16;
-                c.vh = (c.vh + force) * 0.78;
-                c.h += c.vh;
-                if (c.h < 0.1) { c.h = 0.1; c.vh *= 0.5; }
             }
             const p = project(c.x, c.h, c.z);
             c.sx = p.x; c.sy = p.y;
@@ -604,37 +801,43 @@
             const c = cubes[k];
             if (c.sx < -80 || c.sx > w + 80 || c.sy < -80 || c.sy > h + 80) continue;
             const lift = Math.max(0, Math.min(1, (c.h - BASE_H) / LIFT_MAX));
-            const brightness = 0.28 + lift * 0.62 + (animate ? Math.sin(time * 1.1 + c.phase) * 0.03 : 0);
+            const brightness = 0.18 + lift * 0.55 + (animate && lift > 0.01 ? Math.sin(time * 1.1 + c.phase) * 0.03 : 0);
             drawCube(c.x, c.z, c.h, brightness, lift > 0.08);
         }
+
+        return anyMotion;
     }
 
     function step(now) {
         if (!running) return;
         raf = requestAnimationFrame(step);
-        if (now - lastFrame < FRAME_MS) return;
+        const busy = mouse.active || waves.length > 0;
+        const interval = busy ? FRAME_MS : IDLE_BREATH_MS;
+        if (now - lastFrame < interval) return;
+        const dt = Math.min(0.05, (now - lastFrame) / 1000);
         lastFrame = now;
-        time += 0.033;
-        paint(false);
-        if (!mouse.active && !waves.length) stop();
+        time += dt;
+        if (!paint(false) && !breathers.length) stop();
     }
 
     let resizeTimer = 0;
-    window.addEventListener('resize', () => {
+    const onResize = () => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(resize, 120);
-    });
+    };
+    window.addEventListener('resize', onResize);
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', onResize);
     resize();
 })();
 </script>
-<script src="/data/certifications.js?v=20260814"></script>
-<script src="/data/labs.js?v=20260714"></script>
-<script src="/data/writeups.js?v=20260819"></script>
-<script src="/data/projects.js?v=20260821"></script>
-<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script defer src="/data/certifications.js?v=20260814"></script>
+<script defer src="/data/labs.js?v=20260828"></script>
+<script defer src="/data/writeups.js?v=20260828"></script>
+<script defer src="/data/projects.js?v=20260821"></script>
+<script defer src="/assets/vendor/react.production.min.js"></script>
+<script defer src="/assets/vendor/react-dom.production.min.js"></script>
 <!-- Edit this JSX, then run: npm run build  (writes assets/app.js) -->
 <!-- app-source omitted from generated page; see index.html -->
-<script src="/assets/app.js?v=20260821a"></script>
+<script defer src="/assets/app.js?v=20260828c"></script>
 </body>
 </html>

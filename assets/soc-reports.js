@@ -35,7 +35,7 @@ const Icon = ({
 // ── Static data ───────────────────────────────────────────────
 const SOC_REPORTS = [{
   id: '2026-04-20',
-  title: 'CursorJack MCP / AWS Cryptomining Investigation',
+  title: 'MCP / AWS Cryptomining Investigation',
   date: 'July 2026',
   description: 'Malicious Cursor MCP integration leading to endpoint execution, AWS admin credential theft, 16 unauthorized GPU instances, and XMRig cryptomining.',
   file: 'assets/projects/2026-04-20-cursorjack-investigation-report.docx',

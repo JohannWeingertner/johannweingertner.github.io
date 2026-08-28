@@ -7,7 +7,6 @@
     <link rel="icon" type="image/png" href="/assets/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://unpkg.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -88,8 +87,8 @@
 </head>
 <body>
 <div id="root"></div>
-<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script defer src="/assets/vendor/react.production.min.js"></script>
+<script defer src="/assets/vendor/react-dom.production.min.js"></script>
 <!-- Edit this JSX, then run: npm run build  (writes assets/soc-reports.js) -->
 <script type="text/jsx" id="app-source">
 const { useState, useEffect } = React;
@@ -125,7 +124,7 @@ const Icon = ({ name, className = '', size = 15, ...props }) => (
 const SOC_REPORTS = [
     {
         id: '2026-04-20',
-        title: 'CursorJack MCP / AWS Cryptomining Investigation',
+        title: 'MCP / AWS Cryptomining Investigation',
         date: 'July 2026',
         description: 'Malicious Cursor MCP integration leading to endpoint execution, AWS admin credential theft, 16 unauthorized GPU instances, and XMRig cryptomining.',
         file: 'assets/projects/2026-04-20-cursorjack-investigation-report.docx',
@@ -265,6 +264,6 @@ const App = () => {
 
 ReactDOM.render(<App />, document.getElementById('root'));
 </script>
-<script src="/assets/soc-reports.js?v=20260814"></script>
+<script defer src="/assets/soc-reports.js?v=20260828"></script>
 </body>
 </html>

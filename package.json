@@ -3,7 +3,8 @@
   "private": true,
   "description": "Personal site — edit JSX in index.html / soc-reports.html, then npm run build",
   "scripts": {
-    "build": "node scripts/build-app.mjs"
+    "build": "node scripts/build-app.mjs",
+    "sync:labs": "node scripts/sync-labs.mjs"
   },
   "devDependencies": {
     "@babel/core": "^7.26.10",

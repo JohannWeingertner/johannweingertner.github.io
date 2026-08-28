@@ -2,7 +2,9 @@
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 const {
   useState,
-  useEffect
+  useEffect,
+  useRef,
+  useLayoutEffect
 } = React;
 const ICONS = {
   X: 'M18 6 6 18M6 6l12 12',
@@ -104,7 +106,7 @@ const NAV = [{
   label: 'Home'
 }, {
   id: 'certs',
-  label: 'Certs'
+  label: 'Certifications'
 }, {
   id: 'labs',
   label: 'Labs'
@@ -123,7 +125,7 @@ const NAV = [{
 }];
 const PAGE_PATHS = {
   home: '/',
-  certs: '/certs',
+  certs: '/certifications',
   labs: '/labs',
   projects: '/projects',
   writeups: '/writeup',
@@ -131,7 +133,7 @@ const PAGE_PATHS = {
   experience: '/experience'
 };
 const pathForWriteup = id => `/writeup/writeup-${id}`;
-const pathForCert = slug => `/certs/${slug}`;
+const pathForCert = slug => `/certifications/${slug}`;
 const certSlug = cert => String(cert?.slug || cert?.short || cert?.name || '').toLowerCase().replace(/\+/g, '-plus').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 const emptyRoute = () => ({
   page: 'home',
@@ -156,13 +158,13 @@ const parsePath = pathname => {
     writeupId: null,
     certSlug: null
   };
-  const certMatch = path.match(/^\/certs\/([a-z0-9-]+)$/);
+  const certMatch = path.match(/^\/(?:certifications|certs)\/([a-z0-9-]+)$/);
   if (certMatch) return {
     page: 'cert-detail',
     writeupId: null,
     certSlug: certMatch[1]
   };
-  if (path === '/certs') return {
+  if (path === '/certifications' || path === '/certs') return {
     page: 'certs',
     writeupId: null,
     certSlug: null
@@ -256,7 +258,6 @@ const DIFF_HEX = {
   Hard: '#fca5a5',
   Extreme: '#fca5a5'
 };
-const LAB_CATEGORIES = ['All', 'Network Forensics', 'Endpoint Forensics', 'Cloud Forensics', 'Threat Hunting', 'Threat Intel', 'Detection Engineering'];
 const formatLabDate = d => {
   if (!d) return '';
   const date = new Date(d);
@@ -376,7 +377,7 @@ const CertPage = ({
     style: {
       transform: 'rotate(180deg)'
     }
-  }), "Back to Certs"), /*#__PURE__*/React.createElement("div", {
+  }), "Back to Certifications"), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       alignItems: 'flex-start',
@@ -535,7 +536,7 @@ const CertNotFound = ({
   style: {
     transform: 'rotate(180deg)'
   }
-}), "Back to Certs"), /*#__PURE__*/React.createElement("p", {
+}), "Back to Certifications"), /*#__PURE__*/React.createElement("p", {
   style: {
     ...ST
   }
@@ -566,7 +567,7 @@ const HomePage = () => {
     href: 'https://cyberdefenders.org/p/Afterguard/'
   }];
   const stats = [{
-    label: '8 active certs',
+    label: '8 certifications',
     accent: true
   }, {
     label: 'CyberDefenders CyberRange Top 100'
@@ -750,6 +751,7 @@ const LabsPage = () => {
   const [query, setQuery] = useState('');
   const allLabs = window.CD_LABS || [];
   const total = allLabs.length;
+  const LAB_CATEGORIES = ['All', ...[...new Set(allLabs.map(l => l.category).filter(Boolean))].sort()];
   const counts = React.useMemo(() => allLabs.reduce((a, l) => {
     a[l.difficulty] = (a[l.difficulty] || 0) + 1;
     return a;
@@ -1079,6 +1081,109 @@ const ExperiencePage = () => /*#__PURE__*/React.createElement("div", null, /*#__
   },
   "aria-hidden": "true"
 }, "\u2014"), b)))))));
+const reduceMotionOn = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const RevealFigure = ({
+  src,
+  caption,
+  eager
+}) => {
+  const ref = useRef(null);
+  const [shown, setShown] = useState(() => !!(eager || reduceMotionOn()));
+  useEffect(() => {
+    if (shown) return;
+    const node = ref.current;
+    if (!node || !('IntersectionObserver' in window)) {
+      setShown(true);
+      return;
+    }
+    const io = new IntersectionObserver(entries => {
+      if (entries[0] && entries[0].isIntersecting) {
+        setShown(true);
+        io.disconnect();
+      }
+    }, {
+      rootMargin: '0px 0px -8% 0px',
+      threshold: 0.12
+    });
+    io.observe(node);
+    return () => io.disconnect();
+  }, [shown]);
+  return /*#__PURE__*/React.createElement("figure", {
+    ref: ref,
+    className: shown ? 'writeup-fig is-in' : 'writeup-fig',
+    style: {
+      margin: '20px 0',
+      padding: 0
+    }
+  }, /*#__PURE__*/React.createElement("img", {
+    src: src,
+    alt: caption || '',
+    loading: eager ? 'eager' : 'lazy',
+    decoding: "async",
+    fetchPriority: eager ? 'high' : 'low',
+    style: {
+      width: '100%',
+      borderRadius: 6,
+      border: '1px solid var(--border)',
+      display: 'block'
+    }
+  }), caption && /*#__PURE__*/React.createElement("figcaption", {
+    style: {
+      fontSize: '0.75rem',
+      color: 'var(--muted)',
+      textAlign: 'center',
+      marginTop: 6,
+      fontStyle: 'italic'
+    }
+  }, caption));
+};
+const CodeBlock = ({
+  text
+}) => {
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1400);
+    } catch (_) {/* ignore */}
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: copied ? 'code-wrap is-copied' : 'code-wrap'
+  }, /*#__PURE__*/React.createElement("pre", {
+    style: {
+      padding: '11px 14px',
+      paddingRight: 72,
+      background: 'rgba(255,255,255,0.04)',
+      border: '1px solid var(--border)',
+      borderRadius: 6,
+      fontSize: '0.78rem',
+      color: 'var(--text2)',
+      fontFamily: "'DM Mono',monospace",
+      overflowX: 'auto',
+      lineHeight: 1.7,
+      whiteSpace: 'pre-wrap',
+      wordBreak: 'break-all'
+    }
+  }, text), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    className: "code-copy",
+    onClick: copy,
+    "aria-label": copied ? 'Copied' : 'Copy code'
+  }, copied ? 'Copied' : 'Copy'));
+};
 const renderWriteupBlock = (block, i, figureIndex = -1) => {
   switch (block.type) {
     case 'h2':
@@ -1171,23 +1276,10 @@ const renderWriteupBlock = (block, i, figureIndex = -1) => {
         }
       }, j + 1, "."), item)));
     case 'code':
-      return /*#__PURE__*/React.createElement("pre", {
+      return /*#__PURE__*/React.createElement(CodeBlock, {
         key: i,
-        style: {
-          margin: '0 0 14px',
-          padding: '11px 14px',
-          background: 'rgba(255,255,255,0.04)',
-          border: '1px solid var(--border)',
-          borderRadius: 6,
-          fontSize: '0.78rem',
-          color: 'var(--text2)',
-          fontFamily: "'DM Mono',monospace",
-          overflowX: 'auto',
-          lineHeight: 1.7,
-          whiteSpace: 'pre-wrap',
-          wordBreak: 'break-all'
-        }
-      }, block.text);
+        text: block.text
+      });
     case 'note':
       return /*#__PURE__*/React.createElement("div", {
         key: i,
@@ -1250,33 +1342,12 @@ const renderWriteupBlock = (block, i, figureIndex = -1) => {
     case 'figure':
       {
         const eager = figureIndex === 0;
-        return /*#__PURE__*/React.createElement("figure", {
+        return /*#__PURE__*/React.createElement(RevealFigure, {
           key: i,
-          style: {
-            margin: '20px 0',
-            padding: 0
-          }
-        }, /*#__PURE__*/React.createElement("img", {
           src: block.src,
-          alt: block.caption || '',
-          loading: eager ? 'eager' : 'lazy',
-          decoding: "async",
-          fetchPriority: eager ? 'high' : 'low',
-          style: {
-            width: '100%',
-            borderRadius: 6,
-            border: '1px solid var(--border)',
-            display: 'block'
-          }
-        }), block.caption && /*#__PURE__*/React.createElement("figcaption", {
-          style: {
-            fontSize: '0.75rem',
-            color: 'var(--muted)',
-            textAlign: 'center',
-            marginTop: 6,
-            fontStyle: 'italic'
-          }
-        }, block.caption));
+          caption: block.caption,
+          eager: eager
+        });
       }
     default:
       return null;
@@ -1324,16 +1395,6 @@ const WriteupPage = ({
     marginBottom: 8
   }
 }, /*#__PURE__*/React.createElement("span", {
-  style: {
-    fontSize: '0.72rem',
-    color: 'var(--muted)'
-  }
-}, writeup.category), /*#__PURE__*/React.createElement("span", {
-  style: {
-    fontSize: '0.72rem',
-    color: DIFF_HEX[writeup.difficulty] || 'var(--muted)'
-  }
-}, writeup.difficulty), /*#__PURE__*/React.createElement("span", {
   style: {
     fontSize: '0.72rem',
     color: 'var(--muted)'
@@ -1429,16 +1490,6 @@ const WriteupsPage = ({
     marginLeft: 16
   }
 }, /*#__PURE__*/React.createElement("span", {
-  style: {
-    fontSize: '0.72rem',
-    color: 'var(--muted)'
-  }
-}, w.category), /*#__PURE__*/React.createElement("span", {
-  style: {
-    fontSize: '0.72rem',
-    color: DIFF_HEX[w.difficulty] || 'var(--muted)'
-  }
-}, w.difficulty), /*#__PURE__*/React.createElement("span", {
   style: {
     fontSize: '0.72rem',
     color: 'var(--muted)'
@@ -1544,7 +1595,7 @@ const App = () => {
     }
     const labels = {
       home: 'johannweingertner.github.io',
-      certs: 'Certs · johann.',
+      certs: 'Certifications · johann.',
       labs: 'Labs · johann.',
       projects: 'Projects · johann.',
       writeups: 'Writeups · johann.',
@@ -1560,6 +1611,27 @@ const App = () => {
   const writeup = writeupId != null ? (window.WRITEUPS || []).find(w => w.id === writeupId) : null;
   const cert = activeCertSlug ? (window.CERTIFICATIONS || []).find(c => certSlug(c) === activeCertSlug) : null;
   const navActive = page === 'writeup-detail' ? 'writeups' : page === 'cert-detail' ? 'certs' : page;
+  const navRef = useRef(null);
+  const [navBar, setNavBar] = useState({
+    x: 0,
+    w: 0
+  });
+  useLayoutEffect(() => {
+    const bar = navRef.current;
+    const el = bar && bar.querySelector('.nav-pill.active');
+    if (!bar || !el) return;
+    const place = () => {
+      const br = bar.getBoundingClientRect();
+      const r = el.getBoundingClientRect();
+      setNavBar({
+        x: Math.round(r.left - br.left + 10),
+        w: Math.max(8, Math.round(r.width - 20))
+      });
+    };
+    place();
+    window.addEventListener('resize', place);
+    return () => window.removeEventListener('resize', place);
+  }, [navActive]);
   const view = page === 'writeup-detail' ? writeup ? /*#__PURE__*/React.createElement(WriteupPage, {
     writeup: writeup,
     onBack: () => navigate('writeups')
@@ -1580,24 +1652,10 @@ const App = () => {
       minHeight: '100vh'
     }
   }, /*#__PURE__*/React.createElement("nav", {
-    style: {
-      position: 'sticky',
-      top: 0,
-      zIndex: 50,
-      background: 'var(--bg)',
-      borderBottom: '1px solid var(--border)'
-    }
+    ref: navRef,
+    className: "site-nav"
   }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      maxWidth: 720,
-      margin: '0 auto',
-      padding: '0 24px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      height: 50,
-      gap: 8
-    }
+    className: "nav-inner"
   }, /*#__PURE__*/React.createElement("button", {
     onClick: () => navigate('home'),
     style: {
@@ -1610,18 +1668,19 @@ const App = () => {
       letterSpacing: '-0.01em'
     }
   }, "johann."), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      gap: 0,
-      flexWrap: 'nowrap',
-      justifyContent: 'flex-end',
-      alignItems: 'center'
-    }
+    className: "nav-links"
   }, NAV.map(item => /*#__PURE__*/React.createElement("button", {
     key: item.id,
     onClick: () => navigate(item.id),
     className: `nav-pill ${navActive === item.id ? 'active' : ''}`
-  }, item.label))))), /*#__PURE__*/React.createElement("main", {
+  }, item.label)))), /*#__PURE__*/React.createElement("span", {
+    className: "nav-indicator",
+    style: {
+      transform: `translateX(${navBar.x}px)`,
+      width: navBar.w
+    },
+    "aria-hidden": "true"
+  })), /*#__PURE__*/React.createElement("main", {
     id: "main",
     key: `${page}-${writeupId ?? 'none'}-${activeCertSlug ?? 'none'}`,
     className: "content-scrim page-enter",

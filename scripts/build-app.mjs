@@ -191,6 +191,25 @@ function writeGeneratedPage(relPath, html) {
   console.log(`build-app: wrote ${relPath}`);
 }
 
+function writeRedirect(relPath, dest) {
+  const url = absoluteUrl(dest);
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Redirecting…</title>
+  <link rel="canonical" href="${escapeHtml(url)}">
+  <meta http-equiv="refresh" content="0;url=${escapeHtml(dest)}">
+  <script>location.replace(${JSON.stringify(dest)});</script>
+</head>
+<body>
+  <p><a href="${escapeHtml(dest)}">Moved to ${escapeHtml(dest)}</a></p>
+</body>
+</html>
+`;
+  writeGeneratedPage(relPath, html);
+}
+
 function buildFeedXml(writeups) {
   const items = [...writeups]
     .sort((a, b) => parseWriteupDate(b.date) - parseWriteupDate(a.date))
@@ -232,7 +251,6 @@ function buildFeedPage(writeups) {
           <p class="item-summary">${escapeHtml(w.summary || '')}</p>
         </div>
         <div class="item-meta">
-          <span>${escapeHtml(w.category || '')}</span>
           <span>${escapeHtml(w.date || '')}</span>
         </div>
       </a>`
@@ -425,7 +443,7 @@ function buildPrerenders(indexHtml, writeups, certifications, projects) {
     const article = `<article>
   <p><a href="/writeup">Back to Writeups</a></p>
   <h1>${escapeHtml(w.title)}</h1>
-  <p>${escapeHtml(w.category || '')} · ${escapeHtml(w.difficulty || '')} · ${escapeHtml(w.date || '')}</p>
+  <p>${escapeHtml(w.date || '')}</p>
   <p>${escapeHtml(w.summary || '')}</p>
   ${blocksToHtml(w.content)}
 </article>`;
@@ -433,9 +451,9 @@ function buildPrerenders(indexHtml, writeups, certifications, projects) {
   }
 
   const certListHtml = applyHeadMeta(cleaned, {
-    title: 'Certs · johann.',
+    title: 'Certifications · johann.',
     description: 'Industry certifications earned by Johann Weingertner, including CompTIA, CCNA, Azure, ISC2, and Splunk.',
-    path: '/certs',
+    path: '/certifications',
   });
   const certListNoscript = `<article>
   <h1>Certifications</h1>
@@ -443,16 +461,16 @@ function buildPrerenders(indexHtml, writeups, certifications, projects) {
     ${certifications
       .map((c) => {
         const slug = certSlug(c);
-        return `<li><a href="/certs/${slug}">${escapeHtml(c.name)}</a> — ${escapeHtml(c.issuer)} · ${escapeHtml(c.year)}</li>`;
+        return `<li><a href="/certifications/${slug}">${escapeHtml(c.name)}</a> — ${escapeHtml(c.issuer)} · ${escapeHtml(c.year)}</li>`;
       })
       .join('\n    ')}
   </ul>
 </article>`;
-  writeGeneratedPage('certs/index.html', injectNoscript(certListHtml, certListNoscript));
+  writeGeneratedPage('certifications/index.html', injectNoscript(certListHtml, certListNoscript));
 
   for (const c of certifications) {
     const slug = certSlug(c);
-    const pagePath = `/certs/${slug}`;
+    const pagePath = `/certifications/${slug}`;
     const pageHtml = applyHeadMeta(cleaned, {
       title: `${c.name} · johann.`,
       description: c.description || `${c.name} — ${c.issuer} (${c.year}).`,
@@ -462,7 +480,7 @@ function buildPrerenders(indexHtml, writeups, certifications, projects) {
     const isImage = c.credential && /\.(png|svg|webp|jpe?g)$/i.test(c.credential);
     const learned = (c.learned || []).map((item) => `<li>${escapeHtml(item)}</li>`).join('');
     const article = `<article>
-  <p><a href="/certs">Back to Certs</a></p>
+  <p><a href="/certifications">Back to Certifications</a></p>
   <h1>${escapeHtml(c.name)}</h1>
   <p>${escapeHtml(c.issuer)} · ${escapeHtml(c.year)}${c.status ? ` · ${escapeHtml(c.status)}` : ''}</p>
   ${c.description ? `<p>${escapeHtml(c.description)}</p>` : ''}
@@ -470,7 +488,13 @@ function buildPrerenders(indexHtml, writeups, certifications, projects) {
   ${!isImage && c.credential ? `<p><a href="${escapeHtml(c.credential)}">View certificate</a></p>` : ''}
   ${learned ? `<h2>What I learned</h2><ul>${learned}</ul>` : ''}
 </article>`;
-    writeGeneratedPage(`certs/${slug}/index.html`, injectNoscript(pageHtml, article));
+    writeGeneratedPage(`certifications/${slug}/index.html`, injectNoscript(pageHtml, article));
+  }
+
+  writeRedirect('certs/index.html', '/certifications');
+  for (const c of certifications) {
+    const slug = certSlug(c);
+    writeRedirect(`certs/${slug}/index.html`, `/certifications/${slug}`);
   }
 }
 
