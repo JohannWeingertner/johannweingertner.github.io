@@ -5,19 +5,19 @@
     <link>https://johannweingertner.github.io/writeup</link>
     <description>DFIR and cloud investigation writeups by Johann Weingertner.</description>
     <language>en-us</language>
-    <lastBuildDate>Thu, 03 Sep 2026 20:24:29 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 03 Sep 2026 21:28:46 GMT</lastBuildDate>
   <item>
     <title>Malicious MCP Integration to AWS Cryptomining</title>
     <link>https://johannweingertner.github.io/writeup/writeup-2</link>
     <guid isPermaLink="true">https://johannweingertner.github.io/writeup/writeup-2</guid>
-    <pubDate>Wed, 01 Jul 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 01 Jul 2026 04:00:00 GMT</pubDate>
     <description>High-confidence reconstruction of a fraudulent Cursor MCP server leading to endpoint execution, AWS admin credential theft, 16 GPU instances, and XMRig cryptomining.</description>
   </item>
   <item>
     <title>APT29 Azure Compromise</title>
     <link>https://johannweingertner.github.io/writeup/writeup-1</link>
     <guid isPermaLink="true">https://johannweingertner.github.io/writeup/writeup-1</guid>
-    <pubDate>Wed, 01 Apr 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 01 Apr 2026 04:00:00 GMT</pubDate>
     <description>Full attack-chain investigation of a multi-stage APT29-style Azure environment compromise — from on-premises brute force through Key Vault exfiltration — using Microsoft Sentinel.</description>
   </item>
   </channel>

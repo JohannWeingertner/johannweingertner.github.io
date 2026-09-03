@@ -35,7 +35,7 @@ window.CERTIFICATIONS = [
         color: '#0ea5e9',
         badge: '/badges/ccda.png',
         credential: '/assets/certifications/ccda.webp',
-        description: 'Hands-on blue team certification validating threat detection, investigation, and incident response across phishing, web, network, and host attack surfaces. Credential ID 6a99d0fa65159096bada3492 — Issued Sep 2026 (09/03/2026).',
+        description: 'Hands-on blue team certification validating threat detection, investigation, and incident response across phishing, web, network, and host attack surfaces.',
         learned: [
             'Investigated phishing threats including email header, URL, and malicious macro analysis',
             'Investigated web-based intrusions such as injection, inclusion, and automated tool attacks with incident response mind-maps',

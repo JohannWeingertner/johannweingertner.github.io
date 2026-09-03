@@ -552,7 +552,7 @@ const HomePage = () => {
   const {
     displayed,
     done
-  } = useTyping('Networking & Cybersecurity', 43, 800);
+  } = useTyping('SOC Analyst · Blue Team', 43, 800);
   const ctaLinks = [{
     label: 'LinkedIn',
     icon: 'Linkedin',
@@ -608,7 +608,7 @@ const HomePage = () => {
     className: "type-cursor"
   })))), /*#__PURE__*/React.createElement("p", {
     className: "hero-bio fade-up-2"
-  }, "I began pursuing technology at age 16 and earned nine industry-recognized certifications, including CCNA, CompTIA Trifecta, CCDA and others, by age 18. Since then, I have focused on building practical, real-world skills through lab environments and independent projects."), /*#__PURE__*/React.createElement("div", {
+  }, "Emerging SOC Analyst focused on SIEM triage, log analysis, and detection engineering across Elastic, Splunk, and Microsoft Sentinel. Hands-on learner with 360+ hours on CyberDefenders, building labs and investigating real alerts. That curiosity shapes how I build and hunt threats."), /*#__PURE__*/React.createElement("div", {
     className: "stat-chips fade-up-2"
   }, stats.map((s, i) => /*#__PURE__*/React.createElement("span", {
     key: i,
@@ -1656,18 +1656,7 @@ const App = () => {
     className: "site-nav"
   }, /*#__PURE__*/React.createElement("div", {
     className: "nav-inner"
-  }, /*#__PURE__*/React.createElement("button", {
-    onClick: () => navigate('home'),
-    style: {
-      background: 'none',
-      border: 'none',
-      cursor: 'pointer',
-      fontSize: '0.9rem',
-      fontWeight: 600,
-      color: 'var(--text)',
-      letterSpacing: '-0.01em'
-    }
-  }, "johann."), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "nav-links"
   }, NAV.map(item => /*#__PURE__*/React.createElement("button", {
     key: item.id,

@@ -212,7 +212,7 @@
             padding: 0 24px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             height: 50px;
             gap: 8px;
         }
@@ -220,7 +220,7 @@
             display: flex;
             gap: 0;
             flex-wrap: nowrap;
-            justify-content: flex-end;
+            justify-content: center;
             align-items: center;
         }
         @media (max-width: 860px) {
@@ -231,7 +231,7 @@
                 padding: 8px 16px;
                 row-gap: 4px;
             }
-            .nav-links { flex-wrap: wrap; justify-content: flex-start; }
+            .nav-links { flex-wrap: wrap; justify-content: center; }
             .nav-pill { padding: 4px 6px; font-size: 0.76rem; }
         }
         /* Soft radial scrim — readable center, cubes visible at edges */
@@ -1047,7 +1047,7 @@ const CertNotFound = ({ onBack }) => (
 
 // ── Pages ─────────────────────────────────────────────────────
 const HomePage = () => {
-    const { displayed, done } = useTyping('Networking & Cybersecurity', 43, 800);
+    const { displayed, done } = useTyping('SOC Analyst · Blue Team', 43, 800);
     const ctaLinks = [
         {label:'LinkedIn',       icon:'Linkedin', href:'https://www.linkedin.com/in/johann-weingertner-61b884358/'},
         {label:'GitHub',         icon:'Github',   href:'https://github.com/JohannWeingertner'},
@@ -1071,7 +1071,7 @@ const HomePage = () => {
             </div>
         </div>
         <p className="hero-bio fade-up-2">
-            I began pursuing technology at age 16 and earned nine industry-recognized certifications, including CCNA, CompTIA Trifecta, CCDA and others, by age 18. Since then, I have focused on building practical, real-world skills through lab environments and independent projects.
+            Emerging SOC Analyst focused on SIEM triage, log analysis, and detection engineering across Elastic, Splunk, and Microsoft Sentinel. Hands-on learner with 360+ hours on CyberDefenders, building labs and investigating real alerts. That curiosity shapes how I build and hunt threats.
         </p>
         <div className="stat-chips fade-up-2">
             {stats.map((s,i)=>(
@@ -1643,9 +1643,6 @@ const App = () => {
     <div style={{minHeight:'100vh'}}>
         <nav ref={navRef} className="site-nav">
             <div className="nav-inner">
-                <button onClick={()=>navigate('home')} style={{background:'none',border:'none',cursor:'pointer',fontSize:'0.9rem',fontWeight:600,color:'var(--text)',letterSpacing:'-0.01em'}}>
-                    johann.
-                </button>
                 <div className="nav-links">
                     {NAV.map(item=>(
                         <button key={item.id} onClick={()=>navigate(item.id)} className={`nav-pill ${navActive===item.id?'active':''}`}>
