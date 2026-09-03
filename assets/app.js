@@ -608,7 +608,7 @@ const HomePage = () => {
     className: "type-cursor"
   })))), /*#__PURE__*/React.createElement("p", {
     className: "hero-bio fade-up-2"
-  }, "Emerging SOC Analyst focused on SIEM triage, log analysis, and detection engineering across Elastic, Splunk, and Microsoft Sentinel. Hands-on learner with 360+ hours on CyberDefenders, building labs and investigating real alerts. That curiosity shapes how I build and hunt threats."), /*#__PURE__*/React.createElement("div", {
+  }, "Aspiring SOC Analyst focused on SIEM triage, log analysis, and detection engineering across Elastic, Splunk, and Microsoft Sentinel. Hands-on learner with 360+ hours on CyberDefenders, building labs and investigating real alerts. That curiosity shapes how I build and hunt threats."), /*#__PURE__*/React.createElement("div", {
     className: "stat-chips fade-up-2"
   }, stats.map((s, i) => /*#__PURE__*/React.createElement("span", {
     key: i,
