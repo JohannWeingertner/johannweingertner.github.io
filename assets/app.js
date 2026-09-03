@@ -567,7 +567,7 @@ const HomePage = () => {
     href: 'https://cyberdefenders.org/p/Afterguard/'
   }];
   const stats = [{
-    label: '8 certifications',
+    label: '9 certifications',
     accent: true
   }, {
     label: 'CyberDefenders CyberRange Top 100'
@@ -608,7 +608,7 @@ const HomePage = () => {
     className: "type-cursor"
   })))), /*#__PURE__*/React.createElement("p", {
     className: "hero-bio fade-up-2"
-  }, "I began pursuing technology at age 16 and earned eight industry-recognized certifications, including CCNA, CompTIA Trifecta and others, by age 18. Since then, I have focused on building practical, real-world skills through lab environments and independent projects."), /*#__PURE__*/React.createElement("div", {
+  }, "I began pursuing technology at age 16 and earned nine industry-recognized certifications, including CCNA, CompTIA Trifecta, CCDA and others, by age 18. Since then, I have focused on building practical, real-world skills through lab environments and independent projects."), /*#__PURE__*/React.createElement("div", {
     className: "stat-chips fade-up-2"
   }, stats.map((s, i) => /*#__PURE__*/React.createElement("span", {
     key: i,
