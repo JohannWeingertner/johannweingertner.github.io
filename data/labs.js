@@ -1,15 +1,17 @@
 // ─────────────────────────────────────────────────────────────
 //  labs.js  (generated — do not edit by hand)
 //  Source: https://cyberdefenders.org/api/user/Afterguard/completed-challenges/
-//  Synced: 2026-08-31T18:55:24.233Z
-//  49 completed labs
+//  Synced: 2026-09-07T17:29:05.276Z
+//  50 completed labs
 // ─────────────────────────────────────────────────────────────
 
 window.CD_LABS = [
+    { name: "MiniFast - UNC1549", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/minifast-unc1549/", category: "Network Forensics", difficulty: "Medium", completed: "2026-09-01" },
     { name: "Maromalix Nightmare", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/maromalix-nightmare/", category: "Endpoint Forensics", difficulty: "Medium", completed: "2026-08-25" },
     { name: "Operation Cronos - Lockbit", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/operation-cronos-lockbit/", category: "Threat Intel", difficulty: "Easy", completed: "2026-08-06" },
     { name: "ClickFix - VodkaStealer", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/clickfix-vodkastealer/", category: "Threat Hunting", difficulty: "Medium", completed: "2026-08-03" },
     { name: "CursorJack", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/cursorjack/", category: "Endpoint Forensics", difficulty: "Easy", completed: "2026-07-19" },
+    { name: "GhostConnect - TA583", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/ghostconnect-ta583/", category: "Threat Hunting", difficulty: "Easy", completed: "2026-06-23" },
     { name: "T1584.004", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/t1584004/", category: "Threat Intel", difficulty: "Easy", completed: "2026-05-05" },
     { name: "Rhadamanthys", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/rhadamanthys/", category: "Endpoint Forensics", difficulty: "Medium", completed: "2026-04-27" },
     { name: "OpenCTI 101 - APT29", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/opencti-101-apt29/", category: "Threat Intel", difficulty: "Easy", completed: "2026-04-26" },
@@ -28,7 +30,6 @@ window.CD_LABS = [
     { name: "RetailBreach", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/retailbreach/", category: "Network Forensics", difficulty: "Easy", completed: "2026-03-22" },
     { name: "JetBrains", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/jetbrains/", category: "Network Forensics", difficulty: "Easy", completed: "2026-03-21" },
     { name: "Poisoned PyTorch", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/poisoned-pytorch/", category: "Threat Hunting", difficulty: "Medium", completed: "2026-03-18" },
-    { name: "ConsentStorm", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/consentstorm/", category: "Cloud Forensics", difficulty: "Medium", completed: "2026-03-16" },
     { name: "XXE Infiltration", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/xxe-infiltration/", category: "Network Forensics", difficulty: "Easy", completed: "2026-03-15" },
     { name: "DanaBot", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/danabot/", category: "Network Forensics", difficulty: "Easy", completed: "2026-03-14" },
     { name: "CallMeOnTheChain - EtherRAT", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/callmeonthechain-etherrat/", category: "Network Forensics", difficulty: "Medium", completed: "2026-03-13" },
