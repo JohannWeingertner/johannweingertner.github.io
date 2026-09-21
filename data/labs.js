@@ -1,8 +1,8 @@
 // ─────────────────────────────────────────────────────────────
 //  labs.js  (generated — do not edit by hand)
 //  Source: https://cyberdefenders.org/api/user/Afterguard/completed-challenges/
-//  Synced: 2026-09-14T17:53:20.483Z
-//  50 completed labs
+//  Synced: 2026-09-21T17:59:14.239Z
+//  51 completed labs
 // ─────────────────────────────────────────────────────────────
 
 window.CD_LABS = [
@@ -30,6 +30,7 @@ window.CD_LABS = [
     { name: "RetailBreach", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/retailbreach/", category: "Network Forensics", difficulty: "Easy", completed: "2026-03-22" },
     { name: "JetBrains", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/jetbrains/", category: "Network Forensics", difficulty: "Easy", completed: "2026-03-21" },
     { name: "Poisoned PyTorch", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/poisoned-pytorch/", category: "Threat Hunting", difficulty: "Medium", completed: "2026-03-18" },
+    { name: "ConsentStorm", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/consentstorm/", category: "Cloud Forensics", difficulty: "Medium", completed: "2026-03-16" },
     { name: "XXE Infiltration", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/xxe-infiltration/", category: "Network Forensics", difficulty: "Easy", completed: "2026-03-15" },
     { name: "DanaBot", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/danabot/", category: "Network Forensics", difficulty: "Easy", completed: "2026-03-14" },
     { name: "CallMeOnTheChain - EtherRAT", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/callmeonthechain-etherrat/", category: "Network Forensics", difficulty: "Medium", completed: "2026-03-13" },
