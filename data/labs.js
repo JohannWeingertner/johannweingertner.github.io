@@ -1,11 +1,13 @@
 // ─────────────────────────────────────────────────────────────
 //  labs.js  (generated — do not edit by hand)
 //  Source: https://cyberdefenders.org/api/user/Afterguard/completed-challenges/
-//  Synced: 2026-09-21T17:59:14.239Z
-//  51 completed labs
+//  Synced: 2026-09-28T19:23:19.361Z
+//  53 completed labs
 // ─────────────────────────────────────────────────────────────
 
 window.CD_LABS = [
+    { name: "NetSupport RAT - TA569", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/netsupport-rat-ta569/", category: "Threat Hunting", difficulty: "Medium", completed: "2026-09-25" },
+    { name: "ShadowRoast", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/shadowroast/", category: "Threat Hunting", difficulty: "Medium", completed: "2026-09-22" },
     { name: "MiniFast - UNC1549", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/minifast-unc1549/", category: "Network Forensics", difficulty: "Medium", completed: "2026-09-01" },
     { name: "Maromalix Nightmare", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/maromalix-nightmare/", category: "Endpoint Forensics", difficulty: "Medium", completed: "2026-08-25" },
     { name: "Operation Cronos - Lockbit", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/operation-cronos-lockbit/", category: "Threat Intel", difficulty: "Easy", completed: "2026-08-06" },
