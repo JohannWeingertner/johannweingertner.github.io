@@ -100,6 +100,10 @@ const COMPETITIONS = [{
   name: 'Null404',
   detail: 'Investigated a full enterprise ransomware attack chain spanning initial access, lateral movement, privilege escalation, cloud forensics, and memory analysis.',
   period: ''
+}, {
+  name: 'DFIR Labs CTF',
+  detail: 'Private Case #39390 — ClickFix leads to Tsundere Bot, tunnels, RMMs and double theft: investigated a single-workstation compromise that grew into a weeks-long intrusion with repeat threat-actor returns, tunneling, a dropped VM, and two rounds of data exfiltration. Placed 40th of 130.',
+  period: '2026'
 }];
 const NAV = [{
   id: 'home',
@@ -567,7 +571,7 @@ const HomePage = () => {
     href: 'https://cyberdefenders.org/p/Afterguard/'
   }];
   const stats = [{
-    label: '9 certifications',
+    label: '10 certifications',
     accent: true
   }, {
     label: 'CyberDefenders CyberRange Top 100'
