@@ -102,7 +102,7 @@ const COMPETITIONS = [{
   period: ''
 }, {
   name: 'DFIR Labs CTF',
-  detail: 'Private Case #39390 — ClickFix leads to Tsundere Bot, tunnels, RMMs and double theft: investigated a single-workstation compromise that grew into a weeks-long intrusion with repeat threat-actor returns, tunneling, a dropped VM, and two rounds of data exfiltration. Placed 40th of 130.',
+  detail: 'Investigated a weeks-long intrusion sparked by a ClickFix compromise — tracking Tsundere Bot, tunneling, rogue RMM tools, and a dropped virtual machine through to two rounds of data exfiltration. Placed 40th of 130.',
   period: '2026'
 }];
 const NAV = [{
