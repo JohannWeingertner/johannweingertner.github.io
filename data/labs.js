@@ -1,11 +1,12 @@
 // ─────────────────────────────────────────────────────────────
 //  labs.js  (generated — do not edit by hand)
 //  Source: https://cyberdefenders.org/api/user/Afterguard/completed-challenges/
-//  Synced: 2026-10-19T18:28:46.997Z
-//  53 completed labs
+//  Synced: 2026-10-26T18:25:07.069Z
+//  54 completed labs
 // ─────────────────────────────────────────────────────────────
 
 window.CD_LABS = [
+    { name: "ActiveMQ - LockBit Ransomware", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/activemq-lockbit-ransomware/", category: "Threat Hunting", difficulty: "Medium", completed: "2026-10-25" },
     { name: "NetSupport RAT - TA569", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/netsupport-rat-ta569/", category: "Threat Hunting", difficulty: "Medium", completed: "2026-09-25" },
     { name: "ShadowRoast", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/shadowroast/", category: "Threat Hunting", difficulty: "Medium", completed: "2026-09-22" },
     { name: "MiniFast - UNC1549", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/minifast-unc1549/", category: "Network Forensics", difficulty: "Medium", completed: "2026-09-01" },
