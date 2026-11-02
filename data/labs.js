@@ -1,7 +1,7 @@
 // ─────────────────────────────────────────────────────────────
 //  labs.js  (generated — do not edit by hand)
 //  Source: https://cyberdefenders.org/api/user/Afterguard/completed-challenges/
-//  Synced: 2026-10-26T18:25:07.069Z
+//  Synced: 2026-11-02T21:29:39.965Z
 //  54 completed labs
 // ─────────────────────────────────────────────────────────────
 
@@ -10,7 +10,7 @@ window.CD_LABS = [
     { name: "NetSupport RAT - TA569", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/netsupport-rat-ta569/", category: "Threat Hunting", difficulty: "Medium", completed: "2026-09-25" },
     { name: "ShadowRoast", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/shadowroast/", category: "Threat Hunting", difficulty: "Medium", completed: "2026-09-22" },
     { name: "MiniFast - UNC1549", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/minifast-unc1549/", category: "Network Forensics", difficulty: "Medium", completed: "2026-09-01" },
-    { name: "Maromalix Nightmare", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/maromalix-nightmare/", category: "Endpoint Forensics", difficulty: "Medium", completed: "2026-08-25" },
+    { name: "Maromalix Nightmare", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/maromalix-nightmare/", category: "Threat Hunting", difficulty: "Medium", completed: "2026-08-25" },
     { name: "Operation Cronos - Lockbit", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/operation-cronos-lockbit/", category: "Threat Intel", difficulty: "Easy", completed: "2026-08-06" },
     { name: "ClickFix - VodkaStealer", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/clickfix-vodkastealer/", category: "Threat Hunting", difficulty: "Medium", completed: "2026-08-03" },
     { name: "CursorJack", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/cursorjack/", category: "Endpoint Forensics", difficulty: "Easy", completed: "2026-07-19" },
