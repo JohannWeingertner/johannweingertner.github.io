@@ -1,8 +1,8 @@
 // ─────────────────────────────────────────────────────────────
 //  labs.js  (generated — do not edit by hand)
 //  Source: https://cyberdefenders.org/api/user/Afterguard/completed-challenges/
-//  Synced: 2026-11-09T22:02:04.422Z
-//  54 completed labs
+//  Synced: 2026-11-16T21:44:48.779Z
+//  55 completed labs
 // ─────────────────────────────────────────────────────────────
 
 window.CD_LABS = [
@@ -41,6 +41,7 @@ window.CD_LABS = [
     { name: "Perfect Survey", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/perfect-survey/", category: "Threat Hunting", difficulty: "Medium", completed: "2026-03-11" },
     { name: "Tusk Infostealer", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/tusk-infostealer/", category: "Threat Intel", difficulty: "Easy", completed: "2026-03-10" },
     { name: "AWSWatcher", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/awswatcher/", category: "Cloud Forensics", difficulty: "Easy", completed: "2026-03-07" },
+    { name: "Stolen Time - HiddenTear", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/stolen-time-hiddentear/", category: "Threat Hunting", difficulty: "Medium", completed: "2026-03-06" },
     { name: "Rogue Azure", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/rogue-azure/", category: "Cloud Forensics", difficulty: "Easy", completed: "2026-03-05" },
     { name: "SigmaPredator", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/sigmapredator/", category: "Detection Engineering", difficulty: "Easy", completed: "2026-03-05" },
     { name: "AbuSESer - Trufflenet", url: "https://cyberdefenders.org/blueteam-ctf-challenges/achievements/Afterguard/abuseser-trufflenet/", category: "Cloud Forensics", difficulty: "Easy", completed: "2026-03-04" },
